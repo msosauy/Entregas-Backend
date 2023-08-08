@@ -1,0 +1,65 @@
+[
+    {
+        "title": "RB-951UI",
+        "description": "Package contains RouterBOARD 951Ui-2HnD in a plastic case and power adapter.",
+        "price": 100.70,
+        "thumbnail": "image/path/img.png",
+        "stock": 34,
+        "code": "SKU001",
+        "id": 1
+    },
+    {
+        "title": "RB-951G",
+        "description": "Package contains RouterBOARD 951Ui-2HnD in a plastic case and power adapter.",
+        "price": 120.70,
+        "thumbnail": "image/path/img.pngrkin",
+        "stock": 10,
+        "code": "SKU002",
+        "id": 2
+    },
+    {
+        "title": "RB-952-AC",
+        "description": "Package contains RouterBOARD 951Ui-2HnD in a plastic case and power adapter.",
+        "price": 150.70,
+        "thumbnail": "image/path/img.png",
+        "stock": 2,
+        "code": "SKU003",
+        "id": 3
+    },
+    {
+        "title": "RB-3011",
+        "description": "Package contains RouterBOARD 951Ui-2HnD in a plastic case and power adapter.",
+        "price": 300.70,
+        "thumbnail": "image/path/img.pngrkin",
+        "stock": 43,
+        "code": "SKU004",
+        "id": 4
+    },
+    {
+        "title": "UAP-AC-Lite",
+        "description": "Package contains RouterBOARD 951Ui-2HnD in a plastic case and power adapter.",
+        "price": 200.70,
+        "thumbnail": "image/path/img.pngrkin",
+        "stock": 12,
+        "code": "SKU005",
+        "id": 5
+    },
+    {
+        "title": "LiteBeam-AC",
+        "description": "Package contains RouterBOARD 951Ui-2HnD in a plastic case and power adapter.",
+        "price": 300.70,
+        "thumbnail": "image/path/img.pngrkin",
+        "stock": 10,
+        "code": "SKU006",
+        "id": 6
+    },
+    {
+        "title": "LiteBeam-AC-2gen",
+        "description": "Package contains RouterBOARD 951Ui-2HnD in a plastic case and power adapter.",
+        "price": 300.70,
+        "thumbnail": "image/path/img.png",
+        "stock": 25,
+        "code": "SKU007",
+        "id": 7
+    }
+]
