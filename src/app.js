@@ -7,27 +7,28 @@ const productManager = new ProductManager("src/products.json");
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", async (req, res) => {
-  res.send("<h1>Este servidor recibe:<h1/> <h3> 1. params numéricos en la ruta /products/?limit=[number]<h3/><h3> 2. query numéricos en la ruta /products/:pid<h3/>");
+  res.send("<h1>Este servidor recibe:</h1> <h3> 1. params numéricos en la ruta /products/?limit=[number]</h3><h3> 2. query numéricos en la ruta /products/:pid</h3>");
 });
 
 //QUERY
 // /products?limit=4
-app.get("/products/", async (req, res) => {
+app.get("/products", async (req, res) => {
   let limit = req.query.limit;
-
-  if (isNaN(limit)) {
-    return res
-      .status(400)
-      .send({ status: "error", error: "limit debe ser un número" });
-  }
+  
   const products = await productManager.getProducts();
 
   if (!limit) {
     return res.send(products);
   }
 
+  if (isNaN(limit)) {
+    return res
+      .status(400)
+      .send({ status: "error", error: "limit debe ser un número" });
+  }
+
   const productsLimited = products.slice(0, limit);
-  return res.send( {...productsLimited} );
+  return res.send(productsLimited);
 });
 
 
@@ -38,7 +39,7 @@ app.get("/products/:pid", async (req, res) => {
   if (isNaN(searchId)) {
     return res
       .status(400)
-      .send({ status: "error", error: "pid debe ser un número" });
+      .send({ status: "error", error: ":pid debe ser un número" });
   }
 
   const products = await productManager.getProducts();
