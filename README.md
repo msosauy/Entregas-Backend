@@ -1,0 +1,1 @@
+Eliminé las validaciones que se hacían en el ProductManager en versiones anteriores por que entiendo que es mejor desde el punto de vista de costo de procesamiento y no tiene sentido evaluar 2 veces si los datos enviados son correctos.

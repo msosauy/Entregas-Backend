@@ -22,7 +22,6 @@ export default class ProductManager {
     }
     return Math.floor(Math.random() * 10000);
   };
-
   //Busca el ID mas alto existente y lo incrementa en 1. Garantiza que no se repitan los IDs.
   generateId = (productsList) => {
     if (productsList.length > 0) {
@@ -39,12 +38,16 @@ export default class ProductManager {
     return 1;
   };
 
-  addProduct = async (title, description, price, thumbnail, code, stock) => {
-    // No se verifica el valor "code" ni "id".
-    if (!title || !description || !price || !thumbnail || !stock) {
-      console.error("Faltan datos requeridos");
-      return;
-    }
+  addProduct = async (
+    title,
+    description,
+    price,
+    thumbnails,
+    stock,
+    status,
+    category,
+    code
+  ) => {
 
     const productList = await this.getProducts();
 
@@ -52,8 +55,10 @@ export default class ProductManager {
       title,
       description,
       price,
-      thumbnail,
+      thumbnails,
       stock,
+      status,
+      category,
       code: code ? code : this.generateCode(productList), //Si el usuario no envía "code se genera uno aleatorio"
       id: this.generateId(productList),
     };
@@ -61,15 +66,17 @@ export default class ProductManager {
     //verificamos que no se ingrese un producto con un codigo existente.
     for (const item of productList) {
       if (item.code === product.code) {
-        console.error("ERROR: Codigo existente");
-        return;
+        throw new Error("Codigo de producto existente");
       }
     }
 
-    this.products.push(product);
+    productList
+      ? this.products.push(...productList, product)
+      : this.products.push(product);
 
-    //Se crea el archivo con el array de objetos products converido a json.
+    //Se crea el archivo con el array de objetos products convertido a json.
     await fs.promises.writeFile(this.path, JSON.stringify(this.products));
+    return;
   };
 
   getProducts = async () => {
@@ -92,28 +99,18 @@ export default class ProductManager {
     return "Producto no encontrado";
   };
 
-  updateProduct = async (
-    id,
-    title,
-    description,
-    price,
-    thumbnail,
-    code,
-    stock
-  ) => {
-    //verificamos que se ingresen todos los datos.
-    if (
-      !id ||
-      !title ||
-      !description ||
-      !price ||
-      !thumbnail ||
-      !code ||
-      !stock
-    ) {
-      console.error("ERROR: Datos del producto incompletos");
-      return;
-    }
+  updateProduct = async (productToUpdate) => {
+    const {
+      id,
+      title,
+      description,
+      code,
+      price,
+      status,
+      stock,
+      category,
+      thumbnails,
+    } = productToUpdate;
 
     const productList = await this.getProducts();
 
@@ -124,10 +121,12 @@ export default class ProductManager {
           ...item,
           title,
           description,
-          price,
-          thumbnail,
           code,
+          price,
+          status,
           stock,
+          category,
+          thumbnails,
         };
         return updatedProduct;
       }
@@ -135,7 +134,12 @@ export default class ProductManager {
     });
 
     //sobreescribimos el archivo con el contenido actualizado.
-    await fs.promises.writeFile(this.path, JSON.stringify(newProductsList));
+    try {
+      await fs.promises.writeFile(this.path, JSON.stringify(newProductsList));
+      return
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   deleteProduct = async (searchId) => {
@@ -147,7 +151,7 @@ export default class ProductManager {
     );
     if (!existingCode) {
       console.error("ERROR: Codigo inexistente");
-      return;
+      throw new Error("El articulo no existe");
     }
 
     //Se crea una nueva lista sin el producto correspondiente al ID recibido
