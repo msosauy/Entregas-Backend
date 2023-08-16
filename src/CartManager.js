@@ -53,7 +53,8 @@ export default class CartManager {
   getProductsFromCartId = async (searchId) => {
     const carts = await this.getCarts();
     const searchCart = carts.find((cart) => cart.id === searchId);
-    if (!searchCart) {
+    console.log(searchCart);
+    if (searchCart === undefined) {
       throw new Error("El carrito no existe");
     }
     return searchCart.products;

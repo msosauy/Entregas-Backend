@@ -7,7 +7,7 @@ const cartManager = new CartManager("./src/carts.json");
 router.use((req, res, next) => {
   next();
 });
-
+//Devuelve todos los productos de un carrito según su ID
 router.get("/:cid", async (req, res) => {
   const cid = +req.params.cid;
   try {
@@ -16,7 +16,7 @@ router.get("/:cid", async (req, res) => {
   } catch (error) {
     if (error.message === "El carrito no existe") {
       return res
-        .status(204)
+        .status(404)
         .send({ status: "error", error: "El carrito no existe" });
     }
     res.status(500).send({ status: "error", error: "Algo no salió bien" });
@@ -40,7 +40,7 @@ router.post("/", async (req, res) => {
     return res.status(500).send({ status: "error", error: "Algo salió mal" });
   }
 });
-
+//Agrega el producto indicado por ID, al carrito indicado por ID
 router.post("/:cid/product/:pid", async (req, res) => {
   const searchCid = +req.params.cid;
   const searchPid = +req.params.pid;

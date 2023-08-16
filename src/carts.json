@@ -1,1 +1,49 @@
-[{"id":3,"products":[{"product":4,"quantity":1},{"product":3,"quantity":7}]},{"id":2,"products":[{"product":2,"quantity":3},{"product":3,"quantity":1},{"product":4,"quantity":3}]},{"id":1,"products":[{"product":2,"quantity":3},{"product":3,"quantity":1},{"product":4,"quantity":6}]}]
+[
+    {
+        "id": 3,
+        "products": [
+            {
+                "product": 4,
+                "quantity": 1
+            },
+            {
+                "product": 3,
+                "quantity": 8
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "products": [
+            {
+                "product": 2,
+                "quantity": 3
+            },
+            {
+                "product": 3,
+                "quantity": 1
+            },
+            {
+                "product": 4,
+                "quantity": 3
+            }
+        ]
+    },
+    {
+        "id": 1,
+        "products": [
+            {
+                "product": 2,
+                "quantity": 3
+            },
+            {
+                "product": 3,
+                "quantity": 1
+            },
+            {
+                "product": 4,
+                "quantity": 6
+            }
+        ]
+    }
+]
