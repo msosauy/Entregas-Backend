@@ -1,0 +1,142 @@
+[
+    {
+        "title": "MikroTik",
+        "description": "Router VPN de alto rendimiento",
+        "price": 279.99,
+        "thumbnails": [
+            "src/public/img/imagen12.jpg",
+            "src/public/img/imagen12_thumb.jpg"
+        ],
+        "stock": 23,
+        "status": true,
+        "category": "Security",
+        "code": "MTK-1012",
+        "id": 1
+    },
+    {
+        "title": "CiscoVPN",
+        "description": "Potente router VPN para empresas",
+        "price": 349.99,
+        "thumbnails": [
+            "src/public/img/imagen13.jpg",
+            "src/public/img/imagen13_thumb.jpg"
+        ],
+        "stock": 18,
+        "status": true,
+        "category": "Security",
+        "code": "CSV-2023",
+        "id": 2
+    },
+    {
+        "title": "NetGuard Pro",
+        "description": "Router de seguridad con funcionalidad VPN",
+        "price": 239.99,
+        "thumbnails": [
+            "src/public/img/imagen14.jpg",
+            "src/public/img/imagen14_thumb.jpg"
+        ],
+        "stock": 30,
+        "status": true,
+        "category": "Security",
+        "code": "NGP-8765",
+        "id": 3
+    },
+    {
+        "title": "FortiRoute X5",
+        "description": "Router VPN con firewall integrado",
+        "price": 289.99,
+        "thumbnails": [
+            "src/public/img/imagen15.jpg",
+            "src/public/img/imagen15_thumb.jpg"
+        ],
+        "stock": 15,
+        "status": true,
+        "category": "Security",
+        "code": "FRX-4321",
+        "id": 4
+    },
+    {
+        "title": "JuniperSecure S200",
+        "description": "Router de alta seguridad con VPN avanzado",
+        "price": 399.99,
+        "thumbnails": [
+            "src/public/img/imagen16.jpg",
+            "src/public/img/imagen16_thumb.jpg"
+        ],
+        "stock": 8,
+        "status": true,
+        "category": "Security",
+        "code": "JSS-5678",
+        "id": 5
+    },
+    {
+        "title": "SonicWall VPNPlus",
+        "description": "Router VPN para pequeñas empresas",
+        "price": 199.99,
+        "thumbnails": [
+            "src/public/img/imagen17.jpg",
+            "src/public/img/imagen17_thumb.jpg"
+        ],
+        "stock": 25,
+        "status": true,
+        "category": "Security",
+        "code": "SWP-9876",
+        "id": 6
+    },
+    {
+        "title": "TP-Link SecureConnect",
+        "description": "Router seguro con capacidad VPN",
+        "price": 149.99,
+        "thumbnails": [
+            "src/public/img/imagen18.jpg",
+            "src/public/img/imagen18_thumb.jpg"
+        ],
+        "stock": 40,
+        "status": true,
+        "category": "Security",
+        "code": "TPL-7654",
+        "id": 7
+    },
+    {
+        "title": "Zyxel VPNMaster",
+        "description": "Router VPN de gama alta",
+        "price": 319.99,
+        "thumbnails": [
+            "src/public/img/imagen19.jpg",
+            "src/public/img/imagen19_thumb.jpg"
+        ],
+        "stock": 12,
+        "status": true,
+        "category": "Security",
+        "code": "ZVM-2345",
+        "id": 8
+    },
+    {
+        "title": "D-Link SecureNet",
+        "description": "Router con características avanzadas de seguridad",
+        "price": 259.99,
+        "thumbnails": [
+            "src/public/img/imagen20.jpg",
+            "src/public/img/imagen20_thumb.jpg"
+        ],
+        "stock": 20,
+        "status": true,
+        "category": "Security",
+        "code": "DNS-5432",
+        "id": 9
+    },
+    {
+        "title": "Huawei SafeLink",
+        "description": "Router VPN confiable para uso doméstico y empresarial",
+        "price": 229.99,
+        "thumbnails": [
+            "src/public/img/imagen21.jpg",
+            "src/public/img/imagen21_thumb.jpg"
+        ],
+        "stock": 28,
+        "status": true,
+        "category": "Security",
+        "code": "HSL-8765",
+        "id": 10
+    }
+]

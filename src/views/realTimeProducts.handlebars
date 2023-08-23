@@ -2,13 +2,27 @@
     <h1>Listado de todos productos</h1>
 </div>
 
-<div>
-    <ul id="ulProducts">
-        {{!-- {{#each products}}
-        <li>{{title}} - U$S {{price}}</li>
-        {{/each}} --}}
-    </ul>
+<div class="main">
+    <div class="products">
+        <h2>Productos en tiempo real</h2>
+        <ul id="ulProducts"></ul>
+    </div>
+    <div class="form">
+        <input id="title" type="text" placeholder="Title" value="New Producto 1">
+        <input id="description" type="text" placeholder="Description" value="Produto agregado con express">
+        <input id="code" type="text" placeholder="Code">
+        <input id="price" type="number" placeholder="Price" value="99.99">
+        <input id="status" type="text" placeholder="Status" value="true">
+        <input id="stock" type="number" placeholder="Stock" value="99">
+        <input id="category" type="text" placeholder="Category" value="New Category">
+        <input id="thumbnails" type="text" placeholder="Thumbnails" value="ruta/img">
+        <button id="addProduct">Agregar Producto</button>
+    </div>
+</div>
 
+<div class="remove">
+    <input id="removeId" type="number">
+    <button id="removeProduct">Eliminar por ID</button>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>

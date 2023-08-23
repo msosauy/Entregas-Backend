@@ -5,7 +5,7 @@ import viewsRouter from "./routes/views.js";
 import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
 import { Server } from "socket.io";
-import { registerProductSoketHandler } from "./sockets/productSocketHandler.js";
+import { productSoketHandler } from "./sockets/productSocketHandler.js";
 
 const app = express();
 
@@ -26,5 +26,6 @@ const server = app.listen(8080, () => {
   console.log("Server running on port 8080");
 });
 
+//Creamos una instancia del servidor en productSocketHandler
 const io = new Server(server);
-registerProductSoketHandler(io);
+productSoketHandler(io);

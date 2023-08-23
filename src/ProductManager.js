@@ -65,7 +65,7 @@ export default class ProductManager {
     //verificamos que no se ingrese un producto con un codigo existente.
     for (const item of productList) {
       if (item.code === product.code) {
-        throw new Error("Codigo de producto existente");
+        return console.error("El codigo de producto ya existe");
       }
     }
 
@@ -75,6 +75,7 @@ export default class ProductManager {
 
     //Se crea el archivo con el array de objetos products convertido a json.
     await fs.promises.writeFile(this.path, JSON.stringify(this.products));
+    this.products = [];
     return;
   };
 
@@ -149,8 +150,7 @@ export default class ProductManager {
       (product) => product.id === searchId
     );
     if (!existingCode) {
-      console.error("ERROR: Codigo inexistente");
-      throw new Error("El articulo no existe");
+      return console.error("ERROR: El articulo no existe");
     }
 
     //Se crea una nueva lista sin el producto correspondiente al ID recibido
