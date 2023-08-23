@@ -1,2 +1,8 @@
-Desafío 04_Clase10
+# Desafío 04_Clase10
 
+Los productos se pueden agregar a traves de un POST a: /api/products [req.body] o en /views/products/realtimeproducts
+Para agregar un nuevo producto desde el cliente dejé los values de los input ya asignados para facilitar el test, recuerda cambiar el code cada vez que intentes agregar un nuevo producto.
+De todas formas si el articulo y aexiste se dispara un alert con el mensaje "El codigo ya existe".
+De igual forma se dispara un alert si el articulo que intentas eliminar no existe
+
+Para iniciar la app usamos: npm start

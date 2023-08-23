@@ -1,5 +1,8 @@
 const socket = window.io();
-const io = window.io();
+
+socket.on("error", (errorMessage) => {
+  alert(errorMessage);
+})
 
 socket.on("realTimeProducts", (products) => {
   let list = document.getElementById("ulProducts");
@@ -10,7 +13,7 @@ socket.on("realTimeProducts", (products) => {
   let returnList = "";
 
   products.forEach((el) => {
-    returnList = returnList + `<li>${el.id} ${el.title} - U$S ${el.price}</li>`;
+    returnList = returnList + `<li>${el.id} ${el.title} - U$S ${el.price} - ${el.code}</li>`;
   });
 
   list.innerHTML = returnList;

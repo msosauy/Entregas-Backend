@@ -20,22 +20,34 @@ export const productSoketHandler = (io) => {
         category,
         code
       } = newProduct;
-      await productManager.addProduct(
-        title,
-        description,
-        price,
-        thumbnails,
-        stock,
-        status,
-        category,
-        code
-      );
+      try {
+        await productManager.addProduct(
+          title,
+          description,
+          price,
+          thumbnails,
+          stock,
+          status,
+          category,
+          code
+        );
+      } catch (error) {
+        if (error.message === "El codigo de producto ya existe") {
+          socket.emit("error", "El codigo de producto ya existe");
+        }
+      }
       await emitProducts();
     });
     
     socket.on("removeById", async (removeId) => {
-      await productManager.deleteProduct(removeId);
-      await emitProducts();
+      try {
+        await productManager.deleteProduct(removeId);
+        await emitProducts();
+      } catch (error) {
+        if (error.message === "El articulo no existe") {
+          socket.emit("error", "El articulo no existe");
+        }
+      }
     });
   });
 };

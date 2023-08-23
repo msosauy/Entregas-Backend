@@ -65,7 +65,8 @@ export default class ProductManager {
     //verificamos que no se ingrese un producto con un codigo existente.
     for (const item of productList) {
       if (item.code === product.code) {
-        return console.error("El codigo de producto ya existe");
+        console.error("El codigo de producto ya existe");
+        throw new Error("El codigo de producto ya existe");
       }
     }
 
@@ -150,7 +151,8 @@ export default class ProductManager {
       (product) => product.id === searchId
     );
     if (!existingCode) {
-      return console.error("ERROR: El articulo no existe");
+      console.error("ERROR: El articulo no existe");
+      throw new Error("El articulo no existe");
     }
 
     //Se crea una nueva lista sin el producto correspondiente al ID recibido
