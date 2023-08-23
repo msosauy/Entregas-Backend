@@ -34,7 +34,9 @@ export const productSoketHandler = (io) => {
       } catch (error) {
         if (error.message === "El codigo de producto ya existe") {
           socket.emit("error", "El codigo de producto ya existe");
+          return
         }
+        console.log(error);
       }
       await emitProducts();
     });
@@ -46,7 +48,9 @@ export const productSoketHandler = (io) => {
       } catch (error) {
         if (error.message === "El articulo no existe") {
           socket.emit("error", "El articulo no existe");
+          return
         }
+        console.log(error);
       }
     });
   });
