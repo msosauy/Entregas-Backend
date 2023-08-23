@@ -1,0 +1,11 @@
+*{
+    background-color: rgb(48, 47, 47);
+}
+
+h1 {
+    color: white;
+}
+li {
+    color: rgb(194, 191, 191);
+    margin: 10px;
+}

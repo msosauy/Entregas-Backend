@@ -1,0 +1,18 @@
+<div>
+    <h1>Listado de todos productos</h1>
+</div>
+
+<div>
+    <h2>Nuevo producto</h2>
+</div>
+
+<div>
+    <ul>
+        {{#each products}}
+        <li>{{title}} - U$S {{price}}</li>
+        {{/each}}
+    </ul>
+
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/home.js"></script>

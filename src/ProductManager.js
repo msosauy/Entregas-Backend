@@ -48,7 +48,6 @@ export default class ProductManager {
     category,
     code
   ) => {
-
     const productList = await this.getProducts();
 
     const product = {
@@ -136,7 +135,7 @@ export default class ProductManager {
     //sobreescribimos el archivo con el contenido actualizado.
     try {
       await fs.promises.writeFile(this.path, JSON.stringify(newProductsList));
-      return
+      return;
     } catch (error) {
       console.log(error);
     }

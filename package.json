@@ -1,18 +1,24 @@
 {
-  "name": "01_entrega",
+  "name": "04_desafio",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./src/app.js"
+    "dev": "nodemon ./scr/app.js",
+    "start": "node ./src/app.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
-    "nodemon": "^3.0.1"
+    "express-handlebars": "^7.1.2",
+    "nodemon": "^3.0.1",
+    "socket.io": "^4.7.2"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "eslint": "^8.47.0"
+  }
 }

@@ -1,7 +1,8 @@
 import { Router } from "express";
 import ProductManager from "./../ProductManager.js";
+import { emitProducts } from "../sockets/productSocketHandler.js";
 
-const router = Router();
+export const router = Router();
 const productManager = new ProductManager("./src/products.json");
 
 router.use((req, res, next) => {
@@ -15,8 +16,7 @@ router.get("/", async (req, res) => {
     const products = await productManager.getProducts();
 
     if (!limit) {
-      res.send(products);
-      return;
+      return res.status(200).send(products);
     }
 
     if (isNaN(limit)) {
@@ -145,6 +145,8 @@ router.post("/", async (req, res) => {
       code
     );
 
+    await emitProducts();
+
     return res
       .status(201)
       .send({ status: "success", success: "Producto agregado correctamente" });
@@ -243,9 +245,10 @@ router.put("/:pid", async (req, res) => {
 
   try {
     await productManager.updateProduct(productToUpdate);
-    return res
-      .status(201)
-      .send({ status: "success", success: "Producto actualizado correctamente" });
+    return res.status(201).send({
+      status: "success",
+      success: "Producto actualizado correctamente",
+    });
   } catch (err) {
     return res
       .status(400)
@@ -258,6 +261,9 @@ router.delete("/:pid", async (req, res) => {
 
   try {
     await productManager.deleteProduct(pid);
+
+    await emitProducts();
+    
     return res
       .status(200)
       .send({ status: "success", success: "Producto eliminado correctamente" });
