@@ -1,5 +1,5 @@
-import ProductManager from "../ProductManager.js";
-const productManager = new ProductManager("./src/products.json");
+import ProductManager from "../dao/fs.ProductManager.js";
+const productManager = new ProductManager("./src/fs/products.json");
 
 let _io;
 
@@ -41,6 +41,7 @@ export const productSoketHandler = (io) => {
       await emitProducts();
     });
     
+    //Elimina un producto por ID
     socket.on("removeById", async (removeId) => {
       try {
         await productManager.deleteProduct(removeId);

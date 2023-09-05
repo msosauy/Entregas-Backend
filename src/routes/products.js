@@ -1,9 +1,9 @@
 import { Router } from "express";
-import ProductManager from "./../ProductManager.js";
+import ProductManager from "../dao/fs.ProductManager.js";
 import { emitProducts } from "../sockets/productSocketHandler.js";
 
 export const router = Router();
-const productManager = new ProductManager("./src/products.json");
+const productManager = new ProductManager("./src/fs/products.json");
 
 router.use((req, res, next) => {
   next();

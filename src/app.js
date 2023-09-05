@@ -6,8 +6,10 @@ import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
 import { Server } from "socket.io";
 import { productSoketHandler } from "./sockets/productSocketHandler.js";
+import mongoose from "mongoose";
 
 const app = express();
+const PORT = 8080;
 
 app.engine("handlebars", handlebars.engine());
 
@@ -22,8 +24,10 @@ app.use("/api/products", productsRouter);
 app.use("/views/products", viewsRouter);
 app.use("/api/carts", cartsRouter);
 
-const server = app.listen(8080, () => {
-  console.log("Server running on port 8080");
+mongoose.connect("mongodb+srv://msosa:OJ9bgeMIrDF7pkEV@cluster-coder.bxbohyn.mongodb.net/ecommerce")
+
+const server = app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
 
 //Creamos una instancia del servidor en productSocketHandler
