@@ -8,8 +8,11 @@ De igual forma se dispara un alert si el articulo que intentas eliminar no exist
 Para iniciar la app usamos: npm start
 
 
+
 ## Mongo Atlas
 
 MAIL: refrossrocha@gmail.com
 USER: msosa
 CLAVE: sjuGVQbrc6PC09Em
+
+### Se agregó react-toastify para el manejo de notificaciones

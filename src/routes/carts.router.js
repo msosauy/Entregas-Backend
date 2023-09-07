@@ -1,8 +1,8 @@
 import { Router } from "express";
-import CartManager from "../dao/fs.CartManager.js";
+import DbCartManager from "../dao/db.CartManager.js";
 
 const router = Router();
-const cartManager = new CartManager("./src/fs/carts.json");
+const dbcartManager = new DbCartManager();
 
 router.use((req, res, next) => {
   next();
@@ -11,8 +11,9 @@ router.use((req, res, next) => {
 router.get("/:cid", async (req, res) => {
   const cid = +req.params.cid;
   try {
-    const searchCartProducts = await cartManager.getProductsFromCartId(cid);
-    return res.status(200).send(searchCartProducts);
+    const searchCartProducts = await dbcartManager.getProductsFromCartId(cid);
+    console.log(searchCartProducts);
+    return res.status(200).send(searchCartProducts.products);
   } catch (error) {
     if (error.message === "El carrito no existe") {
       return res
@@ -26,7 +27,7 @@ router.get("/:cid", async (req, res) => {
 //Crea un nuevo carrito con ID autogenerado
 router.post("/", async (req, res) => {
   try {
-    const newCartId = await cartManager.newCart();
+    const newCartId = await dbcartManager.newCart();
     res.status(200).send({
       status: "success",
       success: `Nuevo carrito creado correctamente, ID: ${newCartId}`,
@@ -46,8 +47,8 @@ router.post("/:cid/product/:pid", async (req, res) => {
   const searchPid = +req.params.pid;
 
   try {
-    await cartManager.addProductToCart(searchCid, searchPid);
-    const result = await cartManager.getCarts();
+    await dbcartManager.addProductToCart(searchCid, searchPid);
+    const result = await dbcartManager.getCarts();
     res
       .status(201)
       .send({

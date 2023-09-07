@@ -1,19 +1,19 @@
 import { Router } from "express";
-import ProductManager from "../dao/fs.ProductManager.js";
-import { emitProducts } from "../sockets/productSocketHandler.js";
+import DbProductManager from "../dao/db.ProductManager.js";
+import { emitProducts } from "../sockets/SocketHandler.js";
 
 export const router = Router();
-const productManager = new ProductManager("./src/fs/products.json");
+const dbProductManager = new DbProductManager();
 
 router.use((req, res, next) => {
   next();
 });
-//Devuelve todos los productos
+//Devuelve todos los productos o la cantidad de productos indicada con query ?limit=number
 router.get("/", async (req, res) => {
   let limit = req.query.limit;
 
   try {
-    const products = await productManager.getProducts();
+    const products = await dbProductManager.getProducts();
 
     if (!limit) {
       return res.status(200).send(products);
@@ -31,7 +31,7 @@ router.get("/", async (req, res) => {
     console.log(err);
   }
 });
-//Busca un producto por ID
+// //Busca un producto por ID
 router.get("/:pid", async (req, res) => {
   const searchId = +req.params.pid;
 
@@ -41,19 +41,16 @@ router.get("/:pid", async (req, res) => {
       .send({ status: "error", error: "searchId debe ser un numero" });
   }
 
-  const products = await productManager.getProducts();
+  const product = await dbProductManager.getProductById(searchId);
 
-  if (searchId) {
-    const productById = products.find((el) => el.id === searchId);
-    if (!productById) {
+  if (product === null) {
       return res
         .status(400)
         .send({ status: "error", error: "El producto no existe" });
     }
-    return res.send(productById);
-  }
+    return res.status(200).send({status: "success", success: product});
 });
-//Agrega un nuevo producto
+// //Agrega un nuevo producto
 router.post("/", async (req, res) => {
   const {
     title,
@@ -134,7 +131,7 @@ router.post("/", async (req, res) => {
   }
 
   try {
-    await productManager.addProduct(
+    await dbProductManager.addProduct(
       title,
       description,
       price,
@@ -161,7 +158,7 @@ router.post("/", async (req, res) => {
       .send({ status: "error", error: "No se pudo agregar el producto" });
   }
 });
-//Busca un producto por ID y lo modifica
+// //Busca un producto por ID y lo modifica
 router.put("/:pid", async (req, res) => {
   const {
     title,
@@ -244,7 +241,7 @@ router.put("/:pid", async (req, res) => {
   const productToUpdate = { id: +req.params.pid, ...req.body };
 
   try {
-    await productManager.updateProduct(productToUpdate);
+    await dbProductManager.updateProduct(productToUpdate);
     return res.status(201).send({
       status: "success",
       success: "Producto actualizado correctamente",
@@ -255,15 +252,15 @@ router.put("/:pid", async (req, res) => {
       .send({ status: "error", error: "No se pudo actualizar el producto" });
   }
 });
-//Elimina un producto según su ID
+// //Elimina un producto según su ID
 router.delete("/:pid", async (req, res) => {
   const pid = +req.params.pid;
 
   try {
-    await productManager.deleteProduct(pid);
+    await dbProductManager.deleteProduct(pid);
 
     await emitProducts();
-    
+
     return res
       .status(200)
       .send({ status: "success", success: "Producto eliminado correctamente" });

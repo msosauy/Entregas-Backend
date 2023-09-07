@@ -1,13 +1,17 @@
-import ProductManager from "../dao/fs.ProductManager.js";
-const productManager = new ProductManager("./src/fs/products.json");
+import DbProductManager from "../dao/db.ProductManager.js";
+import DbMessageManager from "../dao/db.MessagesManager.js";
+
+const dbProductManager = new DbProductManager();
+const dbMessageManager = new DbMessageManager();
 
 let _io;
 
-export const productSoketHandler = (io) => {
+export const SoketHandler = (io) => {
   _io = io;
   _io.on("connection", async (socket) => {
     console.log("Nuevo cliente conectado");
     await emitProducts();
+    await emitMessages();
     //Agrega un nuevo producto y envía nuevamente la lista de productos al socket
     socket.on("addProduct", async (newProduct) => {
       const {
@@ -21,7 +25,7 @@ export const productSoketHandler = (io) => {
         code
       } = newProduct;
       try {
-        await productManager.addProduct(
+        await dbProductManager.addProduct(
           title,
           description,
           price,
@@ -37,6 +41,7 @@ export const productSoketHandler = (io) => {
           return
         }
         console.log(error);
+        return
       }
       await emitProducts();
     });
@@ -44,20 +49,49 @@ export const productSoketHandler = (io) => {
     //Elimina un producto por ID
     socket.on("removeById", async (removeId) => {
       try {
-        await productManager.deleteProduct(removeId);
+        const resultDelete = await dbProductManager.deleteProduct(removeId);
+        if (resultDelete === "El articulo no existe") {
+          socket.emit("error", "El articulo no existe");
+          return
+        }
         await emitProducts();
       } catch (error) {
         if (error.message === "El articulo no existe") {
+          console.log("this",error);
           socket.emit("error", "El articulo no existe");
           return
         }
         console.log(error);
+        return
       }
     });
+
+    //Agrega un nuevo mensaje a la BBDD y emite todos los mensajes para todos
+    socket.on("message", async (message) => {
+      try {
+        await dbMessageManager.addMessage(message);
+        emitMessages();
+      } catch (error) {
+        console.log(error);
+        return
+      }
+    });
+    
+    
+    socket.on("authenticated", (user) => {
+      console.log("works");
+      socket.broadcast.emit('newUserConnected', user);
+    });
+    
   });
 };
 
 export const emitProducts = async () => {
-  const products = await productManager.getProducts();
+  const products = await dbProductManager.getProducts();
   _io?.emit("realTimeProducts", products);
+};
+
+export const emitMessages = async () => {
+  const messages = await dbMessageManager.getMessages();
+  _io?.emit("messageLogs", messages);
 };
