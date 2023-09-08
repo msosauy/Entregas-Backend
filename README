@@ -6,3 +6,13 @@ De todas formas si el articulo y aexiste se dispara un alert con el mensaje "El 
 De igual forma se dispara un alert si el articulo que intentas eliminar no existe
 
 Para iniciar la app usamos: npm start
+
+
+
+## Mongo Atlas
+
+MAIL: refrossrocha@gmail.com
+USER: msosa
+CLAVE: sjuGVQbrc6PC09Em
+
+### Se agregó react-toastify para el manejo de notificaciones

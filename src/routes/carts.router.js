@@ -1,8 +1,8 @@
 import { Router } from "express";
-import CartManager from "./../CartManager.js";
+import DbCartManager from "../dao/db.CartManager.js";
 
 const router = Router();
-const cartManager = new CartManager("./src/carts.json");
+const dbcartManager = new DbCartManager();
 
 router.use((req, res, next) => {
   next();
@@ -11,8 +11,9 @@ router.use((req, res, next) => {
 router.get("/:cid", async (req, res) => {
   const cid = +req.params.cid;
   try {
-    const searchCartProducts = await cartManager.getProductsFromCartId(cid);
-    return res.status(200).send(searchCartProducts);
+    const searchCartProducts = await dbcartManager.getProductsFromCartId(cid);
+    console.log(searchCartProducts);
+    return res.status(200).send(searchCartProducts.products);
   } catch (error) {
     if (error.message === "El carrito no existe") {
       return res
@@ -26,10 +27,10 @@ router.get("/:cid", async (req, res) => {
 //Crea un nuevo carrito con ID autogenerado
 router.post("/", async (req, res) => {
   try {
-    const newCartId = await cartManager.newCart();
-    res.status(200).send({
+    const newCartId = await dbcartManager.newCart();
+    return res.status(200).send({
       status: "success",
-      success: `Nuevo carrito creado correctamente, ID: ${newCartId}`,
+      success: `Nuevo carrito creado correctamente, ID: ${newCartId[0].id}`,
     });
   } catch (error) {
     if (error.message === "No se pudo crear el carrito") {
@@ -40,22 +41,29 @@ router.post("/", async (req, res) => {
     return res.status(500).send({ status: "error", error: "Algo salió mal" });
   }
 });
+
 //Agrega el producto indicado por ID, al carrito indicado por ID
 router.post("/:cid/product/:pid", async (req, res) => {
-  const searchCid = +req.params.cid;
-  const searchPid = +req.params.pid;
+  const cartId = +req.params.cid;
+  const productId = +req.params.pid;
 
   try {
-    await cartManager.addProductToCart(searchCid, searchPid);
-    const result = await cartManager.getCarts();
-    res
-      .status(201)
-      .send({
+    const resultAdd = await dbcartManager.addProductToCart(cartId, productId);
+    console.log("router", resultAdd);
+    if (resultAdd.matchedCount === 1) {
+      const resultGet = await dbcartManager.getCarts();
+      return res.status(201).send({
         status: "success",
         success: "Producto agregado correctamente",
-        carts: result,
+        carts: resultGet,
       });
+    }
+    return res.status(404).send({
+      status: "error",
+      error: "El carrito no existe",
+    });
   } catch (error) {
+    console.log(error);
     if (error.message === "El carrito no existe") {
       return res.status(404).send({
         status: "error",

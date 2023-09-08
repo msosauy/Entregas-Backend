@@ -20,6 +20,7 @@ socket.on("realTimeProducts", (products) => {
   returnList = "";
 });
 
+//agregar un nuevo producto
 document.getElementById("addProduct").addEventListener("click", () => {
   const title = document.getElementById("title").value;
   const description = document.getElementById("description").value;
@@ -57,6 +58,7 @@ document.getElementById("addProduct").addEventListener("click", () => {
   socket.emit("addProduct", newProduct);
 });
 
+//eliminar un producto
 document.getElementById("removeProduct").addEventListener("click", () => {
   const removeId = document.getElementById("removeId").value;
 
