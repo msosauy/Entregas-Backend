@@ -7,9 +7,8 @@ while (!user) {
 }
 
 let chatBox = document.getElementById("chatBox");
-console.log(user);
 
-await socket.emit("authenticated", user );
+socket.emit("authenticated", {user})
 
 socket.on("newUserConnected", (user) => {
   if (!user) return;
@@ -22,7 +21,7 @@ socket.on("newUserConnected", (user) => {
 socket.on("messageLogs", (data) => {
   if (!user) return;
   let log = document.getElementById("messageLogs");
-  let messages = "";
+  let messages = '';
   data.forEach((message) => {
     console.log(message.message);
     messages = messages + `${message.user} dice: ${message.message} </br>`;

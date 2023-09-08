@@ -5,38 +5,6 @@ export default class DbProductManager {
     this.products = [];
   }
 
-  generateCode = (productsList) => {
-    //Si existen productos, realiza la comparación para asegurar que el codigo no exista.
-    if (productsList) {
-      let newCode = Math.floor(Math.random() * 10000);
-
-      for (let i = 0; i < productsList.length; i++) {
-        const el = productsList[i];
-        if (newCode === el.code) {
-          newCode = Math.floor(Math.random() * 10000);
-          i = 0;
-        }
-      }
-      return newCode;
-    }
-    return Math.floor(Math.random() * 10000);
-  };
-  //Busca el ID mas alto existente y lo incrementa en 1. Garantiza que no se repitan los IDs.
-  generateId = (productsList) => {
-    if (productsList.length > 0) {
-      const higherId = [];
-
-      for (let i = 0; i < productsList.length; i++) {
-        const el = productsList[i];
-        higherId.push(el.id);
-      }
-
-      higherId.sort((a, b) => b - a);
-      return higherId[0] + 1;
-    }
-    return 1;
-  };
-
   getProducts = async () => {
     try {
       const products = await productModel.find();
@@ -61,7 +29,7 @@ export default class DbProductManager {
     category,
     code
   ) => {
-    const productList = await this.getProducts();
+    const productList = await productModel.find().sort({id: -1});
 
     const product = {
       title,
@@ -71,8 +39,8 @@ export default class DbProductManager {
       stock,
       status,
       category,
-      code: code ? code : this.generateCode(productList), //Si el usuario no envía "code se genera uno aleatorio"
-      id: this.generateId(productList),
+      code,
+      id: productList[0].id+1,
     };
 
     //verificamos que no se ingrese un producto con un codigo existente.

@@ -9,8 +9,8 @@ const cartSchema = new mongoose.Schema({
   },
   products: [
     {
-      product: { type: Number, require: true },
-      quantity: { type: Number, require: true },
+      product: Number,
+      quantity: Number
     },
   ],
 });
