@@ -35,12 +35,12 @@ export default class DbCartManager {
 
   //agrega un producto al carrito seleccionado por ID
   addProductToCart = async (cartId, productId) => {
-    const existProduct = await cartModel.find(cartId);
+    const existProduct = await cartModel.findOneAndUpdate({id: cartId});
     const cartUpdate = await cartModel.updateOne(
       { id: cartId },
       { $push: { products: { product: productId, quantity: 1 } } }
     );
-    console.log("manager", cartUpdate);
     return cartUpdate;
   };
 }
+          

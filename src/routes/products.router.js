@@ -44,11 +44,11 @@ router.get("/:pid", async (req, res) => {
   const product = await dbProductManager.getProductById(searchId);
 
   if (product === null) {
-      return res
-        .status(400)
-        .send({ status: "error", error: "El producto no existe" });
-    }
-    return res.status(200).send({status: "success", success: product});
+    return res
+      .status(400)
+      .send({ status: "error", error: "El producto no existe" });
+  }
+  return res.status(200).send({ status: "success", success: product });
 });
 // //Agrega un nuevo producto
 router.post("/", async (req, res) => {
@@ -160,6 +160,8 @@ router.post("/", async (req, res) => {
 });
 // //Busca un producto por ID y lo modifica
 router.put("/:pid", async (req, res) => {
+  const __id = +req.params.pid;
+
   const {
     title,
     description,
@@ -238,10 +240,27 @@ router.put("/:pid", async (req, res) => {
     });
   }
 
-  const productToUpdate = { id: +req.params.pid, ...req.body };
+  const compareProduct = (originalProd, toUpdateProd) => {
+    const differences = {};
+
+    for(const key in originalProd) {
+      if (toUpdateProd.hasOwnProperty(key)) {
+        if (originalProd[key] !== toUpdateProd[key]) {
+          differences[key] = toUpdateProd[key];
+        }
+      }
+    }
+    return differences
+  }
+  
+  const originalProduct = await dbProductManager.getProductById(__id);
+  const toUpdateProduct = { id: __id, ...req.body };
+
+  const resutlCompare = compareProduct(originalProduct, toUpdateProduct);
 
   try {
-    await dbProductManager.updateProduct(productToUpdate);
+    const updateResponse = await dbProductManager.updateProduct(__id, resutlCompare);
+    console.log("router", updateResponse);
     return res.status(201).send({
       status: "success",
       success: "Producto actualizado correctamente",

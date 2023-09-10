@@ -49,13 +49,12 @@ router.post("/:cid/product/:pid", async (req, res) => {
 
   try {
     const resultAdd = await dbcartManager.addProductToCart(cartId, productId);
-    console.log("router", resultAdd);
-    if (resultAdd.matchedCount === 1) {
-      const resultGet = await dbcartManager.getCarts();
+    if (resultAdd.matchedCount === 1 && resultAdd.modifiedCount === 1) {
+      const resultGet = await dbcartManager.getProductsFromCartId(cartId);
       return res.status(201).send({
         status: "success",
         success: "Producto agregado correctamente",
-        carts: resultGet,
+        products: resultGet,
       });
     }
     return res.status(404).send({

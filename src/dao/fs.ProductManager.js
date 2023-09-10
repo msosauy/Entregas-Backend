@@ -90,7 +90,7 @@ export default class ProductManager {
     }
   };
 
-  getProductsById = async (searchId) => {
+  getProductById = async (searchId) => {
     const productsList = await this.getProducts();
     for (const product of productsList) {
       if (product.id === searchId) {
@@ -163,16 +163,5 @@ export default class ProductManager {
     await fs.promises.writeFile(this.path, JSON.stringify(newProductList));
     console.log("Producto eliminado");
     return newProductList;
-  };
-
-  getProductById = async (searchId) => {
-    //Almacenamos el contenido del archivo creado en una variable, el cual sera un array de objetos. con un for..of recorremos el arreglo hasta encontrar uno con el mismo id que se ingresa como parametro.
-    const productsList = await this.getProducts();
-    for (const product of productsList) {
-      if (product.id === searchId) {
-        return product;
-      }
-    }
-    return "Not found";
   };
 }

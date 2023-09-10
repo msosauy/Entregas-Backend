@@ -5,20 +5,6 @@ export default class DbProductManager {
     this.products = [];
   }
 
-  getProducts = async () => {
-    try {
-      const products = await productModel.find();
-      return products;
-    } catch (error) {
-      return error;
-    }
-  };
-
-  getProductById = async (searchId) => {
-    const productById = await productModel.findOne({id: searchId});
-    return productById;
-  };
-
   addProduct = async (
     title,
     description,
@@ -29,7 +15,7 @@ export default class DbProductManager {
     category,
     code
   ) => {
-    const productList = await productModel.find().sort({id: -1});
+    const productList = await productModel.find().sort({ id: -1 });
 
     const product = {
       title,
@@ -40,7 +26,7 @@ export default class DbProductManager {
       status,
       category,
       code,
-      id: productList[0].id+1,
+      id: productList[0].id + 1,
     };
 
     //verificamos que no se ingrese un producto con un codigo existente.
@@ -52,21 +38,47 @@ export default class DbProductManager {
     }
 
     try {
-      await productModel.insertMany(product)
+      await productModel.insertMany(product);
     } catch (error) {
-      console.log(error);      
+      console.log(error);
     }
     return;
   };
 
+  getProducts = async () => {
+    try {
+      const products = await productModel.find();
+      return products;
+    } catch (error) {
+      return error;
+    }
+  };
+
+  getProductById = async (searchId) => {
+    const productById = await productModel.findOne({ id: searchId });
+    return productById;
+  };
+
+  //recibe los parametros
+  updateProduct = async (prodId, valuesToUpdate) => {
+
+    Object.entries(valuesToUpdate, async (key, value) => {
+      console.log("key", key, "value", value);
+      const productResponse = await productModel.updateOne({ id: prodId }, {key: value});
+      console.log(productResponse);
+    })
+    console.log("llegó");
+  };
+
+
   deleteProduct = async (removeId) => {
     try {
-      const result = await productModel.deleteOne({id: removeId});
+      const result = await productModel.deleteOne({ id: removeId });
       if (result.deletedCount === 0) {
         return "El articulo no existe";
       }
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 }
