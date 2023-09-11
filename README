@@ -1,12 +1,13 @@
+# Entrega 5
 Para iniciar la app usamos: npm start
 
-## Mongo Atlas
+##Mongo Atlas
 
 MAIL: refrossrocha@gmail.com
 USER: msosa
 CLAVE: sjuGVQbrc6PC09Em
 
-### Se agregó react-toastify para el manejo de notificaciones
+###Se agregó react-toastify para el manejo de notificaciones
 
 1. En este link (localhost:8080/views/products/realtimeproducts) podemos ver, agregar y eliminar los productos en tiempo real desde MongoDB-Atlas
 
