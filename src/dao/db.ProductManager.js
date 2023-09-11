@@ -15,6 +15,14 @@ export default class DbProductManager {
     category,
     code
   ) => {
+    //verificamos que no se ingrese un producto con un codigo existente.
+    const resultCode = await productModel.findOne({ code: code });
+    if (resultCode !== null) {
+      console.error("El codigo de producto ya existe");
+      return "El codigo de producto ya existe";
+    }
+
+    //ordena todos los productos por ID de forma descendente
     const productList = await productModel.find().sort({ id: -1 });
 
     const product = {
@@ -28,14 +36,6 @@ export default class DbProductManager {
       code,
       id: productList[0].id + 1,
     };
-
-    //verificamos que no se ingrese un producto con un codigo existente.
-    for (const item of productList) {
-      if (item.code === product.code) {
-        console.error("El codigo de producto ya existe");
-        throw new Error("El codigo de producto ya existe");
-      }
-    }
 
     try {
       await productModel.insertMany(product);
@@ -66,30 +66,23 @@ export default class DbProductManager {
     const resultMap = Object.keys(valuesToUpdate);
     resultMap.map(async (key) => {
       if (key !== "thumbnails") {
-        console.log(key);
-        const objUpdate = { key: valuesToUpdate[key] };
+        const objUpdate = {};
+        objUpdate[key] = valuesToUpdate[key];
         const productResponse = await productModel.updateOne(
           { id: prodId },
-          { objUpdate }
+          objUpdate 
         );
-        console.log(objUpdate);
-        console.log(productResponse);
+        if (productResponse.acknowledged === false) {
+          console.log(`No se pudo actualizar el campo ${objUpdate}`);
+        }
       }
     });
-
-    // Object.entries(valuesToUpdate, async (key, value) => {
-    //   console.log("key", key, "value", value);
-    //   console.log(productResponse);
-    // })
-    console.log("llegó");
   };
 
   deleteProduct = async (removeId) => {
     try {
       const result = await productModel.deleteOne({ id: removeId });
-      if (result.deletedCount === 0) {
-        return "El articulo no existe";
-      }
+      return result;
     } catch (error) {
       console.log(error);
     }

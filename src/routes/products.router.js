@@ -131,7 +131,7 @@ router.post("/", async (req, res) => {
   }
 
   try {
-    await dbProductManager.addProduct(
+    const resultAdd = await dbProductManager.addProduct(
       title,
       description,
       price,
@@ -141,6 +141,15 @@ router.post("/", async (req, res) => {
       category,
       code
     );
+
+    if (resultAdd === "El codigo de producto ya existe") {
+      return res
+        .status(201)
+        .send({
+          status: "error",
+          error: "El codigo de producto ya existe",
+        });
+    }
 
     await emitProducts();
 
@@ -243,24 +252,26 @@ router.put("/:pid", async (req, res) => {
   const compareProduct = (originalProd, toUpdateProd) => {
     const differences = {};
 
-    for(const key in originalProd) {
+    for (const key in originalProd) {
       if (toUpdateProd.hasOwnProperty(key)) {
         if (originalProd[key] !== toUpdateProd[key]) {
           differences[key] = toUpdateProd[key];
         }
       }
     }
-    return differences
-  }
-  
+    return differences;
+  };
+
   const originalProduct = await dbProductManager.getProductById(__id);
   const toUpdateProduct = { id: __id, ...req.body };
 
   const resutlCompare = compareProduct(originalProduct, toUpdateProduct);
 
   try {
-    const updateResponse = await dbProductManager.updateProduct(__id, resutlCompare);
-    console.log("router", updateResponse);
+    await dbProductManager.updateProduct(
+      __id,
+      resutlCompare
+    );
     return res.status(201).send({
       status: "success",
       success: "Producto actualizado correctamente",
@@ -276,7 +287,13 @@ router.delete("/:pid", async (req, res) => {
   const pid = +req.params.pid;
 
   try {
-    await dbProductManager.deleteProduct(pid);
+    const result = await dbProductManager.deleteProduct(pid);
+    console.log(result);
+    if (result.acknowledged === true && result.deletedCount === 0) {
+      return res
+        .status(404)
+        .send({ status: "error", error: "El articulo no existe" });
+    }
 
     await emitProducts();
 
