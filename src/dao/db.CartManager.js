@@ -16,6 +16,7 @@ export default class DbCartManager {
       };
 
       const result = await cartModel.insertMany(cart);
+      console.log(result);
       return result;
     } catch (error) {
       console.log(error);
@@ -35,11 +36,23 @@ export default class DbCartManager {
 
   //agrega un producto al carrito seleccionado por ID
   addProductToCart = async (cartId, productId) => {
-    const existProduct = await cartModel.findOneAndUpdate({id: cartId});
-    const cartUpdate = await cartModel.updateOne(
-      { id: cartId },
-      { $push: { products: { product: productId, quantity: 1 } } }
-    );
+    const cart = await cartModel.findOne({id: cartId});
+    const doesProductExist = cart.products.some((product) => {
+      return product.product === productId
+    })
+
+    if (doesProductExist) {
+      cart.products = cart.products.map((product) => {
+        if (product.product === productId) {
+          return {...product, quantity: product.quantity + 1 }
+        }
+        return product
+      })
+    }else{
+      cart.products = [...cart.products, {product: productId, quantity: 1}] 
+    }
+
+    const cartUpdate = await cart.save()
     return cartUpdate;
   };
 }

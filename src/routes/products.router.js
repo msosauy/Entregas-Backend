@@ -31,7 +31,7 @@ router.get("/", async (req, res) => {
     console.log(err);
   }
 });
-// //Busca un producto por ID
+// //Busca un producto por ID por params
 router.get("/:pid", async (req, res) => {
   const searchId = +req.params.pid;
 
