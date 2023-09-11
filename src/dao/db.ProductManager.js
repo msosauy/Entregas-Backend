@@ -61,15 +61,28 @@ export default class DbProductManager {
 
   //recibe los parametros
   updateProduct = async (prodId, valuesToUpdate) => {
+    // console.log(valuesToUpdate);
 
-    Object.entries(valuesToUpdate, async (key, value) => {
-      console.log("key", key, "value", value);
-      const productResponse = await productModel.updateOne({ id: prodId }, {key: value});
-      console.log(productResponse);
-    })
+    const resultMap = Object.keys(valuesToUpdate);
+    resultMap.map(async (key) => {
+      if (key !== "thumbnails") {
+        console.log(key);
+        const objUpdate = { key: valuesToUpdate[key] };
+        const productResponse = await productModel.updateOne(
+          { id: prodId },
+          { objUpdate }
+        );
+        console.log(objUpdate);
+        console.log(productResponse);
+      }
+    });
+
+    // Object.entries(valuesToUpdate, async (key, value) => {
+    //   console.log("key", key, "value", value);
+    //   console.log(productResponse);
+    // })
     console.log("llegó");
   };
-
 
   deleteProduct = async (removeId) => {
     try {

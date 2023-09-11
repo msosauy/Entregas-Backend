@@ -43,4 +43,3 @@ export default class DbCartManager {
     return cartUpdate;
   };
 }
-          
