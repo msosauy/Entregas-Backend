@@ -1,12 +1,12 @@
 Para iniciar la app usamos: npm start
 
-## Mongo Atlas
+##Mongo Atlas
 
 MAIL: refrossrocha@gmail.com
 USER: msosa
 CLAVE: sjuGVQbrc6PC09Em
 
-### Se agregó react-toastify para el manejo de notificaciones
+###Se agregó react-toastify para el manejo de notificaciones
 
 product.router.js = limit desde mongoDB
 CHAT notificacion cuando se conecta un nuevo usuario
