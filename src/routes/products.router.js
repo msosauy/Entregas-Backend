@@ -249,6 +249,7 @@ router.put("/:pid", async (req, res) => {
     });
   }
 
+  //compara los 2 productos y retorna un objeto solo con los campos a editar
   const compareProduct = (originalProd, toUpdateProd) => {
     const differences = {};
 

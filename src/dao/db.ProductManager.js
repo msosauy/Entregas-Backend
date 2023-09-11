@@ -1,9 +1,19 @@
 import { productModel } from "./models/productModel.js";
 
 export default class DbProductManager {
-  constructor() {
-    this.products = [];
-  }
+  getProducts = async () => {
+    try {
+      const products = await productModel.find();
+      return products;
+    } catch (error) {
+      return error;
+    }
+  };
+
+  getProductById = async (searchId) => {
+    const productById = await productModel.findOne({ id: searchId });
+    return productById;
+  };
 
   addProduct = async (
     title,
@@ -45,24 +55,8 @@ export default class DbProductManager {
     return;
   };
 
-  getProducts = async () => {
-    try {
-      const products = await productModel.find();
-      return products;
-    } catch (error) {
-      return error;
-    }
-  };
-
-  getProductById = async (searchId) => {
-    const productById = await productModel.findOne({ id: searchId });
-    return productById;
-  };
-
-  //recibe los parametros
+  //recibe los parametros prodId (producto a editar) y un objeto solo con los datos a editar
   updateProduct = async (prodId, valuesToUpdate) => {
-    // console.log(valuesToUpdate);
-
     const resultMap = Object.keys(valuesToUpdate);
     resultMap.map(async (key) => {
       if (key !== "thumbnails") {
@@ -70,7 +64,7 @@ export default class DbProductManager {
         objUpdate[key] = valuesToUpdate[key];
         const productResponse = await productModel.updateOne(
           { id: prodId },
-          objUpdate 
+          objUpdate
         );
         if (productResponse.acknowledged === false) {
           console.log(`No se pudo actualizar el campo ${objUpdate}`);
