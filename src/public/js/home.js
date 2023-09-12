@@ -1,7 +1,17 @@
-const socket = io();
+const socket = window.io();
 
-// socket.emit("message", "Hola desde websocket");
+socket.on("realTimeProducts", (products) => {
+  const list = document.getElementById("list");
 
-// socket.on("updateProducts", () => {
-//   alert({ updateProducts });
-// });
+  while (list.firstChild) {
+    list.removeChild(list.firstChild);
+  }
+
+  let productList = "";
+
+  products.forEach((el) => {
+    productList = productList + `<li>${el.title} - U$S ${el.price}</li>`;
+  });
+
+  list.innerHTML = productList;
+});
