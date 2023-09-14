@@ -11,3 +11,6 @@ CLAVE: sjuGVQbrc6PC09Em
 
 2. En este link (localhost:8080/views/chat) podemos acceder al chat en tiempo real
 
+query en product debe ordenar por category o stock
+
+ordenamiento a asc/des por price

@@ -1,13 +1,21 @@
 import { productModel } from "./models/productModel.js";
 
 export default class DbProductManager {
-  getProducts = async () => {
-    try {
-      const products = await productModel.find();
-      return products;
-    } catch (error) {
-      return error;
-    }
+  getProducts = async (_limit, _page, query, sort) => {
+    const limit = _limit || 10;
+    const page = _page || 1;
+    const _query = +query || "title";
+    const _sort = +sort || 0;
+
+
+    let productsSearch;
+    await productModel.paginate({}, { page, limit }, (error, result) => {
+      if (error) {
+        throw new Error(error);
+      }
+      productsSearch = result;
+    });
+    return productsSearch;
   };
 
   getProductById = async (searchId) => {
@@ -29,7 +37,7 @@ export default class DbProductManager {
     const resultCode = await productModel.findOne({ code: code });
     if (resultCode !== null) {
       console.error("El codigo de producto ya existe");
-      return "El codigo de producto ya existe";
+      throw new Error("El codigo de producto ya existe");
     }
 
     //ordena todos los productos por ID de forma descendente
@@ -74,11 +82,10 @@ export default class DbProductManager {
   };
 
   deleteProduct = async (removeId) => {
-    try {
-      const result = await productModel.deleteOne({ id: removeId });
-      return result;
-    } catch (error) {
-      console.log(error);
+    const result = await productModel.deleteOne({ id: removeId });
+    if (result.acknowledged === true && result.deletedCount === 0) {
+      throw new Error("El articulo no existe");
     }
+    return result;
   };
 }

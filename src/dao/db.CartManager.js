@@ -36,7 +36,7 @@ export default class DbCartManager {
 
   //agrega un producto al carrito seleccionado por ID
   addProductToCart = async (cartId, productId) => {
-    const cart = await cartModel.findOne({id: cartId});
+    const cart = await cartModel.find({id: cartId});
     const doesProductExist = cart.products.some((product) => {
       return product.product === productId
     })

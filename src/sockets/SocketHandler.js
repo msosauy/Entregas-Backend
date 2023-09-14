@@ -22,7 +22,7 @@ export const SoketHandler = (io) => {
         stock,
         status,
         category,
-        code
+        code,
       } = newProduct;
       try {
         await dbProductManager.addProduct(
@@ -38,31 +38,25 @@ export const SoketHandler = (io) => {
       } catch (error) {
         if (error.message === "El codigo de producto ya existe") {
           socket.emit("error", "El codigo de producto ya existe");
-          return
+          return;
         }
         console.log(error);
-        return
+        return;
       }
       await emitProducts();
     });
-    
+
     //Elimina un producto por ID
     socket.on("removeById", async (removeId) => {
       try {
-        const resultDelete = await dbProductManager.deleteProduct(removeId);
-        if (resultDelete === "El articulo no existe") {
-          socket.emit("error", "El articulo no existe");
-          return
-        }
+        await dbProductManager.deleteProduct(removeId);
         await emitProducts();
       } catch (error) {
         if (error.message === "El articulo no existe") {
-          console.log("this",error);
           socket.emit("error", "El articulo no existe");
-          return
         }
-        console.log(error);
-        return
+        console.error(error);
+        return;
       }
     });
 
@@ -73,22 +67,20 @@ export const SoketHandler = (io) => {
         emitMessages();
       } catch (error) {
         console.log(error);
-        return
+        return;
       }
     });
-    
-    
+
     socket.on("authenticated", (user) => {
       console.log("works");
-      socket.broadcast.emit('newUserConnected', user);
+      socket.broadcast.emit("newUserConnected", user);
     });
-    
   });
 };
 
 export const emitProducts = async () => {
   const products = await dbProductManager.getProducts();
-  _io?.emit("realTimeProducts", products);
+  _io?.emit("realTimeProducts", products.docs);
 };
 
 export const emitMessages = async () => {

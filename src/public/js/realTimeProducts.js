@@ -61,6 +61,5 @@ document.getElementById("addProduct").addEventListener("click", () => {
 //eliminar un producto
 document.getElementById("removeProduct").addEventListener("click", () => {
   const removeId = document.getElementById("removeId").value;
-
   socket.emit("removeById", parseInt(removeId));
 });
