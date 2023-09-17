@@ -1,3 +1,6 @@
+//EMITE en realTimeProducts, newUserConnected, messageLogs
+//ESCUCHA en addProduct, error, message, removeById, authenticated
+
 import DbProductManager from "../dao/db.ProductManager.js";
 import DbMessageManager from "../dao/db.MessagesManager.js";
 

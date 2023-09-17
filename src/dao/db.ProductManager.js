@@ -1,15 +1,15 @@
 import { productModel } from "./models/productModel.js";
 
 export default class DbProductManager {
-  getProducts = async (_limit, _page, query, sort) => {
+  getProducts = async (_limit, _page, _query, _sort) => {
     const limit = _limit || 10;
     const page = _page || 1;
-    const _query = +query || "title";
-    const _sort = +sort || 0;
+    const query = {category: _query};
+    // const sort = _sort;
 
 
     let productsSearch;
-    await productModel.paginate({}, { page, limit }, (error, result) => {
+    await productModel.paginate({query} , { page, limit }, (error, result) => {
       if (error) {
         throw new Error(error);
       }

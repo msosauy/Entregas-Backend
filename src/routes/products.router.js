@@ -13,11 +13,11 @@ router.use((req, res, next) => {
 router.get("/", async (req, res) => {
   const _limit = +req.query.limit;
   const _page = +req.query.page;
-  const query = req.query.query;
-  const sort = +req.query.sort;
+  const _query = req.query.query ;
+  const _sort = +req.query.sort;
 
   try {
-    const products = await dbProductManager.getProducts(_limit, _page, query, sort);
+    const products = await dbProductManager.getProducts(_limit, _page, _query, _sort);
     return res.status(200).send({
       status: "success",
       payload: products.docs,
