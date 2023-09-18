@@ -11,9 +11,9 @@ router.use((req, res, next) => {
 
 //Devuelve todos los productos o la cantidad de productos indicada con query ?limit=number
 router.get("/", async (req, res) => {
-  const _limit = +req.query.limit;
-  const _page = +req.query.page;
-  const _query = req.query.query ;
+  const _limit = +req.query.limit || 5;
+  const _page = +req.query.page || 1;
+  const _query = req.query.query || null;
   const _sort = +req.query.sort;
 
   try {

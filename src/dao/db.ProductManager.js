@@ -4,12 +4,12 @@ export default class DbProductManager {
   getProducts = async (_limit, _page, _query, _sort) => {
     const limit = _limit || 10;
     const page = _page || 1;
-    const query = {category: _query};
+    const query = _query? {category: _query} : null;
     // const sort = _sort;
 
 
     let productsSearch;
-    await productModel.paginate({query} , { page, limit }, (error, result) => {
+    await productModel.paginate(query, { page, limit }, (error, result) => {
       if (error) {
         throw new Error(error);
       }
