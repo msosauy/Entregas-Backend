@@ -1,5 +1,6 @@
 import { Router } from "express";
 import DbCartManager from "../dao/db.CartManager.js";
+import { cartModel } from "../dao/models/cartModel.js";
 
 const router = Router();
 const dbcartManager = new DbCartManager();
@@ -12,9 +13,10 @@ router.use((req, res, next) => {
 router.post("/", async (req, res) => {
   try {
     const newCartId = await dbcartManager.newCart();
+    console.log(newCartId);
     return res.status(200).send({
       status: "success",
-      success: `Nuevo carrito creado correctamente, ID: ${newCartId[0].id}`,
+      success: `Nuevo carrito creado correctamente, ID: ${newCartId.id}, MongoID:${newCartId._id}`,
     });
   } catch (error) {
     if (error.message === "No se pudo crear el carrito") {
@@ -36,10 +38,20 @@ router.get("/:cid", async (req, res) => {
       .send({ status: "error", error: "/:cid debe ser un numero" });
   }
 
+  //primero chequeamos que el carrito exista
+  const cartExist = await cartModel.findOne({id: cid});
+  if (!cartExist) {
+    return res.status(404).send({status: "error", error: "El carrito no existe"});
+  }
+  
+  //si el carrito existe pero está vacío devolvemos:
+  if (cartExist.products.length === 0) {
+    return res.status(200).send({status: "succes", succes: "El carrito está vacío"});
+  }
+  
   try {
     const searchCartProducts = await dbcartManager.getProductsFromCartId(cid);
-    console.log(searchCartProducts);
-    return res.status(200).send(searchCartProducts.products);
+    return res.status(200).send(searchCartProducts);
   } catch (error) {
     if (error.message === "El carrito no existe") {
       return res
@@ -53,8 +65,16 @@ router.get("/:cid", async (req, res) => {
 //Agrega el producto indicado por ID, al carrito indicado por ID
 router.post("/:cid/product/:pid", async (req, res) => {
   const cartId = +req.params.cid;
-  const productId = +req.params.pid;
+  const productId = req.params.pid;
+  
+  //primero chequeamos que el carrito exista
+  const cartExist = await cartModel.findOne({id: cartId});
+  if (!cartExist) {
+    return res.status(404).send({status: "error", error: "El carrito no existe"});
+  }
 
+  
+  
   try {
     const resultAdd = await dbcartManager.addProductToCart(cartId, productId);
 

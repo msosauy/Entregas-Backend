@@ -1,4 +1,5 @@
 import { cartModel } from "./models/cartModel.js";
+import mongoose from "mongoose";
 
 export default class DbCartManager {
   getCarts = async () => {
@@ -10,16 +11,22 @@ export default class DbCartManager {
     try {
       const cartList = await cartModel.find().sort({ id: -1 });
 
+      let newCartId;
+      if (cartList.length === 0) {
+        newCartId = 1;
+      } else {
+        newCartId = cartList[0].id + 1;
+      }
+
       const cart = {
-        id: cartList[0].id + 1,
-        products: [],
+        id: newCartId,
+        // products: [], no es necesario agregar el array vacío ya que mongoose lo crea por defecto
       };
 
-      const result = await cartModel.insertMany(cart);
-      console.log(result);
+      const result = await cartModel.create(cart);
       return result;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw new Error("No se pudo crear el carrito");
     }
   };
@@ -28,7 +35,7 @@ export default class DbCartManager {
   getProductsFromCartId = async (cid) => {
     try {
       const result = await cartModel.findOne({ id: cid });
-      return result;
+      return result.products;
     } catch (error) {
       console.log(error);
     }
@@ -36,23 +43,26 @@ export default class DbCartManager {
 
   //agrega un producto al carrito seleccionado por ID
   addProductToCart = async (cartId, productId) => {
-    const cart = await cartModel.find({id: cartId});
-    const doesProductExist = cart.products.some((product) => {
-      return product.product === productId
-    })
+    cartModel.findOneAndUpdate(
+      {
+        $and: [
+          { id: cartId },
+          { "products.product": new mongoose.Types.ObjectId(productId) },
+        ],
+      },
+      { $inc: { "products.$.quantity": 1 } }
+    );
 
-    if (doesProductExist) {
-      cart.products = cart.products.map((product) => {
-        if (product.product === productId) {
-          return {...product, quantity: product.quantity + 1 }
-        }
-        return product
-      })
-    }else{
-      cart.products = [...cart.products, {product: productId, quantity: 1}] 
-    }
+    const doesProductExist = await cartModel.findOne({
+      $and: [
+        { id: cartId },
+        { "products.product": new mongoose.Types.ObjectId(productId) },
+      ],
+    });
 
-    const cartUpdate = await cart.save()
-    return cartUpdate;
+    console.log(doesProductExist);
+
+    // return cartUpdate;
+    return await cartModel.findOne({ id: cartId });
   };
 }
