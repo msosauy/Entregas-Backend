@@ -83,7 +83,7 @@ export const SoketHandler = (io) => {
 
 export const emitProducts = async () => {
   const products = await dbProductManager.getProducts();
-  _io?.emit("realTimeProducts", products.docs);
+  _io?.emit("realTimeProducts", products);
 };
 
 export const emitMessages = async () => {

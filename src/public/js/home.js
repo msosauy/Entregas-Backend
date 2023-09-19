@@ -10,7 +10,7 @@ socket.on("realTimeProducts", (products) => {
 
   let productList = "";
 
-  products.forEach((el) => {
+  products.docs.forEach((el) => {
     productList = productList + `<li>${el.title} - U$S ${el.price}</li>`;
   });
 
