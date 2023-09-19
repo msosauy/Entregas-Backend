@@ -54,8 +54,8 @@ router.get("/:cid", async (req, res) => {
   }
 
   try {
-    const searchCartProducts = await dbcartManager.getProductsFromCartId(cid);
-    return res.status(200).send(searchCartProducts);
+    const populateCart = await cartModel.findOne({id: cid}).populate("products.product");
+    return res.status(200).send(populateCart);
   } catch (error) {
     if (error.message === "El carrito no existe") {
       return res
