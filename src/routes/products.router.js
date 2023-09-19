@@ -10,25 +10,28 @@ router.use((req, res, next) => {
 });
 //Devuelve todos los productos o la cantidad de productos indicada con query ?limit=number
 router.get("/", async (req, res) => {
-  let limit = req.query.limit;
+  const _limit = +req.query.limit || 5;
+  const _page = +req.query.page || 1;
+  const _query = req.query.query || null;
+  const _sort = +req.query.sort;
 
   try {
-    const products = await dbProductManager.getProducts();
-
-    if (!limit) {
-      return res.status(200).send(products);
-    }
-
-    if (isNaN(limit)) {
-      return res
-        .status(400)
-        .send({ status: "erorr", error: "limit debe ser un numero" });
-    }
-
-    const productsLimited = products.slice(0, limit);
-    return res.send(productsLimited);
-  } catch (err) {
-    console.log(err);
+    const products = await dbProductManager.getProducts(_limit, _page, _query, _sort);
+    return res.status(200).send({
+      status: "success",
+      payload: products.docs,
+      totalPages: products.totalPages,
+      prevPage: products.prevPage,
+      nextPage: products.nextPage,
+      page: products.page,
+      hasPrevPage: products.hasPrevPage,
+      hasNextPage: products.hasNextPage,
+      prevLink: products.hasPrevPage? `localhost:8080/api/products/?limit=${_limit}&page=${products.prevPage}${_query? `&query=${_query}` : ""}${_sort? `&sort=${_sort}` : ""}`: null,
+      nextLink: products.hasNextPage? `localhost:8080/api/products/?limit=${_limit}&page=${products.nextPage}${_query? `&query=${_query}` : ""}${_sort? `&sort=${_sort}` : ""}`: null,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(400).send({status: "error", error: error})
   }
 });
 // //Busca un producto por ID por params
@@ -289,7 +292,6 @@ router.delete("/:pid", async (req, res) => {
 
   try {
     const result = await dbProductManager.deleteProduct(pid);
-    console.log(result);
     if (result.acknowledged === true && result.deletedCount === 0) {
       return res
         .status(404)

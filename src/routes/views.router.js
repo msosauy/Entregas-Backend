@@ -24,7 +24,8 @@ router.get("/chat", async (req, res) => {
 
 router.get("/products", async (req, res) => {
   try {
-    const products = await dbProductManager.getProducts();
+    const mongoRes = await dbProductManager.getProducts();
+    const products = mongoRes.docs;
     return res.status(200).render("home", { products, style: "style.css" });
   } catch (error) {
     console.log(error);

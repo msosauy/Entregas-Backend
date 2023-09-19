@@ -1,6 +1,7 @@
 const socket = window.io();
 
 socket.on("realTimeProducts", (products) => {
+  console.log(products);
   const list = document.getElementById("list");
 
   while (list.firstChild) {
@@ -9,7 +10,7 @@ socket.on("realTimeProducts", (products) => {
 
   let productList = "";
 
-  products.forEach((el) => {
+  products.docs.forEach((el) => {
     productList = productList + `<li>${el.title} - U$S ${el.price}</li>`;
   });
 
