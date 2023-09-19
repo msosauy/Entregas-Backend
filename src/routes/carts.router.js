@@ -73,8 +73,6 @@ router.post("/:cid/product/:pid", async (req, res) => {
     return res.status(404).send({status: "error", error: "El carrito no existe"});
   }
 
-  
-  
   try {
     const resultAdd = await dbcartManager.addProductToCart(cartId, productId);
 

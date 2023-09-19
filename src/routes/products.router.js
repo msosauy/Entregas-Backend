@@ -8,7 +8,6 @@ const dbProductManager = new DbProductManager();
 router.use((req, res, next) => {
   next();
 });
-
 //Devuelve todos los productos o la cantidad de productos indicada con query ?limit=number
 router.get("/", async (req, res) => {
   const _limit = +req.query.limit || 5;

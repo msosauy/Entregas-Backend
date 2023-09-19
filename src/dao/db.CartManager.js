@@ -43,24 +43,29 @@ export default class DbCartManager {
 
   //agrega un producto al carrito seleccionado por ID
   addProductToCart = async (cartId, productId) => {
-    cartModel.findOneAndUpdate(
-      {
-        $and: [
-          { id: cartId },
-          { "products.product": new mongoose.Types.ObjectId(productId) },
-        ],
-      },
-      { $inc: { "products.$.quantity": 1 } }
-    );
+    
+    const cart = await cartModel.findOne({id: cartId})
+    const productExistsInCart = cart.products.some(product => product.product == productId);
 
-    const doesProductExist = await cartModel.findOne({
-      $and: [
-        { id: cartId },
-        { "products.product": new mongoose.Types.ObjectId(productId) },
-      ],
-    });
+    console.log(productExistsInCart);
+    // cartModel.findOneAndUpdate(
+    //   {
+    //     $and: [
+    //       { id: cartId },
+    //       { "products.product": new mongoose.Types.ObjectId(productId) },
+    //     ],
+    //   },
+    //   { $inc: { "products.$.quantity": 1 } }
+    // );
 
-    console.log(doesProductExist);
+    // const doesProductExist = await cartModel.findOne({
+    //   $and: [
+    //     { id: cartId },
+    //     { "products.product": new mongoose.Types.ObjectId(productId) },
+    //   ],
+    // });
+
+    // console.log(doesProductExist);
 
     // return cartUpdate;
     return await cartModel.findOne({ id: cartId });
