@@ -1,5 +1,4 @@
 import { cartModel } from "./models/cartModel.js";
-import mongoose from "mongoose";
 
 export default class DbCartManager {
   getCarts = async () => {
@@ -43,31 +42,60 @@ export default class DbCartManager {
 
   //agrega un producto al carrito seleccionado por ID
   addProductToCart = async (cartId, productId) => {
-    
-    const cart = await cartModel.findOne({id: cartId})
-    const productExistsInCart = cart.products.some(product => product.product == productId);
+    const cart = await cartModel.findOne({ id: cartId });
+    const doesProductExist = cart.products.some(
+      (product) => product.product == productId
+    );
 
-    console.log(productExistsInCart);
-    // cartModel.findOneAndUpdate(
-    //   {
-    //     $and: [
-    //       { id: cartId },
-    //       { "products.product": new mongoose.Types.ObjectId(productId) },
-    //     ],
-    //   },
-    //   { $inc: { "products.$.quantity": 1 } }
-    // );
+    if (doesProductExist) {
+      cart.products = cart.products.map((product) => {
+        if (product.product == productId) {
+          return { ...product, quantity: product.quantity + 1 };
+        }
+        return product;
+      });
+    } else {
+      cart.products = [...cart.products, { product: productId, quantity: 1 }];
+    }
 
-    // const doesProductExist = await cartModel.findOne({
-    //   $and: [
-    //     { id: cartId },
-    //     { "products.product": new mongoose.Types.ObjectId(productId) },
-    //   ],
-    // });
+    const cartUpdate = await cart.save();
+    return cartUpdate;
+  };
 
-    // console.log(doesProductExist);
+  //Elimina un producto de el carrito indicado por ID
+  removeProductFromCart = async (cartId, productId) => {
+    try {
+      const cart = await cartModel.findOne({ id: cartId });
+      const doesProductExist = await cart.products.some(
+        (product) => product.product == productId
+      );
 
-    // return cartUpdate;
-    return await cartModel.findOne({ id: cartId });
+      if (!doesProductExist) {
+        return "El producto no existe en este carrito";
+      }
+
+      const remove = await cartModel.updateOne(
+        { id: cartId },
+        { $pull: { products: { product: productId } } }
+      );
+      return remove;
+    } catch (error) {
+      console.error("db.CartManager.js", error);
+      throw new Error(error);
+    }
+  };
+
+  //actualiza todo el carrito
+  updateCartProducts = async (cartId, productList) => {
+    try {
+      const cartUpdated = await cartModel.updateOne(
+        { id: cartId },
+        { products: productList }
+      );
+      return cartUpdated;
+    } catch (error) {
+      console.error(error);
+      return
+    }
   };
 }
