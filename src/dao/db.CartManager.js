@@ -62,7 +62,7 @@ export default class DbCartManager {
     return cartUpdate;
   };
 
-  //Elimina un producto de el carrito indicado por ID
+  //Elimina un producto del carrito indicado por ID
   removeProductFromCart = async (cartId, productId) => {
     try {
       const cart = await cartModel.findOne({ id: cartId });
@@ -84,6 +84,20 @@ export default class DbCartManager {
       throw new Error(error);
     }
   };
+  
+  //Elimina todos los productos del carrito indicado por ID
+  removeAllProductFromCart = async (cartId) => {
+    try {
+      const cartUpdated = await cartModel.updateOne(
+        { id: cartId },
+        { products: [] }
+      );
+      return cartUpdated;
+    } catch (error) {
+      console.error("db.CartManager.js", error);
+      throw new Error(error);
+    }
+  };
 
   //actualiza todo el carrito
   updateCartProducts = async (cartId, productList) => {
@@ -97,5 +111,27 @@ export default class DbCartManager {
       console.error(error);
       return
     }
+  };
+
+  //actualiza la cantidad de un producto
+  quantityUpdate = async (cartId, productId, newQuantity) => {
+    const cart = await cartModel.findOne({ id: cartId });
+    const doesProductExist = cart.products.some(
+      (product) => product.product == productId
+    );
+
+    if (doesProductExist) {
+      cart.products = cart.products.map((product) => {
+        if (product.product == productId) {
+          return { ...product, quantity: newQuantity };
+        }
+        return product;
+      });
+    } else {
+      cart.products = [...cart.products, { product: productId, quantity: newQuantity }];
+    }
+
+    const cartUpdate = await cart.save();
+    return cartUpdate;
   };
 }
