@@ -1,6 +1,7 @@
 const socket = window.io();
 
 socket.on("realTimeProducts", (products) => {
+  console.log(products);
   const list = document.getElementById("list");
 
   while (list.firstChild) {

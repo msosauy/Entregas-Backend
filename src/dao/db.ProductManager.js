@@ -5,11 +5,11 @@ export default class DbProductManager {
     const limit = _limit || 10;
     const page = _page || 1;
     const query = _query? {category: _query} : null;
-    // const sort = _sort;
+    const sort = _sort? {price: _sort} : null;
 
 
     let productsSearch;
-    await productModel.paginate(query, { page, limit }, (error, result) => {
+    await productModel.paginate(query, { page, limit, sort }, (error, result) => {
       if (error) {
         throw new Error(error);
       }

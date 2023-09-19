@@ -26,8 +26,8 @@ router.get("/", async (req, res) => {
       page: products.page,
       hasPrevPage: products.hasPrevPage,
       hasNextPage: products.hasNextPage,
-      prevLink: products.hasPrevPage? `localhost:8080/api/products/?limit=${_limit}&page=${products.prevPage}` : null,
-      nextLink: products.hasNextPage? `localhost:8080/api/products/?limit=${_limit}&page=${products.nextPage}` : null,
+      prevLink: products.hasPrevPage? `localhost:8080/api/products/?limit=${_limit}&page=${products.prevPage}${_query? `&query=${_query}` : ""}${_sort? `&sort=${_sort}` : ""}`: null,
+      nextLink: products.hasNextPage? `localhost:8080/api/products/?limit=${_limit}&page=${products.nextPage}${_query? `&query=${_query}` : ""}${_sort? `&sort=${_sort}` : ""}`: null,
     });
   } catch (error) {
     console.error(error);
