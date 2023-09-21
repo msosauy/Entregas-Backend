@@ -10,6 +10,14 @@ router.use((req, res, next) => {
   next();
 });
 
+router.get("/login", (req, res) => {
+  return res.status(200).render("login", { style: "style.css" });
+});
+
+router.get("register", (req, res) => {
+  res.status(200).render("register", { style: "style.css"});
+});
+
 router.get("/chat", async (req, res) => {
   try {
     const data = await dbMessagesManager.getMessages();

@@ -2,6 +2,7 @@ import express from "express";
 import productsRouter from "./routes/products.router.js";
 import cartsRouter from "./routes/carts.router.js";
 import viewsRouter from "./routes/views.router.js";
+import sessionRouter from "./routes/session.router.js";
 import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
 import { Server } from "socket.io";
@@ -23,6 +24,7 @@ app.use(express.static(__dirname + "/public"));
 app.use("/api/products", productsRouter);
 app.use("/views", viewsRouter);
 app.use("/api/carts", cartsRouter);
+app.use("api/sessions/register", sessionRouter);
 
 mongoose.connect("mongodb+srv://msosa:OJ9bgeMIrDF7pkEV@cluster-coder.bxbohyn.mongodb.net/ecommerce")
 
