@@ -24,7 +24,7 @@ app.use(express.static(__dirname + "/public"));
 app.use("/api/products", productsRouter);
 app.use("/views", viewsRouter);
 app.use("/api/carts", cartsRouter);
-app.use("api/sessions/register", sessionRouter);
+app.use("/api/sessions", sessionRouter);
 
 mongoose.connect("mongodb+srv://msosa:OJ9bgeMIrDF7pkEV@cluster-coder.bxbohyn.mongodb.net/ecommerce")
 

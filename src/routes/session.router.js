@@ -1,11 +1,12 @@
 import { Router } from "express";
-import {userModel} from "../dao/models/userModel.js"; 
+import { userModel } from "../dao/models/userModel.js";
 const router = Router();
 
 router.post("/login", async (req, res) => {
-  const { email, password: pass } = req.body;
+  const { email, password } = req.body;
 
-  const user = await userModel.findOne({ email, password: pass });
+  console.log(email, password );
+  const user = await userModel.findOne({ email, password });
   if (!user)
     return res
       .status(400)
@@ -35,7 +36,7 @@ router.post("/register", async (req, res) => {
     password,
   };
   let result = await userModel.create(user);
-  res.send({ status: "success", message: "User registered" });
+  res.send({ status: "success", message: "User registered", newUser: result});
 });
 
 export default router;
