@@ -12,7 +12,7 @@ socket.on("realTimeProducts", (products) => {
   }
   let returnList = "";
 
-  products.forEach((el) => {
+  products.docs.forEach((el) => {
     returnList = returnList + `<li>${el.id} ${el.title} - U$S ${el.price} - ${el.code}</li>`;
   });
 

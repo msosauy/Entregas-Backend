@@ -23,6 +23,10 @@
     max-width: 500px;
 }
 
+label{
+    color: white;
+}
+
 .remove {
     display: flex;
     flex-direction: row;
