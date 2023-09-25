@@ -1,6 +1,7 @@
 import { Router } from "express";
 import DbProductManager from "../dao/db.ProductManager.js";
 import { emitProducts } from "../sockets/SocketHandler.js";
+import {authAdmin} from "../auth/authentication.js";
 
 export const router = Router();
 const dbProductManager = new DbProductManager();
@@ -10,7 +11,7 @@ router.use((req, res, next) => {
 });
 //Devuelve todos los productos o la cantidad de productos indicada con query ?limit=number
 router.get("/", async (req, res) => {
-  const _limit = +req.query.limit || 5;
+  const _limit = +req.query.limit || 10;
   const _page = +req.query.page || 1;
   const _query = req.query.query || null;
   const _sort = +req.query.sort;
@@ -54,7 +55,7 @@ router.get("/:pid", async (req, res) => {
   return res.status(200).send({ status: "success", success: product });
 });
 // //Agrega un nuevo producto
-router.post("/", async (req, res) => {
+router.post("/", authAdmin, async (req, res) => {
   const {
     title,
     description,
