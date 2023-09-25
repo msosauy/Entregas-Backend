@@ -1,22 +1,11 @@
 const form = document.getElementById("registerForm");
 
-const validate = (json) => {
-  console.log(json);
-  if ((json.status === "success", json.message === "User registered")) {
-    alert("Usuario creado correctamente");
-    window.location.replace("/views/login");
-  } else {
-    alert("Intentalo de nuevo");
-    window.location.replace("/views/register");
-  }
-};
-
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   const data = new FormData(form);
   const obj = {};
   data.forEach((value, key) => (obj[key] = value));
-  fetch("/api/sessions/register", {
+  fetch("/session/register", {
     method: "POST",
     body: JSON.stringify(obj),
     headers: {
@@ -24,5 +13,16 @@ form.addEventListener("submit", (e) => {
     },
   })
     .then((result) => result.json())
-    .then((json) => validate(json));
+    .then((json) => {
+      if ((json.status === "success", json.success === "User registered")) {
+        alert("Usuario creado correctamente");
+        window.location.replace("/views/login");
+        return
+      }
+      if (json.status === "error" && json.error === "Ya existe usuario con ese email") {
+        return alert(json.error);
+      }
+        alert("Intentalo de nuevo");
+        window.location.replace("/views/register");
+    });
 });

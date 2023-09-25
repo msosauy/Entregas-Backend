@@ -1,6 +1,7 @@
 import { Router } from "express";
 import DbProductManager from "../dao/db.ProductManager.js";
 import DbMessagesManager from "../dao/db.MessagesManager.js";
+import {authAdmin, authUser} from "../auth/authentication.js";
 
 const router = Router();
 const dbProductManager = new DbProductManager();
@@ -30,7 +31,7 @@ router.get("/chat", async (req, res) => {
   }
 });
 
-router.get("/products", async (req, res) => {
+router.get("/products", authUser, async (req, res) => {
   try {
     const mongoRes = await dbProductManager.getProducts();
     const products = mongoRes.docs;
@@ -43,7 +44,7 @@ router.get("/products", async (req, res) => {
   }
 });
 
-router.get("/products/realtimeproducts", async (req, res) => {
+router.get("/products/realtimeproducts", authAdmin, async (req, res) => {
   try {
     return res.status(200).render("realTimeProducts", { style: "style.css" });
   } catch (error) {

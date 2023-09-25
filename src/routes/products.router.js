@@ -1,7 +1,6 @@
 import { Router } from "express";
 import DbProductManager from "../dao/db.ProductManager.js";
 import { emitProducts } from "../sockets/SocketHandler.js";
-import {authAdmin} from "../auth/authentication.js";
 
 export const router = Router();
 const dbProductManager = new DbProductManager();
@@ -55,7 +54,7 @@ router.get("/:pid", async (req, res) => {
   return res.status(200).send({ status: "success", success: product });
 });
 // //Agrega un nuevo producto
-router.post("/", authAdmin, async (req, res) => {
+router.post("/", async (req, res) => {
   const {
     title,
     description,
