@@ -32,7 +32,7 @@ app.use(
       mongoUrl:
         "mongodb+srv://msosa:OJ9bgeMIrDF7pkEV@cluster-coder.bxbohyn.mongodb.net/ecommerce",
       mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
-      ttl: 15,
+      ttl: 1800,
     }),
     secret: "coderhouse", //usuario al que se le genera la cookie session
     resave: true, // mantiene la sesión activa aunque no haya actividad

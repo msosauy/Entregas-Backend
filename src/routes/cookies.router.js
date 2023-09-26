@@ -11,7 +11,6 @@ router.get("/setCookie", (req, res) => {
 });
 
 router.get('/getCookie', (req, res) => {
-    console.log(req.signedCookies);
     res.send(req.signedCookies);
 });
 

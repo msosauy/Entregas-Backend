@@ -1,6 +1,7 @@
 import { Router } from "express";
 import DbCartManager from "../dao/db.CartManager.js";
 import { cartModel } from "../dao/models/cartModel.js";
+import {authUser} from "../auth/authentication.js";
 
 const router = Router();
 const dbcartManager = new DbCartManager();
@@ -10,10 +11,9 @@ router.use((req, res, next) => {
 });
 
 //Crea un nuevo carrito con ID autogenerado
-router.post("/", async (req, res) => {
+router.post("/", authUser, async (req, res) => {
   try {
     const newCartId = await dbcartManager.newCart();
-    console.log(newCartId);
     return res.status(200).send({
       status: "success",
       success: `Nuevo carrito creado correctamente, ID: ${newCartId.id}, MongoID:${newCartId._id}`,
@@ -29,7 +29,7 @@ router.post("/", async (req, res) => {
 });
 
 //Devuelve todos los productos de un carrito según su ID por params
-router.get("/:cid", async (req, res) => {
+router.get("/:cid", authUser, async (req, res) => {
   const cid = +req.params.cid;
 
   if (isNaN(cid)) {
@@ -67,7 +67,7 @@ router.get("/:cid", async (req, res) => {
 });
 
 //Agrega el producto indicado por ID, al carrito indicado por ID
-router.post("/:cid/product/:pid", async (req, res) => {
+router.post("/:cid/product/:pid", authUser, async (req, res) => {
   const cartId = +req.params.cid;
   const productId = req.params.pid;
 
@@ -98,7 +98,7 @@ router.post("/:cid/product/:pid", async (req, res) => {
 });
 
 //Elimina un producto del carrito indicado por ID
-router.delete("/:cid/product/:pid", async (req, res) => {
+router.delete("/:cid/product/:pid", authUser, async (req, res) => {
   const cartId = +req.params.cid;
   const productId = req.params.pid;
 
@@ -142,7 +142,7 @@ router.delete("/:cid/product/:pid", async (req, res) => {
 });
 
 //Elimina todos los productos de un carrito
-router.delete("/:cid", async (req, res) => {
+router.delete("/:cid", authUser, async (req, res) => {
   const cartId = +req.params.cid;
 
   //primero chequeamos que el carrito exista
@@ -166,7 +166,7 @@ router.delete("/:cid", async (req, res) => {
 });
 
 //Actualiza todos los productos de un carrito
-router.put("/:cid", async (req, res) => {
+router.put("/:cid", authUser, async (req, res) => {
   const cartId = +req.params.cid;
   const productList = req.body;
 
@@ -200,7 +200,7 @@ router.put("/:cid", async (req, res) => {
 });
 
 //actualiza la cantidad del producto indicado
-router.put("/:cid/product/:pid", async (req, res) => {
+router.put("/:cid/product/:pid",authUser,  async (req, res) => {
   const cartId = +req.params.cid;
   const productId = req.params.pid;
   const newQuantity = req.body;

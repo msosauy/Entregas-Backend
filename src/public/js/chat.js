@@ -23,7 +23,6 @@ socket.on("messageLogs", (data) => {
   let log = document.getElementById("messageLogs");
   let messages = '';
   data.forEach((message) => {
-    console.log(message.message);
     messages = messages + `${message.user} dice: ${message.message} </br>`;
   });
   log.innerHTML = messages;
@@ -32,7 +31,6 @@ socket.on("messageLogs", (data) => {
 chatBox.addEventListener("keyup", (evt) => {
   if (evt.key === "Enter") {
     if (chatBox.value.trim().length > 0) {
-      console.log(chatBox.value);
       socket.emit("message", { user: user, message: chatBox.value });
       chatBox.value = "";
     }

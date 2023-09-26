@@ -1,6 +1,8 @@
 import { Router } from "express";
 import DbProductManager from "../dao/db.ProductManager.js";
 import { emitProducts } from "../sockets/SocketHandler.js";
+import {authUser, authAdmin} from "../auth/authentication.js";
+
 
 export const router = Router();
 const dbProductManager = new DbProductManager();
@@ -9,7 +11,7 @@ router.use((req, res, next) => {
   next();
 });
 //Devuelve todos los productos o la cantidad de productos indicada con query ?limit=number
-router.get("/", async (req, res) => {
+router.get("/", authUser, async (req, res) => {
   const _limit = +req.query.limit || 10;
   const _page = +req.query.page || 1;
   const _query = req.query.query || null;
@@ -35,7 +37,7 @@ router.get("/", async (req, res) => {
   }
 });
 // //Busca un producto por ID por params
-router.get("/:pid", async (req, res) => {
+router.get("/:pid", authUser, async (req, res) => {
   const searchId = +req.params.pid;
 
   if (isNaN(searchId)) {
@@ -54,7 +56,7 @@ router.get("/:pid", async (req, res) => {
   return res.status(200).send({ status: "success", success: product });
 });
 // //Agrega un nuevo producto
-router.post("/", async (req, res) => {
+router.post("/", authAdmin, async (req, res) => {
   const {
     title,
     description,
@@ -171,7 +173,7 @@ router.post("/", async (req, res) => {
   }
 });
 // //Busca un producto por ID y lo modifica
-router.put("/:pid", async (req, res) => {
+router.put("/:pid", authAdmin, async (req, res) => {
   const __id = +req.params.pid;
 
   const {
@@ -287,7 +289,7 @@ router.put("/:pid", async (req, res) => {
   }
 });
 // //Elimina un producto según su ID
-router.delete("/:pid", async (req, res) => {
+router.delete("/:pid", authAdmin, async (req, res) => {
   const pid = +req.params.pid;
 
   try {

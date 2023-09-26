@@ -7,21 +7,25 @@ form.addEventListener("submit", (event) => {
 
   data.forEach((value, key) => (obj[key] = value));
 
-  fetch("/session/login", {
-    method: "POST",
-    body: JSON.stringify(obj),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.status === "success") {
-        window.location.replace("/views/products");
-      }
-      if (data.status === "error") {
-        alert(data.error);
-        window.location.replace("/views/login");
-      }
-    });
+  try {
+    fetch("/session/login", {
+      method: "POST",
+      body: JSON.stringify(obj),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          window.location.replace("/views/products");
+        }
+        if (data.status === "error") {
+          alert(data.error);
+          window.location.replace("/views/login");
+        }
+      });
+  } catch (error) {
+    console.log("login.js", error);
+  }
 });
