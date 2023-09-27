@@ -19,18 +19,7 @@ router.get("/", authUser, async (req, res) => {
 
   try {
     const products = await dbProductManager.getProducts(_limit, _page, _query, _sort);
-    return res.status(200).send({
-      status: "success",
-      payload: products.docs,
-      totalPages: products.totalPages,
-      prevPage: products.prevPage,
-      nextPage: products.nextPage,
-      page: products.page,
-      hasPrevPage: products.hasPrevPage,
-      hasNextPage: products.hasNextPage,
-      prevLink: products.hasPrevPage? `localhost:8080/api/products/?limit=${_limit}&page=${products.prevPage}${_query? `&query=${_query}` : ""}${_sort? `&sort=${_sort}` : ""}`: null,
-      nextLink: products.hasNextPage? `localhost:8080/api/products/?limit=${_limit}&page=${products.nextPage}${_query? `&query=${_query}` : ""}${_sort? `&sort=${_sort}` : ""}`: null,
-    });
+    return res.status(200).send(products);
   } catch (error) {
     console.error(error);
     return res.status(400).send({status: "error", error: error})

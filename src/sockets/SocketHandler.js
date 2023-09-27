@@ -81,18 +81,8 @@ export const SoketHandler = (io) => {
 };
 
 export const emitProducts = async () => {
-  // const products = await dbProductManager.getProducts();
-  // const products = await 
-  fetch("http://localhost:8080/api/products", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      _io?.emit("realTimeProducts", data);
-    });
+  const products = await dbProductManager.getProducts();
+  _io?.emit("realTimeProducts", products);
 };
 
 export const emitMessages = async () => {

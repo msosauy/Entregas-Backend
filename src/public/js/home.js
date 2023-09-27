@@ -1,5 +1,3 @@
-const socket = window.io();
-
 //User info
 const userLogin = document.getElementById("userLogin");
 try {
@@ -29,28 +27,4 @@ logout.addEventListener("click", () => {
       window.location.replace("/views/login");
     }
   });
-});
-
-//get products
-socket.on("realTimeProducts", (products) => {
-  const list = document.getElementById("list");
-  const pagination = document.getElementById("pagination");
-
-  while (list.firstChild) {
-    list.removeChild(list.firstChild);
-  }
-
-  while (pagination.firstChild) {
-    pagination.removeChild(pagination.firstChild);
-  }
-
-  let productList = "";
-  let paginationList = "";
-
-  products.payload.forEach((el) => {
-    productList = productList + `<li>${el.title} - U$S ${el.price}</li>`;
-  });
-
-  list.innerHTML = productList;
-  pagination.innerHTML = paginationList;
-});
+})

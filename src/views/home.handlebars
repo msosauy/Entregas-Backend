@@ -1,10 +1,13 @@
 <div id="userLogin"></div>
 <button id="logout">LOGOUT</button>
-
 <div>
-    <ul id="list"></ul>
+    <ul>
+        {{#each products.payload}}
+        <li>{{title}} - U$S {{price}}</li>
+        {{/each}}
+    </ul>
 </div>
-<div id="pagination"></div>
+<div id="pagination">
+</div>
 
-<script src="/socket.io/socket.io.js"></script>
 <script src="/js/home.js"></script>

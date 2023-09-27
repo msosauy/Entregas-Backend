@@ -1,7 +1,7 @@
 import { Router } from "express";
 import DbProductManager from "../dao/db.ProductManager.js";
 import DbMessagesManager from "../dao/db.MessagesManager.js";
-import {authAdmin, authUser} from "../auth/authentication.js";
+import { authAdmin, authUser } from "../auth/authentication.js";
 
 const router = Router();
 const dbProductManager = new DbProductManager();
@@ -16,7 +16,7 @@ router.get("/login", (req, res) => {
 });
 
 router.get("/register", (req, res) => {
-  return res.status(200).render("register", { style: "style.css"});
+  return res.status(200).render("register", { style: "style.css" });
 });
 
 router.get("/chat", async (req, res) => {
@@ -33,14 +33,14 @@ router.get("/chat", async (req, res) => {
 
 router.get("/products", authUser, async (req, res) => {
   try {
-    const mongoRes = await dbProductManager.getProducts();
-    const products = mongoRes.docs;
+    const products = await dbProductManager.getProducts();
+    products.payload = products.payload.map((doc) => doc.toObject());
     return res.status(200).render("home", { products, style: "style.css" });
   } catch (error) {
     console.log(error);
     return res
       .status(400)
-      .render({ status: "error", error: "Error al obtener los productos" });
+      .send({ status: "error", error: "Error al obtener los productos" });
   }
 });
 
@@ -48,10 +48,10 @@ router.get("/products/realtimeproducts", authAdmin, async (req, res) => {
   try {
     return res.status(200).render("realTimeProducts", { style: "style.css" });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res
       .status(400)
-      .render({ status: "error", error: "Error al obtener los productos" });
+      .send({ status: "error", error: "Error al obtener los productos" });
   }
 });
 

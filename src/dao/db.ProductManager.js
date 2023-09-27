@@ -7,15 +7,26 @@ export default class DbProductManager {
     const query = _query? {category: _query} : null;
     const sort = _sort? {price: _sort} : null;
 
+    let productsObj;
 
-    let productsSearch;
-    await productModel.paginate(query, { page, limit, sort }, (error, result) => {
+    await productModel.paginate(query, { page, limit, sort }, (error, products) => {
       if (error) {
         throw new Error(error);
       }
-      productsSearch = result;
+      productsObj = {
+        status: "success",
+        payload: products.docs,
+        totalPages: products.totalPages,
+        prevPage: products.prevPage,
+        nextPage: products.nextPage,
+        page: products.page,
+        hasPrevPage: products.hasPrevPage,
+        hasNextPage: products.hasNextPage,
+        prevLink: products.hasPrevPage? `localhost:8080/api/products/?limit=${_limit}&page=${products.prevPage}${_query? `&query=${_query}` : ""}${_sort? `&sort=${_sort}` : ""}`: null,
+        nextLink: products.hasNextPage? `localhost:8080/api/products/?limit=${_limit}&page=${products.nextPage}${_query? `&query=${_query}` : ""}${_sort? `&sort=${_sort}` : ""}`: null,
+      }
     });
-    return productsSearch;
+    return productsObj;
   };
 
   getProductById = async (searchId) => {
