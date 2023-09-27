@@ -6,6 +6,10 @@
     width: 100vw;
 }
 
+a{
+    color: grey;
+}
+
 .main {
     display: flex;
     flex-direction: row;

@@ -8,6 +8,7 @@ const schema = new mongoose.Schema({
   email: { type: String, require: true },
   age: { type: String, require: true },
   password: { type: String, require: true },
+  admin: { type: Boolean, default: false}
 });
 
 export const userModel = mongoose.model(collection, schema);

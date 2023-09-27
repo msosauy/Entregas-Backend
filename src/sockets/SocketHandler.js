@@ -75,7 +75,6 @@ export const SoketHandler = (io) => {
     });
 
     socket.on("authenticated", (user) => {
-      console.log("works");
       socket.broadcast.emit("newUserConnected", user);
     });
   });
@@ -83,7 +82,6 @@ export const SoketHandler = (io) => {
 
 export const emitProducts = async () => {
   const products = await dbProductManager.getProducts();
-  console.log("socket",products);
   _io?.emit("realTimeProducts", products);
 };
 

@@ -1,6 +1,8 @@
 import { Router } from "express";
 import DbProductManager from "../dao/db.ProductManager.js";
 import { emitProducts } from "../sockets/SocketHandler.js";
+import {authUser, authAdmin} from "../auth/authentication.js";
+
 
 export const router = Router();
 const dbProductManager = new DbProductManager();
@@ -9,33 +11,22 @@ router.use((req, res, next) => {
   next();
 });
 //Devuelve todos los productos o la cantidad de productos indicada con query ?limit=number
-router.get("/", async (req, res) => {
-  const _limit = +req.query.limit || 5;
+router.get("/", authUser, async (req, res) => {
+  const _limit = +req.query.limit || 10;
   const _page = +req.query.page || 1;
   const _query = req.query.query || null;
   const _sort = +req.query.sort;
 
   try {
     const products = await dbProductManager.getProducts(_limit, _page, _query, _sort);
-    return res.status(200).send({
-      status: "success",
-      payload: products.docs,
-      totalPages: products.totalPages,
-      prevPage: products.prevPage,
-      nextPage: products.nextPage,
-      page: products.page,
-      hasPrevPage: products.hasPrevPage,
-      hasNextPage: products.hasNextPage,
-      prevLink: products.hasPrevPage? `localhost:8080/api/products/?limit=${_limit}&page=${products.prevPage}${_query? `&query=${_query}` : ""}${_sort? `&sort=${_sort}` : ""}`: null,
-      nextLink: products.hasNextPage? `localhost:8080/api/products/?limit=${_limit}&page=${products.nextPage}${_query? `&query=${_query}` : ""}${_sort? `&sort=${_sort}` : ""}`: null,
-    });
+    return res.status(200).send(products);
   } catch (error) {
     console.error(error);
     return res.status(400).send({status: "error", error: error})
   }
 });
 // //Busca un producto por ID por params
-router.get("/:pid", async (req, res) => {
+router.get("/:pid", authUser, async (req, res) => {
   const searchId = +req.params.pid;
 
   if (isNaN(searchId)) {
@@ -54,7 +45,7 @@ router.get("/:pid", async (req, res) => {
   return res.status(200).send({ status: "success", success: product });
 });
 // //Agrega un nuevo producto
-router.post("/", async (req, res) => {
+router.post("/", authAdmin, async (req, res) => {
   const {
     title,
     description,
@@ -171,7 +162,7 @@ router.post("/", async (req, res) => {
   }
 });
 // //Busca un producto por ID y lo modifica
-router.put("/:pid", async (req, res) => {
+router.put("/:pid", authAdmin, async (req, res) => {
   const __id = +req.params.pid;
 
   const {
@@ -287,7 +278,7 @@ router.put("/:pid", async (req, res) => {
   }
 });
 // //Elimina un producto según su ID
-router.delete("/:pid", async (req, res) => {
+router.delete("/:pid", authAdmin, async (req, res) => {
   const pid = +req.params.pid;
 
   try {
