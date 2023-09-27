@@ -19,7 +19,7 @@ router.get("/register", (req, res) => {
   return res.status(200).render("register", { style: "style.css" });
 });
 
-router.get("/chat", async (req, res) => {
+router.get("/chat", authUser, async (req, res) => {
   try {
     const data = await dbMessagesManager.getMessages();
     return res.status(200).render("chat", { data, style: "style.css" });
