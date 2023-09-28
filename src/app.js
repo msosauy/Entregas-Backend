@@ -12,6 +12,8 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import MongoStore from "connect-mongo";
+import passport from "passport";
+import { initializePassport } from "./config/passport.config.js";
 
 const app = express();
 const PORT = 8080;
@@ -41,6 +43,10 @@ app.use(
     saveUninitialized: true, //permite guardar la sesión aunque el objeto recibido no contenga nada
   })
 );
+
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session())
 
 app.use(cookieParser(cookieSecret)); // secret para firmar las cookies accedemos con req.signedCookies
 app.use(express.json());

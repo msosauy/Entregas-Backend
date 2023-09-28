@@ -1,25 +1,28 @@
 import { Router } from "express";
 import { userModel } from "../dao/models/userModel.js";
-import { createHash, isValidPassword } from "../utils.js";
+import { createHash } from "../utils.js";
+import passport from "passport";
 
 const router = Router();
 
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  const user = await userModel.findOne({ email });
-  if (!user)
+router.post("/login",
+  passport.authenticate("login", { failureRedirect: "/faillogin" }),
+  async (req, res) => {
+    if (!req.user) {
+      return res
+        .status(400)
+        .send({ status: "error", error: "Credenciales invalidas" });
+    }
+    delete req.user.password;
+    req.session.user = req.user;
     return res
-      .status(400)
-      .send({ status: "error", error: "Credenciales incorrectas" });
-
-  if (!isValidPassword(user, password)) {
-    return res
-      .status(403)
-      .send({ status: "error", error: "Contraseña incorrecta" });
+      .status(200)
+      .send({ status: "success", success: "Logueado correctamente" });
   }
-  delete user.password;
-  req.session.user = user;
-  return res.status(200).send({ status: "success", success: "Login OK!" });
+);
+
+router.get("/failLogin", (req, res) => {
+  res.send({ error: "Failed login" });
 });
 
 router.get("/logout", (req, res) => {
@@ -31,26 +34,19 @@ router.get("/logout", (req, res) => {
     }
   });
 });
-
-router.post("/register", async (req, res) => {
-  const { first_name, last_name, email, age, password } = req.body;
-  const exists = await userModel.findOne({ email });
-  if (exists) {
+//si recibe false en el done pasa a failregister
+router.post("/register",
+  passport.authenticate("register", { failureRedirect: "/failregister" }),
+  async (req, res) => {
     return res
-      .status(400)
-      .send({ status: "error", error: "Ya existe usuario con ese email" });
+      .status(200)
+      .send({ status: "success", success: "Usuario registrado correctamente" });
   }
-  const user = {
-    first_name,
-    last_name,
-    email,
-    age,
-    password: createHash(password),
-  };
-  let result = await userModel.create(user);
-  if (result) {
-    return res.status(200).send({ status: "success", success: "ok" });
-  }
+);
+
+router.get("/failRegister", async (req, res) => {
+  console.error("Fallo la estrategia");
+  return res.send({ error: "Falló el registro" });
 });
 
 router.post("/restorepassword", async (req, res) => {

@@ -14,15 +14,18 @@ form.addEventListener("submit", (e) => {
   })
     .then((result) => result.json())
     .then((data) => {
-      if (data.status === "success" && data.success === "ok") {
+      if (data.status === "success" && data.success === "Usuario registrado correctamente") {
         alert("Usuario creado correctamente");
         window.location.replace("/views/login");
         return
       }
-      if (data.status === "error" && data.error === "Ya existe usuario con ese email") {
-        return alert(data.error);
+      if (data.error) {
+        alert(data.error)
+        window.location.replace("/views/register");
+        return
       }
         alert("Intentalo de nuevo");
         window.location.replace("/views/register");
+        return
     });
 });
