@@ -17,7 +17,6 @@ form.addEventListener("submit", (event) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
         if (data.status === "success" && data.success === "Login OK!") {
           window.location.replace("/views/products");
         }
