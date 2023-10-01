@@ -5,7 +5,8 @@ import passport from "passport";
 
 const router = Router();
 
-router.post("/login",
+router.post(
+  "/login",
   passport.authenticate("login", { failureRedirect: "/faillogin" }),
   async (req, res) => {
     if (!req.user) {
@@ -21,6 +22,17 @@ router.post("/login",
   }
 );
 
+router.get(
+  "/github",
+  passport.authenticate("github", { scope: ["user: email"] }),
+  async (req, res) => {}
+);
+
+router.get("/githubcallback", passport.authenticate("github", {failureRedirect: "/views/login"}), async (req, res) => {
+  req.session.user = req.user;
+  res.redirect("/views/products");
+})
+
 router.get("/failLogin", (req, res) => {
   res.send({ error: "Failed login" });
 });
@@ -35,7 +47,8 @@ router.get("/logout", (req, res) => {
   });
 });
 //si recibe false en el done pasa a failregister
-router.post("/register",
+router.post(
+  "/register",
   passport.authenticate("register", { failureRedirect: "/failregister" }),
   async (req, res) => {
     return res
