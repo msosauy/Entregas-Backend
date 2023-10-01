@@ -31,3 +31,8 @@ USER: Puede acceder a todos los endpoints de "carts.router.js", de los endpoints
 
 
 http://localhost:8080/session/githubcallback
+
+# TODO
+
+1. Manejar error usuario y contraseña invalidos.
+    error: Uncaught (in promise) SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
