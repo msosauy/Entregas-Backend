@@ -13,14 +13,8 @@ form.addEventListener("submit", (e) => {
     },
   })
     .then((result) => result.json())
-<<<<<<< HEAD
-    .then((json) => {
-      console.log(json);
-      if ((json.status === "success", json.success === "User registered")) {
-=======
     .then((data) => {
       if (data.status === "success" && data.success === "Usuario registrado correctamente") {
->>>>>>> dev
         alert("Usuario creado correctamente");
         window.location.replace("/views/login");
         return
@@ -31,10 +25,7 @@ form.addEventListener("submit", (e) => {
         return
       }
         alert("Intentalo de nuevo");
-<<<<<<< HEAD
-=======
         window.location.replace("/views/register");
         return
->>>>>>> dev
     });
 });
