@@ -71,12 +71,10 @@ export const initializePassport = () => {
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
-          console.log("passport.config.js try log1", profile);
           let user = await userModel.findOne({ email: profile._json.name });
           if (!user) {
-            const newUser = { first_name: profile._json.name, userName: profile._json.login };
+            const newUser = { first_name: profile.username, userName: profile._json.login, email: profile._json.html_url, age: profile._json.public_repos };
             const result = await userModel.create(newUser);
-            console.log("passport.config.js try log2", result);
             return done(null, result);
           }
           done(null, user);
