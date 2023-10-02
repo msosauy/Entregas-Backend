@@ -19,7 +19,7 @@ export const authAdmin = (req, res, next) => {
     }
     return res
       .status(401)
-      .send({ status: "error", error: "No tienes permisos de administrador" });
+      .render("notAdmin", { style: "style.css" });
   } catch (error) {
     console.error("authAdmin", error);
   }
