@@ -22,7 +22,6 @@ form.addEventListener("submit", (event) => {
         }
         if (data.status === "error") {
           alert(data.error);
-          window.location.replace("/views/login");
         }
       });
   } catch (error) {

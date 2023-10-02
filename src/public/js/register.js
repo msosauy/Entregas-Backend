@@ -14,6 +14,7 @@ form.addEventListener("submit", (e) => {
   })
     .then((result) => result.json())
     .then((json) => {
+      console.log(json);
       if ((json.status === "success", json.success === "User registered")) {
         alert("Usuario creado correctamente");
         window.location.replace("/views/login");
@@ -23,6 +24,5 @@ form.addEventListener("submit", (e) => {
         return alert(json.error);
       }
         alert("Intentalo de nuevo");
-        window.location.replace("/views/register");
     });
 });
