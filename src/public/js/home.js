@@ -9,7 +9,8 @@ try {
   })
     .then((response) => response.json())
     .then((data) => {
-      let userInfo = `<h2> Nombre: ${data.user.first_name} - Email: ${data.user.email} - Edad: ${data.user.age} </h2>`;
+      console.log(data);
+      let userInfo = `<h2> Nombre: ${data.user.first_name} - Email: ${data.user.email} - Edad: ${data.user.age} - ROL: ${data.user.admin? "Administrador" : "Usuario"}</h2>`;
       userLogin.innerHTML = userInfo;
     });
 } catch (error) {
