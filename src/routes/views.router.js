@@ -19,6 +19,10 @@ router.get("/register", (req, res) => {
   return res.status(200).render("register", { style: "style.css" });
 });
 
+router.get("/resetpassword", (req, res) => {
+  return res.status(200).render("resetpassword", { style: "style.css" });
+});
+
 router.get("/chat", authUser, async (req, res) => {
   try {
     const data = await dbMessagesManager.getMessages();

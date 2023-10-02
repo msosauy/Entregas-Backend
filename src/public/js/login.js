@@ -17,7 +17,7 @@ form.addEventListener("submit", (event) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.status === "success") {
+        if (data.status === "success" && data.success === "Logueado correctamente") {
           window.location.replace("/views/products");
         }
         if (data.status === "error") {

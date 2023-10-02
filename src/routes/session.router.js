@@ -1,55 +1,96 @@
 import { Router } from "express";
 import { userModel } from "../dao/models/userModel.js";
+import { createHash } from "../utils.js";
+import passport from "passport";
+
 const router = Router();
 
-router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  const user = await userModel.findOne({ email, password });
-  if (!user)
+router.post(
+  "/login",
+  passport.authenticate("login", { failureRedirect: "/faillogin" }),
+  async (req, res) => {
+    if (!req.user) {
+      return res
+        .status(400)
+        .send({ status: "error", error: "Credenciales invalidas" });
+    }
+    delete req.user.password;
+    req.session.user = req.user;
     return res
-      .status(400)
-      .send({ status: "error", error: "Credenciales incorrectas" });
+      .status(200)
+      .send({ status: "success", success: "Logueado correctamente" });
+  }
+);
 
-  req.session.user = {
-    name: `${user.first_name} ${user.last_name}`,
-    email: user.email,
-    age: user.age,
-    admin: user.admin
-  };
-  return res.status(200).send({ status: "success", success: "Login OK!" });
+router.get(
+  "/github",
+  passport.authenticate("github", { scope: ["user: email"] }),
+  async (req, res) => {}
+);
+
+router.get("/githubcallback", passport.authenticate("github", {failureRedirect: "/views/login"}), async (req, res) => {
+  req.session.user = req.user;
+  res.redirect("/views/products");
+})
+
+router.get("/failLogin", (req, res) => {
+  res.send({ error: "Failed login" });
 });
 
 router.get("/logout", (req, res) => {
   req.session.destroy((error) => {
     if (!error) {
-      res.status(200).send({status: "success", success: "Logout OK"});
+      res.status(200).send({ status: "success", success: "Logout OK" });
     } else {
       res.send({ status: "Logout ERROR!", body: error });
     }
   });
 });
-
-router.post("/register", async (req, res) => {
-  const { first_name, last_name, email, age, password } = req.body;
-  const exists = await userModel.findOne({ email });
-  if (exists) {
+//si recibe false en el done pasa a failregister
+router.post(
+  "/register",
+  passport.authenticate("register", { failureRedirect: "/failregister" }),
+  async (req, res) => {
     return res
-      .status(400)
-      .send({ status: "error", error: "Ya existe usuario con ese email" });
+      .status(200)
+      .send({ status: "success", success: "Usuario registrado correctamente" });
   }
-  const user = {
-    first_name,
-    last_name,
-    email,
-    age,
-    password,
-  };
-  let result = await userModel.create(user);
-  res.send({ status: "success", success: "User registered", newUser: result });
+);
+
+router.get("/failRegister", async (req, res) => {
+  console.error("Fallo la estrategia");
+  return res.send({ error: "Falló el registro" });
+});
+
+router.post("/restorepassword", async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).send({ status: "error", error: "Faltan datos" });
+  }
+
+  const user = await userModel.findOne({ email });
+
+  if (!user) {
+    return res
+      .status(404)
+      .send({ status: "error", error: "El usuario no existe" });
+  }
+
+  const passwordHash = createHash(password);
+  const response = await userModel.updateOne(
+    { email },
+    { $set: { password: passwordHash } }
+  );
+  if (response.acknowledged === true && response.modifiedCount === 1) {
+    return res
+      .status(200)
+      .send({ status: "success", success: "Clave restablecida correctamente" });
+  }
 });
 
 router.get("/profile", (req, res) => {
-  res.send({user: req.session.user})
+  res.send({ user: req.session.user });
 });
 
 export default router;

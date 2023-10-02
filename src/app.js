@@ -12,14 +12,19 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import MongoStore from "connect-mongo";
+import passport from "passport";
+import { initializePassport } from "./config/passport.config.js";
 
 const app = express();
 const PORT = 8080;
+const mongoDbUrl =
+  "mongodb+srv://msosa:OJ9bgeMIrDF7pkEV@cluster-coder.bxbohyn.mongodb.net/ecommerce";
+const cookieSecret = "ASDfghjkl098!lp";
 
-mongoose.connect(
-  "mongodb+srv://msosa:OJ9bgeMIrDF7pkEV@cluster-coder.bxbohyn.mongodb.net/ecommerce",
-  { useNewUrlParser: true, useUnifiedTopology: true }
-);
+mongoose.connect(mongoDbUrl, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 app.engine("handlebars", handlebars.engine());
 
@@ -29,10 +34,9 @@ app.set("views", __dirname + "/views");
 app.use(
   session({
     store: MongoStore.create({
-      mongoUrl:
-        "mongodb+srv://msosa:OJ9bgeMIrDF7pkEV@cluster-coder.bxbohyn.mongodb.net/ecommerce",
+      mongoUrl: mongoDbUrl,
       mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
-      ttl: 1800,
+      ttl: 60,
     }),
     secret: "coderhouse", //usuario al que se le genera la cookie session
     resave: true, // mantiene la sesión activa aunque no haya actividad
@@ -40,7 +44,11 @@ app.use(
   })
 );
 
-app.use(cookieParser("ASDfghjkl098!lp")); // secret para firmar las cookies accedemos con req.signedCookies
+initializePassport();
+app.use(passport.initialize());
+app.use(passport.session())
+
+app.use(cookieParser(cookieSecret)); // secret para firmar las cookies accedemos con req.signedCookies
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));

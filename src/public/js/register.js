@@ -13,16 +13,28 @@ form.addEventListener("submit", (e) => {
     },
   })
     .then((result) => result.json())
+<<<<<<< HEAD
     .then((json) => {
       console.log(json);
       if ((json.status === "success", json.success === "User registered")) {
+=======
+    .then((data) => {
+      if (data.status === "success" && data.success === "Usuario registrado correctamente") {
+>>>>>>> dev
         alert("Usuario creado correctamente");
         window.location.replace("/views/login");
         return
       }
-      if (json.status === "error" && json.error === "Ya existe usuario con ese email") {
-        return alert(json.error);
+      if (data.error) {
+        alert(data.error)
+        window.location.replace("/views/register");
+        return
       }
         alert("Intentalo de nuevo");
+<<<<<<< HEAD
+=======
+        window.location.replace("/views/register");
+        return
+>>>>>>> dev
     });
 });
