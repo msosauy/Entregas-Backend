@@ -2,9 +2,11 @@ import { Router } from "express";
 import { userModel } from "../dao/models/userModel.js";
 import { createHash } from "../utils.js";
 import passport from "passport";
+import { generateToken, authToken } from "../auth/authentication.js";
 
 const router = Router();
 
+//Login passport
 router.post(
   "/login",
   passport.authenticate("login", { failureRedirect: "/faillogin" }),
@@ -15,38 +17,44 @@ router.post(
         .send({ status: "error", error: "Credenciales invalidas" });
     }
     delete req.user.password;
+    const newToken = generateToken(req.user);
     req.session.user = req.user;
-    return res
-      .status(200)
-      .send({ status: "success", success: "Logueado correctamente" });
+    return res.status(200).send({
+      status: "success",
+      success: "Logueado correctamente",
+      token: newToken,
+    });
   }
 );
 
+router.get("/current", authToken, (req, res) => {
+  delete req.user.password;
+  res.status(200).send({ status: "success", user: req.user });
+});
+
+//Login fail login
+router.get("/failLogin", (req, res) => {
+  res.send({ error: "Failed login" });
+});
+
+//Github
 router.get(
   "/github",
   passport.authenticate("github", { scope: ["user: email"] }),
   async (req, res) => {}
 );
 
-router.get("/githubcallback", passport.authenticate("github", {failureRedirect: "/views/login"}), async (req, res) => {
-  req.session.user = req.user;
-  res.redirect("/views/products");
-})
+//githubcallback
+router.get(
+  "/githubcallback",
+  passport.authenticate("github", { failureRedirect: "/views/login" }),
+  async (req, res) => {
+    req.session.user = req.user;
+    res.redirect("/views/products");
+  }
+);
 
-router.get("/failLogin", (req, res) => {
-  res.send({ error: "Failed login" });
-});
-
-router.get("/logout", (req, res) => {
-  req.session.destroy((error) => {
-    if (!error) {
-      res.status(200).send({ status: "success", success: "Logout OK" });
-    } else {
-      res.send({ status: "Logout ERROR!", body: error });
-    }
-  });
-});
-//si recibe false en el done pasa a failregister
+//Register (si recibe false en el done pasa a failregister)
 router.post(
   "/register",
   passport.authenticate("register", { failureRedirect: "/failregister" }),
@@ -57,6 +65,7 @@ router.post(
   }
 );
 
+//Register fail register
 router.get("/failRegister", async (req, res) => {
   console.error("Fallo la estrategia");
   return res.send({ error: "Falló el registro" });
@@ -91,6 +100,16 @@ router.post("/restorepassword", async (req, res) => {
 
 router.get("/profile", (req, res) => {
   res.send({ user: req.session.user });
+});
+
+router.get("/logout", (req, res) => {
+  req.session.destroy((error) => {
+    if (!error) {
+      res.status(200).send({ status: "success", success: "Logout OK" });
+    } else {
+      res.send({ status: "Logout ERROR!", body: error });
+    }
+  });
 });
 
 export default router;

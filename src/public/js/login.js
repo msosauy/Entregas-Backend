@@ -22,8 +22,22 @@ form.addEventListener("submit", (event) => {
         (response) => response.json()
       })
       .then((data) => {
-        if (data.status === "success" && data.success === "Logueado correctamente") {
-          window.location.replace("/views/products");
+        if (
+          data.status === "success" &&
+          data.success === "Logueado correctamente"
+        ) {
+          fetch("/api/cookies/setcookie/token", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${data.token}`,
+            },
+          }).then(
+            setTimeout(() => {
+              window.location.replace("/views/products");
+              // window.location.replace("/session/current");
+            }, "300")
+          );
         }
         if (data.status === "error") {
           alert(data.error);
