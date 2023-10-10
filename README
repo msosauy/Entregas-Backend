@@ -15,12 +15,12 @@ CLAVE: sjuGVQbrc6PC09Em
 
 USER: adminCoder@coder.com
 CLAVE: Cod3r123
-Privilegios: ADMIN
+Role: ADMIN
 
 
 USER: user@gmail.com
 CLAVE: user098
-Privilegios: USER
+Role: USER
 
 
 ### Privilegios:
@@ -36,3 +36,8 @@ http://localhost:8080/session/githubcallback
 
 1. Manejar error usuario y contraseña invalidos.
     error: Uncaught (in promise) SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
+
+
+
+
+La validación del token se hace en el archivo src/auth/authentication.js 

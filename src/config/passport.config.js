@@ -73,7 +73,11 @@ export const initializePassport = () => {
         try {
           let user = await userModel.findOne({ email: profile._json.name });
           if (!user) {
-            const newUser = { first_name: profile.username, userName: profile._json.login, email: profile._json.html_url, age: profile._json.public_repos };
+            const newUser = {
+              first_name: profile.username,
+              userName: profile._json.login,
+              email: profile._json.html_url,
+            };
             const result = await userModel.create(newUser);
             return done(null, result);
           }

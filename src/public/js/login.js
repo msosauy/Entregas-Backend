@@ -17,8 +17,18 @@ form.addEventListener("submit", (event) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.status === "success" && data.success === "Logueado correctamente") {
-          window.location.replace("/views/products");
+        if (
+          data.status === "success" &&
+          data.success === "Logueado correctamente"
+        ) {
+          fetch("/api/cookies/setcookie/token", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "authorization": `Bearer ${data.token}`,
+            },
+          });
+          window.location.replace("/session/current");
         }
         if (data.status === "error") {
           alert(data.error);
