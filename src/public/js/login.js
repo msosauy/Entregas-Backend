@@ -15,7 +15,12 @@ form.addEventListener("submit", (event) => {
         "Content-Type": "application/json",
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.status == 404) {
+          alert("Credenicales invalidas")
+        }
+        (response) => response.json()
+      })
       .then((data) => {
         if (
           data.status === "success" &&
