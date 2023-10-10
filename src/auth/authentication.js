@@ -8,20 +8,15 @@ export const generateToken = (user) => {
 };
 
 export const authToken = async (req, res, next) => {
-  if (req.signedCookies) {
-    next();
-    return;
-  }
 
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader) {
+  if (!req.signedCookies) {
     return res
       .status(401)
       .send({ status: "error", error: "Not authenticated" });
   }
 
-  const token = authHeader.split(" ")[1];
+  const token = req.signedCookies.authorization;
+
   jwt.verify(token, PRIVATE_KEY, (error, credentials) => {
     if (error) {
       return res.status(403).send({ status: "error", error: "Not authorized" });

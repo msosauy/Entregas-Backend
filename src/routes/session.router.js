@@ -25,12 +25,10 @@ router.post(
       token: newToken,
     });
   }
-  );
-  
-  router.get("/current", authToken, (req, res) => {
-    console.log(req.signedCookies);
-    delete req.user.password;
-    req.session.user = req.user;
+);
+
+router.get("/current", authToken, (req, res) => {
+  delete req.user.password;
   res.status(200).send({ status: "success", user: req.user });
 });
 

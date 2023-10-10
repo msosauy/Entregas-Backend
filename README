@@ -29,15 +29,7 @@ ADMIN: Ademas de tener acceso a los mismos endpoints que USER, puede eliminar, m
 
 USER: Puede acceder a todos los endpoints de "carts.router.js", de los endpoints de "products.router.js" solamente puede leer la lista de productos y hacer una busqueda por ID.
 
+## NOTAS:
 
-http://localhost:8080/session/githubcallback
-
-# TODO
-
-1. Manejar error usuario y contraseña invalidos.
-    error: Uncaught (in promise) SyntaxError: Unexpected token '<', "<!DOCTYPE "... is not valid JSON
-
-
-
-
-La validación del token se hace en el archivo src/auth/authentication.js 
+La validación del token se hace en el archivo src/auth/authentication.js
+Al loguearse con usuario y contraseña se redirige al usuario al endpoint /session/current el cual valida el token a traves de la signedCookie.

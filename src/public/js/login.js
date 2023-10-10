@@ -25,10 +25,14 @@ form.addEventListener("submit", (event) => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "authorization": `Bearer ${data.token}`,
+              authorization: `Bearer ${data.token}`,
             },
-          });
-          window.location.replace("/session/current");
+          }).then(
+            setTimeout(() => {
+              window.location.replace("/views/products");
+              // window.location.replace("/session/current");
+            }, "300")
+          );
         }
         if (data.status === "error") {
           alert(data.error);
