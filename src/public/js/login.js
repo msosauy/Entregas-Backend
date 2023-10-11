@@ -15,13 +15,11 @@ form.addEventListener("submit", (event) => {
         "Content-Type": "application/json",
       },
     })
-      .then((response) => {
-        if (response.status == 404) {
-          alert("Credenicales invalidas")
-        }
-        (response) => response.json()
-      })
+      .then((response) => response.json())
       .then((data) => {
+        if (data.status === 400) {
+          alert("Credenicales invalidas");
+        }
         if (
           data.status === "success" &&
           data.success === "Logueado correctamente"
@@ -34,9 +32,8 @@ form.addEventListener("submit", (event) => {
             },
           }).then(
             setTimeout(() => {
-              // window.location.replace("/views/products");
               window.location.replace("/session/current");
-            }, "300")
+            }, "500")
           );
         }
         if (data.status === "error") {
