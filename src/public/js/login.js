@@ -34,8 +34,8 @@ form.addEventListener("submit", (event) => {
             },
           }).then(
             setTimeout(() => {
-              window.location.replace("/views/products");
-              // window.location.replace("/session/current");
+              // window.location.replace("/views/products");
+              window.location.replace("/session/current");
             }, "300")
           );
         }
