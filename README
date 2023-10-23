@@ -1,5 +1,12 @@
-# Entrega 5
-Para iniciar la app usamos: npm start
+# Entrega 9 (Clase 27)
+
+1. Para iniciar la app usamos: 
+    Production (port 80): node src/app.js
+    Development (port 8080): node src/app.js --dev
+2. No se incluyeron los archivos de las variables de ambiente en el .gitignore para facilitar el testing.
+
+
+-------Información adicional-------
 
 ##Mongo Atlas
 
@@ -8,7 +15,6 @@ USER: msosa
 CLAVE: sjuGVQbrc6PC09Em
 
 1. En este link (localhost:8080/views/products/realtimeproducts) podemos ver, agregar y eliminar los productos en tiempo real desde MongoDB-Atlas
-
 2. En este link (localhost:8080/views/chat) podemos acceder al chat en tiempo real
 
 ### USUARIOS: 
