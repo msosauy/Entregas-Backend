@@ -14,12 +14,14 @@ import session from "express-session";
 import MongoStore from "connect-mongo";
 import passport from "passport";
 import { initializePassport } from "./config/passport.config.js";
+import env from "./config/enviroment.config.js";
+
+console.log(env);
 
 const app = express();
-const PORT = 8080;
-const mongoDbUrl =
-  "mongodb+srv://msosa:OJ9bgeMIrDF7pkEV@cluster-coder.bxbohyn.mongodb.net/ecommerce";
-const cookieSecret = "ASDfghjkl098!lp";
+const PORT = env.port;
+const mongoDbUrl = env.mongo_url
+const cookieSecret = env.cookie_secret;
 
 mongoose.connect(mongoDbUrl, {
   useNewUrlParser: true,
