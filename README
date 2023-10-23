@@ -1,7 +1,7 @@
 # Entrega 9 (Clase 27)
 
 1. Para iniciar la app usamos: 
-    Production (port 80): node src/app.js
+    Production (port 80): node src/app.js || npm start
     Development (port 8080): node src/app.js --dev
 2. No se incluyeron los archivos de las variables de ambiente en el .gitignore para facilitar el testing.
 
