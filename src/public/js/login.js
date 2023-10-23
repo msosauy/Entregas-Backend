@@ -8,7 +8,7 @@ form.addEventListener("submit", (event) => {
   data.forEach((value, key) => (obj[key] = value));
 
   try {
-    fetch("/session/login", {
+    fetch("/login", {
       method: "POST",
       body: JSON.stringify(obj),
       headers: {
