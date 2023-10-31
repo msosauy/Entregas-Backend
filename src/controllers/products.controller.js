@@ -1,4 +1,4 @@
-import DbProductManager from "../dao/db.ProductManager.js";
+import DbProductManager from "../dao/mongodb/db.ProductManager.js";
 import { emitProducts } from "../sockets/SocketHandler.js";
 
 const dbProductManager = new DbProductManager();

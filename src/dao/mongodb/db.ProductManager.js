@@ -1,4 +1,4 @@
-import { productModel } from "./models/productModel.js";
+import { productModel } from "../models/productModel.js";
 
 export default class DbProductManager {
   getProducts = async (_limit, _page, _query, _sort) => {

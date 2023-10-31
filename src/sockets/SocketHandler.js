@@ -1,8 +1,8 @@
 //EMITE en realTimeProducts, newUserConnected, messageLogs
 //ESCUCHA en addProduct, error, message, removeById, authenticated
 
-import DbProductManager from "../dao/db.ProductManager.js";
-import DbMessageManager from "../dao/db.MessagesManager.js";
+import DbProductManager from "../dao/mongodb/db.ProductManager.js";
+import DbMessageManager from "../dao/mongodb/db.MessagesManager.js";
 
 const dbProductManager = new DbProductManager();
 const dbMessageManager = new DbMessageManager();

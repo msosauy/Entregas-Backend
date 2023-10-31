@@ -1,6 +1,6 @@
 import { Router } from "express";
-import DbProductManager from "../dao/db.ProductManager.js";
-import DbMessagesManager from "../dao/db.MessagesManager.js";
+import DbProductManager from "../dao/mongodb/db.ProductManager.js";
+import DbMessagesManager from "../dao/mongodb/db.MessagesManager.js";
 import { authAdmin, authUser } from "../auth/authentication.js";
 
 const router = Router();

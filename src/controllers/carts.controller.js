@@ -1,4 +1,4 @@
-import DbCartManager from "../dao/db.CartManager.js";
+import DbCartManager from "../dao/mongodb/db.CartManager.js";
 import { cartModel } from "../dao/models/cartModel.js";
 
 const dbcartManager = new DbCartManager();
