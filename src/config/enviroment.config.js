@@ -8,7 +8,7 @@ command.parse();
 
 const enviroment = command.opts().dev;
 
-dotenv.config({path: enviroment ? "./env.development" : "./env.production"});
+dotenv.config({path: enviroment ? "./development.env" : "./production.env"});
 
 export default {
     port: process.env.PORT,

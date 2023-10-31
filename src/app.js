@@ -16,8 +16,6 @@ import passport from "passport";
 import { initializePassport } from "./config/passport.config.js";
 import env from "./config/enviroment.config.js";
 
-console.log(env);
-
 const app = express();
 const PORT = env.port;
 const mongoDbUrl = env.mongo_url
