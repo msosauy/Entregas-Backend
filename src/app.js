@@ -21,10 +21,10 @@ const PORT = env.port;
 const mongoDbUrl = env.mongo_url
 const cookieSecret = env.cookie_secret;
 
-mongoose.connect(mongoDbUrl, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+// mongoose.connect(mongoDbUrl, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
 
 app.engine("handlebars", handlebars.engine());
 

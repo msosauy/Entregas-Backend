@@ -1,7 +1,8 @@
-import DbProductManager from "../dao/mongodb/db.ProductManager.js";
+import { Products } from "../dao/factory.js";
 import { emitProducts } from "../sockets/SocketHandler.js";
 
-const dbProductManager = new DbProductManager();
+const productService = new Products();
+
 //Devuelve todos los productos o la cantidad de productos indicada con query ?limit=number
 export const getProducts = async (req, res) => {
   const _limit = +req.query.limit || 10;
@@ -10,7 +11,7 @@ export const getProducts = async (req, res) => {
   const _sort = +req.query.sort;
 
   try {
-    const products = await dbProductManager.getProducts(
+    const products = await productService.getProducts(
       _limit,
       _page,
       _query,
@@ -33,7 +34,7 @@ export const getProductById = async (req, res) => {
       .send({ status: "error", error: "searchId debe ser un numero" });
   }
 
-  const product = await dbProductManager.getProductById(searchId);
+  const product = await productService.getProductById(searchId);
 
   if (product === null) {
     return res
@@ -123,7 +124,7 @@ export const addProduct = async (req, res) => {
   }
 
   try {
-    const resultAdd = await dbProductManager.addProduct(
+    const resultAdd = await productService.addProduct(
       title,
       description,
       price,
@@ -253,13 +254,13 @@ export const updateProduct = async (req, res) => {
     return differences;
   };
 
-  const originalProduct = await dbProductManager.getProductById(__id);
+  const originalProduct = await productService.getProductById(__id);
   const toUpdateProduct = { id: __id, ...req.body };
 
   const resutlCompare = compareProduct(originalProduct, toUpdateProduct);
 
   try {
-    await dbProductManager.updateProduct(__id, resutlCompare);
+    await productService.updateProduct(__id, resutlCompare);
     return res.status(201).send({
       status: "success",
       success: "Producto actualizado correctamente",
@@ -269,13 +270,13 @@ export const updateProduct = async (req, res) => {
       .status(400)
       .send({ status: "error", error: "No se pudo actualizar el producto" });
   }
-}
+};
 // //Elimina un producto según su ID
 export const deleteProductById = async (req, res) => {
   const pid = +req.params.pid;
 
   try {
-    const result = await dbProductManager.deleteProduct(pid);
+    const result = await productService.deleteProduct(pid);
     if (result.acknowledged === true && result.deletedCount === 0) {
       return res
         .status(404)
@@ -299,4 +300,4 @@ export const deleteProductById = async (req, res) => {
       error: "No se pudo eliminar el producto",
     });
   }
-}
+};
