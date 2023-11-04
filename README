@@ -2,9 +2,10 @@
 
 1. Para iniciar la app usamos: 
     Production (port 80): node src/app.js || npm start
-    Development (port 8080): node src/app.js --dev
-2. No se incluyeron los archivos de las variables de ambiente en el .gitignore para facilitar el testing.
-
+    Development (Persistence = MONGODB (mongoDB)) (port 8080): node src/app.js --dev
+    Development (Persistence = MEMORY (file system)) (port 8080): node src/app.js --dev
+2. Se incluyeron los archivos de las variables de ambiente en el .gitignore para facilitar el testing.
+3. DTO productDTO agrega la propiedad "active: true" al crear un nuevo producto desde "localhost/views/product/realtimeproducts"
 
 -------Información adicional-------
 

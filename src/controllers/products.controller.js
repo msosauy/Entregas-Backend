@@ -1,5 +1,6 @@
 import { Products } from "../dao/factory.js";
 import { emitProducts } from "../sockets/SocketHandler.js";
+import ProductDTO from "../dao/dto/productDTO.js";
 
 const productService = new Products();
 
@@ -45,16 +46,7 @@ export const getProductById = async (req, res) => {
 };
 // //Agrega un nuevo producto
 export const addProduct = async (req, res) => {
-  let {
-    title,
-    description,
-    code,
-    price,
-    status,
-    stock,
-    category,
-    thumbnails,
-  } = req.body;
+  let { title, description, code, price, status, stock, category, thumbnails } = req.body;
 
   status = JSON.parse(status);
 
@@ -117,7 +109,7 @@ export const addProduct = async (req, res) => {
     }
   }
 
-//Chequeamos que status sea un BOOLEAN
+  //Chequeamos que status sea un BOOLEAN
   if (typeof status != "boolean") {
     return res.status(400).send({
       status: "error",
@@ -125,17 +117,21 @@ export const addProduct = async (req, res) => {
     });
   }
 
+  let productToDTO = {
+    title,
+    description,
+    price,
+    thumbnails,
+    stock,
+    status,
+    category,
+    code,
+  };
+
+  let newProduct = new ProductDTO(productToDTO);
+
   try {
-    const resultAdd = await productService.addProduct(
-      title,
-      description,
-      price,
-      thumbnails,
-      stock,
-      status,
-      category,
-      code
-    );
+    const resultAdd = await productService.addProduct(newProduct);
 
     if (resultAdd === "El codigo de producto ya existe") {
       return res.status(201).send({
@@ -146,9 +142,11 @@ export const addProduct = async (req, res) => {
 
     await emitProducts();
 
-    return res
+    if (resultAdd === "Producto agregado correctamente") {
+      return res
       .status(201)
       .send({ status: "success", success: "Producto agregado correctamente" });
+    }
   } catch (err) {
     if (err.message === "Codigo de producto existente") {
       return res

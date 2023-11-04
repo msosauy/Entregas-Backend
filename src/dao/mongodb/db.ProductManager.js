@@ -4,28 +4,44 @@ export default class DbProductManager {
   getProducts = async (_limit, _page, _query, _sort) => {
     const limit = _limit || 10;
     const page = _page || 1;
-    const query = _query? {category: _query} : null;
-    const sort = _sort? {price: _sort} : null;
+    const query = _query ? { category: _query } : null;
+    const sort = _sort ? { price: _sort } : null;
 
     let productsObj;
 
-    await productModel.paginate(query, { page, limit, sort }, (error, products) => {
-      if (error) {
-        throw new Error(error);
+    await productModel.paginate(
+      query,
+      { page, limit, sort },
+      (error, products) => {
+        if (error) {
+          throw new Error(error);
+        }
+        productsObj = {
+          status: "success",
+          payload: products.docs,
+          totalPages: products.totalPages,
+          prevPage: products.prevPage,
+          nextPage: products.nextPage,
+          page: products.page,
+          hasPrevPage: products.hasPrevPage,
+          hasNextPage: products.hasNextPage,
+          prevLink: products.hasPrevPage
+            ? `localhost:8080/api/products/?limit=${_limit}&page=${
+                products.prevPage
+              }${_query ? `&query=${_query}` : ""}${
+                _sort ? `&sort=${_sort}` : ""
+              }`
+            : null,
+          nextLink: products.hasNextPage
+            ? `localhost:8080/api/products/?limit=${_limit}&page=${
+                products.nextPage
+              }${_query ? `&query=${_query}` : ""}${
+                _sort ? `&sort=${_sort}` : ""
+              }`
+            : null,
+        };
       }
-      productsObj = {
-        status: "success",
-        payload: products.docs,
-        totalPages: products.totalPages,
-        prevPage: products.prevPage,
-        nextPage: products.nextPage,
-        page: products.page,
-        hasPrevPage: products.hasPrevPage,
-        hasNextPage: products.hasNextPage,
-        prevLink: products.hasPrevPage? `localhost:8080/api/products/?limit=${_limit}&page=${products.prevPage}${_query? `&query=${_query}` : ""}${_sort? `&sort=${_sort}` : ""}`: null,
-        nextLink: products.hasNextPage? `localhost:8080/api/products/?limit=${_limit}&page=${products.nextPage}${_query? `&query=${_query}` : ""}${_sort? `&sort=${_sort}` : ""}`: null,
-      }
-    });
+    );
     return productsObj;
   };
 
@@ -34,42 +50,38 @@ export default class DbProductManager {
     return productById;
   };
 
-  addProduct = async (
-    title,
-    description,
-    price,
-    thumbnails,
-    stock,
-    status,
-    category,
-    code
-  ) => {
+  addProduct = async (product) => {
     //verificamos que no se ingrese un producto con un codigo existente.
-    const resultCode = await productModel.findOne({ code: code });
+    const resultCode = await productModel.findOne({ code: product.code });
+
     if (resultCode !== null) {
       console.error("El codigo de producto ya existe");
-      throw new Error("El codigo de producto ya existe");
+      return "El codigo de producto ya existe";
     }
 
     //ordena todos los productos por ID de forma descendente
     const productList = await productModel.find().sort({ id: -1 });
 
-    const product = {
-      title,
-      description,
-      price,
-      thumbnails,
-      stock,
-      status,
-      category,
-      code,
+    const newProduct = {
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      thumbnails: product.thumbnails,
+      stock: product.stock,
+      status: product.status,
+      category: product.category,
+      code: product.code,
       id: productList[0].id + 1,
+      active: product.active,
     };
 
     try {
-      await productModel.insertMany(product);
+      const addResult = await productModel.insertMany(newProduct);
+      if (addResult) {
+        return "Producto agregado correctamente";
+      }
     } catch (error) {
-      console.log(error);
+      console.error("addResult db.ProductManager", error);
     }
     return;
   };

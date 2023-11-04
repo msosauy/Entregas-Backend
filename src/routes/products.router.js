@@ -12,7 +12,8 @@ router.get("/", authUser, getProducts);
 // //Busca un producto por ID por params
 router.get("/:pid", authUser, getProductById);
 // //Agrega un nuevo producto
-router.post("/", authAdmin, addProduct);
+router.post("/", addProduct);
+// router.post("/", authAdmin, addProduct);
 // //Busca un producto por ID y lo modifica
 router.put("/:pid", authAdmin, updateProduct);
 // //Elimina un producto según su ID
