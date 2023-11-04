@@ -6,6 +6,7 @@
     Development (Persistence = MEMORY (file system)) (port 8080): node src/app.js --dev
 2. Se incluyeron los archivos de las variables de ambiente en el .gitignore para facilitar el testing.
 3. DTO productDTO agrega la propiedad "active: true" al crear un nuevo producto desde "localhost/views/product/realtimeproducts"
+4. Se eleimina la información sensible en session.router.js antes de antes de degenerar el token y devolverlo al frontend.
 
 -------Información adicional-------
 
