@@ -2,6 +2,7 @@ import { Router } from "express";
 import passport from "passport";
 import { generateToken, authToken } from "../auth/authentication.js";
 import  {restorePassword} from "../controllers/session.controller.js";
+import UserDTO from "../dao/dto/userDTO.js";
 
 const router = Router();
 
@@ -27,8 +28,10 @@ router.post(
 );
 
 router.get("/current", authToken, (req, res) => {
-  delete req.user.password;
-  res.status(200).send({ status: "success", user: req.user });
+  // delete req.user.password;
+  console.log('req.user', req.user)
+  const user = new UserDTO(req.user);
+  res.status(200).send({ status: "success", user: user });
 });
 
 //Login fail login
