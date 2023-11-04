@@ -82,7 +82,27 @@ document.getElementById("addProduct").addEventListener("click", () => {
     thumbnails,
   };
 
-  socket.emit("addProduct", newProduct);
+  // socket.emit("addProduct", newProduct);
+  fetch("/api/products", {
+    method: "POST",
+    body: JSON.stringify(newProduct),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.status === "error") {
+          alert(data.error);
+      }
+
+      if (data.status === "success") {
+        alert(data.success);
+      }
+    })
+    .catch((error) => {
+      console.error("realTimeProducts.js_catch_01", error);
+    });
 });
 
 //eliminar un producto

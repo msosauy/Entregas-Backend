@@ -45,7 +45,7 @@ export const getProductById = async (req, res) => {
 };
 // //Agrega un nuevo producto
 export const addProduct = async (req, res) => {
-  const {
+  let {
     title,
     description,
     code,
@@ -56,13 +56,15 @@ export const addProduct = async (req, res) => {
     thumbnails,
   } = req.body;
 
+  status = JSON.parse(status);
+
   //Chequeamos que no falten datos requeridos
   const evaluateRequired = [
     { name: "title", value: title },
     { name: "description", value: description },
     { name: "code", value: code },
     { name: "price", value: price },
-    { name: "status", value: status },
+    { name: "status", value: JSON.parse(status) },
     { name: "stock", value: stock },
     { name: "category", value: category },
   ];
@@ -115,7 +117,7 @@ export const addProduct = async (req, res) => {
     }
   }
 
-  //Chequeamos que status sea un BOOLEAN
+//Chequeamos que status sea un BOOLEAN
   if (typeof status != "boolean") {
     return res.status(400).send({
       status: "error",

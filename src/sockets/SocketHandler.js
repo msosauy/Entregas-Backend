@@ -16,38 +16,38 @@ export const SoketHandler = (io) => {
     await emitProducts();
     await emitMessages();
     //Agrega un nuevo producto y envía nuevamente la lista de productos al socket
-    socket.on("addProduct", async (newProduct) => {
-      const {
-        title,
-        description,
-        price,
-        thumbnails,
-        stock,
-        status,
-        category,
-        code,
-      } = newProduct;
-      try {
-        await dbProductManager.addProduct(
-          title,
-          description,
-          price,
-          thumbnails,
-          stock,
-          status,
-          category,
-          code
-        );
-      } catch (error) {
-        if (error.message === "El codigo de producto ya existe") {
-          socket.emit("error", "El codigo de producto ya existe");
-          return;
-        }
-        console.log(error);
-        return;
-      }
-      await emitProducts();
-    });
+    // socket.on("addProduct", async (newProduct) => {
+    //   const {
+    //     title,
+    //     description,
+    //     price,
+    //     thumbnails,
+    //     stock,
+    //     status,
+    //     category,
+    //     code,
+    //   } = newProduct;
+    //   try {
+    //     await dbProductManager.addProduct(
+    //       title,
+    //       description,
+    //       price,
+    //       thumbnails,
+    //       stock,
+    //       status,
+    //       category,
+    //       code
+    //     );
+    //   } catch (error) {
+    //     if (error.message === "El codigo de producto ya existe") {
+    //       socket.emit("error", "El codigo de producto ya existe");
+    //       return;
+    //     }
+    //     console.log(error);
+    //     return;
+    //   }
+    //   await emitProducts();
+    // });
 
     //Elimina un producto por ID
     socket.on("removeById", async (removeId) => {
