@@ -8,7 +8,6 @@ import handlebars from "express-handlebars";
 import __dirname from "./utils.js";
 import { Server } from "socket.io";
 import { SoketHandler } from "./sockets/SocketHandler.js";
-import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import MongoStore from "connect-mongo";
@@ -20,11 +19,6 @@ const app = express();
 const PORT = env.port;
 const mongoDbUrl = env.mongo_url
 const cookieSecret = env.cookie_secret;
-
-// mongoose.connect(mongoDbUrl, {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// });
 
 app.engine("handlebars", handlebars.engine());
 

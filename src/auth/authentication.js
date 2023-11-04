@@ -31,7 +31,10 @@ export const authUser = (req, res, next) => {
     if (!req.session?.user) {
       return res.redirect("/views/login");
     }
-    next();
+    if (req.session?.user.role === "user") {
+      return next();
+    }
+    return res.status(401).render("notUser", { style: "style.css" });
   } catch (error) {
     console.error("authUser", error);
   }

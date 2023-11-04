@@ -28,8 +28,6 @@ router.post(
 );
 
 router.get("/current", authToken, (req, res) => {
-  // delete req.user.password;
-  console.log('req.user', req.user)
   const user = new UserDTO(req.user);
   res.status(200).send({ status: "success", user: user });
 });
