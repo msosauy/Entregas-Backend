@@ -4,6 +4,7 @@ import config from "../config/enviroment.config.js";
 export let Products;
 export let Carts;
 export let Messages;
+export let Tickets;
 
 switch (config.persistence) {
     case "MONGO":
@@ -15,9 +16,11 @@ switch (config.persistence) {
         const {default: DbProductManager} = await import("./mongodb/db.ProductManager.js");
         const {default: DbCartManager} = await import("./mongodb/db.CartManager.js");
         const {default: DbMessageManager} = await import("./mongodb/db.MessagesManager.js");
+        const {default: DbTicketManager} = await import("./mongodb/db.TicketManager.js");
         Products = DbProductManager;
         Carts = DbCartManager;
         Messages = DbMessageManager;
+        Tickets = DbTicketManager;
         break;
     case "MEMORY":
         console.log("Persistencia seleccionada: MEMORY");

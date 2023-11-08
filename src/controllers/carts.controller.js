@@ -1,11 +1,14 @@
 import DbCartManager from "../dao/mongodb/db.CartManager.js";
 import { Carts } from "../dao/factory.js";
 import { Products } from "../dao/factory.js";
+import { Tickets } from "../dao/factory.js";
 import { cartModel } from "../dao/models/cartModel.js";
 
 const dbcartManager = new DbCartManager();
 const carts = new Carts();
 const products = new Products();
+const tickets = new Tickets();
+
 //Crea un nuevo carrito con ID autogenerado
 export const newCart = async (req, res) => {
   try {
@@ -232,17 +235,17 @@ export const cartPurchase = async (req, res) => {
   try {
     //chequear STOCK
     const { outOfStock, orderProducts } = await carts.checkStock(cartId);
-
     //Obtener ticket de compra
     const ticketData = await carts.getTicket(orderProducts, user);
-
     //Restar stock de los productos selecionados.
     await products.updateStock(orderProducts);
-
     //Quitar los productos comprados del carrito
     for (const item of orderProducts) {
       await carts.removeProductFromCart(cartId, item._id);
     }
+    //Generar orden 
+    const isOrderDone = await tickets.generateTicket(ticketData);
+    console.log(isOrderDone);
     //Devolver un array con los ids de los productos que no pudieron comprarse
     const data = { ticketData, orderProducts, outOfStock };
     return res.status(200).send({ status: "success", success: "ok", data });
