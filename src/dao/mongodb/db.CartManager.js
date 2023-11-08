@@ -1,4 +1,6 @@
 import { cartModel } from "../models/cartModel.js";
+import { productModel } from "../models/productModel.js";
+import { generateUniqueTicketCode } from "../../controllers/ticketsController.js";
 
 export default class DbCartManager {
   getCarts = async () => {
@@ -84,7 +86,7 @@ export default class DbCartManager {
       throw new Error(error);
     }
   };
-  
+
   //Elimina todos los productos del carrito indicado por ID
   removeAllProductFromCart = async (cartId) => {
     try {
@@ -109,7 +111,7 @@ export default class DbCartManager {
       return cartUpdated;
     } catch (error) {
       console.error(error);
-      return
+      return;
     }
   };
 
@@ -128,10 +130,65 @@ export default class DbCartManager {
         return product;
       });
     } else {
-      cart.products = [...cart.products, { product: productId, quantity: newQuantity }];
+      cart.products = [
+        ...cart.products,
+        { product: productId, quantity: newQuantity },
+      ];
     }
 
     const cartUpdate = await cart.save();
     return cartUpdate;
   };
+
+  calculateTotalAmount = async (orderProducts) => {
+    try {
+      let totalAmount = 0;
+
+      for (const item of orderProducts) {
+        const product = await productModel.findById(item._id);
+        const productPrice = product.price;
+
+        totalAmount += productPrice * item.quantity;
+      }
+      return totalAmount;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  checkStock = async (cartId) => {
+    let outOfStock = [];
+    let orderProducts = [];
+
+    const cartProducts = await this.getProductsFromCartId(cartId);
+
+    for (const item of cartProducts) {
+      const product = await productModel.findById(item.product);
+      if (item.quantity > product.stock) {
+        outOfStock.push(product);
+      } else {
+        orderProducts.push({
+          _id: product._id,
+          code: product.code,
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          quantity: item.quantity,
+        });
+      }
+    }
+    return { outOfStock, orderProducts };
+  };
+
+  getTicket = async (orderProducts, user) => {
+    const ticketData = {
+      code: generateUniqueTicketCode(),
+      purchase_datetime: new Date(),
+      amount: await this.calculateTotalAmount(orderProducts),
+      purchaser: user.email,
+    };
+    return ticketData;
+  };
+
+  
 }

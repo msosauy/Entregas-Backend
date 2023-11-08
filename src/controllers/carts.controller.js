@@ -1,7 +1,11 @@
 import DbCartManager from "../dao/mongodb/db.CartManager.js";
+import { Carts } from "../dao/factory.js";
+import { Products } from "../dao/factory.js";
 import { cartModel } from "../dao/models/cartModel.js";
 
 const dbcartManager = new DbCartManager();
+const carts = new Carts();
+const products = new Products();
 //Crea un nuevo carrito con ID autogenerado
 export const newCart = async (req, res) => {
   try {
@@ -219,4 +223,34 @@ export const updateProductQuantity = async (req, res) => {
     console.error(error);
     return;
   }
+};
+//Cerrar compra
+export const cartPurchase = async (req, res) => {
+  const cartId = +req.params.cid;
+  const user = req.session.user;
+
+  try {
+    //chequear STOCK
+    const { outOfStock, orderProducts } = await carts.checkStock(cartId);
+
+    //Obtener ticket de compra
+    const ticketData = await carts.getTicket(orderProducts, user);
+
+    //Restar stock de los productos selecionados.
+    await products.updateStock(orderProducts);
+
+    //Quitar los productos comprados del carrito
+    for (const item of orderProducts) {
+      const removeProducts = await carts.removeProductFromCart(cartId, item_id);
+      console.log("removeProducts", removeProducts);
+    }
+    //Devolver un array con los ids de los productos que no pudieron comprarse
+
+    //Si todos los articulos tienen stock disponible generar tickets con la compra
+    const data = { ticketData, orderProducts, outOfStock };
+    return res.status(200).send({ status: "success", success: "ok", data });
+  } catch (error) {
+    console.error("carts.controller.js_01", error);
+  }
+
 };

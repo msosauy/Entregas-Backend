@@ -30,7 +30,7 @@ app.use(
     store: MongoStore.create({
       mongoUrl: mongoDbUrl,
       mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
-      ttl: 60,
+      ttl: 3600,
     }),
     secret: "coderhouse", //usuario al que se le genera la cookie session
     resave: true, // mantiene la sesión activa aunque no haya actividad

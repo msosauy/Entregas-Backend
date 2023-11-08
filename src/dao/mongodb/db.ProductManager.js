@@ -98,7 +98,7 @@ export default class DbProductManager {
           objUpdate
         );
         if (productResponse.acknowledged === false) {
-          console.log(`No se pudo actualizar el campo ${objUpdate}`);
+          console.error(`No se pudo actualizar el campo ${objUpdate}`);
         }
       }
     });
@@ -110,5 +110,21 @@ export default class DbProductManager {
       throw new Error("El articulo no existe");
     }
     return result;
+  };
+
+  //Recibe un array de productos (utiliza _id & quantity)
+  updateStock = async (orderProducts) => {
+    for (const item of orderProducts) {
+      let productToUpdate = await productModel.findById(item._id);
+      const newStock = productToUpdate.stock - item.quantity;
+
+      const updateResponse = await productModel.updateOne(
+        {_id: item._id},{stock: newStock}
+      );
+
+      if (updateResponse.acknowledged === false) {
+        console.error(`No se pudo actualizar el stock del producto ${item._id}`);
+      };
+    }
   };
 }

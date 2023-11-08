@@ -7,7 +7,8 @@ import {
   removeProductByIdFromCartById,
   removeAllProductFromCart,
   updateCartProducts,
-  updateProductQuantity
+  updateProductQuantity,
+  cartPurchase
 } from "../controllers/carts.controller.js";
 
 const router = Router();
@@ -36,5 +37,7 @@ router.put("/:cid", authUser, updateCartProducts );
 
 //actualiza la cantidad del producto indicado
 router.put("/:cid/product/:pid",  authUser, updateProductQuantity );
+
+router.post("/:cid/purchase", authUser, cartPurchase)
 
 export default router;

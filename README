@@ -8,6 +8,8 @@
 3. DTO productDTO agrega la propiedad "active: true" al crear un nuevo producto desde "localhost/views/product/realtimeproducts"
 4. Se eleimina la información sensible en session.router.js antes de devolverlo al frontend a traves del userDTO.js.
 
+5. Se agrego el psot /:cid/purchase al que solamente puede acceder un cliente con role : user.
+
 -------Información adicional-------
 
 ##Mongo Atlas
