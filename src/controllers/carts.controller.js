@@ -237,18 +237,22 @@ export const cartPurchase = async (req, res) => {
     const { outOfStock, orderProducts } = await carts.checkStock(cartId);
     //Obtener ticket de compra
     const ticketData = await carts.getTicket(orderProducts, user);
-    //Restar stock de los productos selecionados.
-    await products.updateStock(orderProducts);
-    //Quitar los productos comprados del carrito
-    for (const item of orderProducts) {
-      await carts.removeProductFromCart(cartId, item._id);
-    }
-    //Generar orden 
+    //Generar orden
     const isOrderDone = await tickets.generateTicket(ticketData);
-    console.log(isOrderDone);
-    //Devolver un array con los ids de los productos que no pudieron comprarse
-    const data = { ticketData, orderProducts, outOfStock };
-    return res.status(200).send({ status: "success", success: "ok", data });
+    if (isOrderDone) {
+      //Restar stock de los productos selecionados.
+      await products.updateStock(orderProducts);
+      //Quitar los productos comprados del carrito
+      for (const item of orderProducts) {
+        await carts.removeProductFromCart(cartId, item._id);
+      }
+      //Devolver un array con los ids de los productos que no pudieron comprarse
+      const data = { ticketData, orderProducts, outOfStock };
+      return res.status(200).send({ status: "success", success: "ok", data });
+    }
+    return res
+      .status(400)
+      .send({ status: "error", error: "No se pudo cerrar la compra" });
   } catch (error) {
     console.error("carts.controller.js_01", error);
     return res.status(500).send({ status: "success", error: error });
