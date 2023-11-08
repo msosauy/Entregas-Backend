@@ -241,16 +241,13 @@ export const cartPurchase = async (req, res) => {
 
     //Quitar los productos comprados del carrito
     for (const item of orderProducts) {
-      const removeProducts = await carts.removeProductFromCart(cartId, item_id);
-      console.log("removeProducts", removeProducts);
+      await carts.removeProductFromCart(cartId, item._id);
     }
     //Devolver un array con los ids de los productos que no pudieron comprarse
-
-    //Si todos los articulos tienen stock disponible generar tickets con la compra
     const data = { ticketData, orderProducts, outOfStock };
     return res.status(200).send({ status: "success", success: "ok", data });
   } catch (error) {
     console.error("carts.controller.js_01", error);
+    return res.status(500).send({ status: "success", error: error });
   }
-
 };

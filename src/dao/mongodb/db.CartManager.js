@@ -67,20 +67,19 @@ export default class DbCartManager {
   //Elimina un producto del carrito indicado por ID
   removeProductFromCart = async (cartId, productId) => {
     try {
-      const cart = await cartModel.findOne({ id: cartId });
-      const doesProductExist = await cart.products.some(
-        (product) => product.product == productId
-      );
+      const doesProductExist = await cartModel.findOne({
+        id: cartId,
+        "products.product": productId,
+      });
 
-      if (!doesProductExist) {
-        return "El producto no existe en este carrito";
+      if (doesProductExist) {
+        const remove = await cartModel.updateOne(
+          { id: cartId },
+          { $pull: { products: { product: productId } } }
+        );
+        return remove;
       }
-
-      const remove = await cartModel.updateOne(
-        { id: cartId },
-        { $pull: { products: { product: productId } } }
-      );
-      return remove;
+      return "El producto no existe en este carrito";
     } catch (error) {
       console.error("db.CartManager.js", error);
       throw new Error(error);
@@ -141,19 +140,15 @@ export default class DbCartManager {
   };
 
   calculateTotalAmount = async (orderProducts) => {
-    try {
-      let totalAmount = 0;
+    let totalAmount = 0;
 
-      for (const item of orderProducts) {
-        const product = await productModel.findById(item._id);
-        const productPrice = product.price;
+    for (const item of orderProducts) {
+      const product = await productModel.findById(item._id);
+      const productPrice = product.price;
 
-        totalAmount += productPrice * item.quantity;
-      }
-      return totalAmount;
-    } catch (error) {
-      throw error;
+      totalAmount += productPrice * item.quantity;
     }
+    return totalAmount;
   };
 
   checkStock = async (cartId) => {
@@ -189,6 +184,4 @@ export default class DbCartManager {
     };
     return ticketData;
   };
-
-  
 }
