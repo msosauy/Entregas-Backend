@@ -1,6 +1,7 @@
 import { Products } from "../dao/factory.js";
 import { emitProducts } from "../sockets/SocketHandler.js";
 import ProductDTO from "../dao/dto/productDTO.js";
+import { generateProduct } from "../utils.js";
 
 const productService = new Products();
 
@@ -300,4 +301,12 @@ export const deleteProductById = async (req, res) => {
       error: "No se pudo eliminar el producto",
     });
   }
+};
+//Mocking products
+export const mockingProducts = (req, res) => {
+  const products = [];
+  for (let i = 0; i < 100; i++) {
+    products.push(generateProduct())
+  }
+  res.send({status: "success", payload: products});
 };

@@ -1,6 +1,25 @@
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import bcrypt from "bcrypt";
+import { fakerES_MX } from "@faker-js/faker";
+
+const faker = fakerES_MX;
+
+export const generateProduct = () => {
+  return {
+    _id: faker.database.mongodbObjectId(),
+    id: faker.string.nanoid({ max: 101, min: 1 }),
+    title: faker.commerce.productName(),
+    description: faker.commerce.productDescription(),
+    price: +faker.commerce.price(),
+    stock: +faker.string.numeric(2),
+    status: true,
+    category: faker.commerce.productAdjective(),
+    code: faker.string.alphanumeric(5),
+    thumbnails: [faker.image.image(), faker.image.image()],
+    active: true,
+  };
+};
 
 const __fileName = fileURLToPath(import.meta.url);
 const __dirname = dirname(__fileName);
