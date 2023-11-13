@@ -160,7 +160,14 @@ export default class DbCartManager {
     for (const item of cartProducts) {
       const product = await productModel.findById(item.product);
       if (item.quantity > product.stock) {
-        outOfStock.push(product);
+        outOfStock.push({
+          _id: product._id,
+          code: product.code,
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          quantity: item.quantity,
+        });
       } else {
         orderProducts.push({
           _id: product._id,

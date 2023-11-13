@@ -59,4 +59,12 @@ router.get("/products/realtimeproducts", authAdmin, async (req, res) => {
   }
 });
 
+router.get("/carts/cart", authUser, async (req, res) => {
+  try {
+    return res.render("cart", {style: "style.css"});
+  } catch (error) {
+    console.error(error);
+  }
+});
+
 export default router;
