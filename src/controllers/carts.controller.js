@@ -269,12 +269,15 @@ export const getCartFromUser = async (req, res) => {
   const user = req.user;
 
   let orderProducts = [];
-
+  let cartId;
+  
   try {
     const cartFromUser = await users.getCartFromUser(user); //Obtenemos el _id del carrito desde el usuario
     const cartProducts = await carts.getProductsFromCartId(
       cartFromUser.cart.id
     ); //Obtenemos los productos de ese carrito
+
+    cartId = cartFromUser.cart.id;
     
     for (const item of cartProducts) {
       const product = await productModel.findById(item.product);
@@ -289,7 +292,7 @@ export const getCartFromUser = async (req, res) => {
     }
     const totalAmount = await carts.calculateTotalAmount(orderProducts);
 
-    const payload = {orderProducts, totalAmount}
+    const payload = {orderProducts, totalAmount, cartId}
     
     return res.status(200).send({ status: "success", payload });
   } catch (error) {

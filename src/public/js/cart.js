@@ -6,6 +6,7 @@ fetch("/api/carts/getcartfromuser", {
   .then((data) => {
     let productsList = document.getElementById("ulProducts");
     let totalAmount = document.getElementById("totalAmount");
+    let buyButton = document.getElementById("buyButton");
 
     let returnList = "";
 
@@ -16,6 +17,7 @@ fetch("/api/carts/getcartfromuser", {
 
     productsList.innerHTML = returnList;
     totalAmount.innerHTML = `TOTAL: U$S ${data.payload.totalAmount}`;
+    buyButton.innerHTML = `<a href=/api/carts/${data.payload.cartId}/purchase//>COMPRAR</a>`;
   })
   .catch((error) => {
     console.error(error);
