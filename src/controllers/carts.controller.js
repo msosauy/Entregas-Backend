@@ -236,7 +236,7 @@ export const updateProductQuantity = async (req, res) => {
 //Cerrar compra
 export const cartPurchase = async (req, res) => {
   const cartId = +req.params.cid;
-  const user = req.session.user;
+  const user = req.user;
 
   try {
     //chequear STOCK

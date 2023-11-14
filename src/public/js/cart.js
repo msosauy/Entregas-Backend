@@ -17,7 +17,7 @@ fetch("/api/carts/getcartfromuser", {
 
     productsList.innerHTML = returnList;
     totalAmount.innerHTML = `TOTAL: U$S ${data.payload.totalAmount}`;
-    buyButton.innerHTML = `<a href=/api/carts/${data.payload.cartId}/purchase//>COMPRAR</a>`;
+    buyButton.innerHTML = `<a href=/api/carts/${data.payload.cartId}/purchase>COMPRAR</a>`;
   })
   .catch((error) => {
     console.error(error);
