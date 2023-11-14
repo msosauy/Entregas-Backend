@@ -1,7 +1,6 @@
 fetch("/api/carts/1/purchase", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
-  //   authorization: `Bearer ${data.token}`,
 })
   .then((response) => response.json())
   .then((data) => {

@@ -67,10 +67,8 @@ router.get("/cart", authUser, async (req, res) => {
   }
 });
 
-router.get("/cartorder/", authUser, async (req, res) => {
-  const user = req.user;
-  console.log(user);
-  return res.render("cartOrder", {style: "style.css"})
+router.get("/cartpurchase/", authUser, async (req, res) => {
+  return res.render("cartPurchase", {style: "style.css"})
 });
 
 export default router;

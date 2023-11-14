@@ -16,7 +16,17 @@ export default class DbUserManager {
         return false
     };
 
-    getCartFromUser = async (user) => {
+    existCart = async (user) => {
+        const mongoUser = await userModel.findById(user._id);
+
+        if (mongoUser.cart[0]) {
+            throw new Error("El usuario ya tiene un carrito abierto");
+        }
         console.log(user);
+    };
+
+    getCartFromUser = async (user) => {
+        const mongoUser = await userModel.findById(user._id).populate("cart.cart");
+        return mongoUser.cart[0];
     };
 }

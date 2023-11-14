@@ -27,6 +27,8 @@ export default class DbCartManager {
         // products: [], no es necesario agregar el array vacío ya que mongoose lo crea por defecto
       };
 
+      await userManager.existCart(user) //Si el usuario tiene un carrito en proceso no se crea el nuevo carrito
+      
       const result = await cartModel.create(cart);
 
       const addCartToUser = await userManager.addCartToUser(
