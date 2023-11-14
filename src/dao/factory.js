@@ -5,6 +5,7 @@ export let Products;
 export let Carts;
 export let Messages;
 export let Tickets;
+export let Users;
 
 switch (config.persistence) {
     case "MONGO":
@@ -17,10 +18,12 @@ switch (config.persistence) {
         const {default: DbCartManager} = await import("./mongodb/db.CartManager.js");
         const {default: DbMessageManager} = await import("./mongodb/db.MessagesManager.js");
         const {default: DbTicketManager} = await import("./mongodb/db.TicketManager.js");
+        const {default: DbUserManager} = await import("./mongodb/db.UserManager.js");
         Products = DbProductManager;
         Carts = DbCartManager;
         Messages = DbMessageManager;
         Tickets = DbTicketManager;
+        Users = DbUserManager;
         break;
     case "MEMORY":
         console.log("Persistencia seleccionada: MEMORY");

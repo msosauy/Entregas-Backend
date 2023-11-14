@@ -10,6 +10,10 @@
 
 5. Se agrego el psot /:cid/purchase al que solamente puede acceder un cliente con role : user.
 
+6. Agregué un campo "tickets" al modelo de "user" para guardar el id del ticket que genere con la compra.
+
+7. En el caso de que se intente agergar un nuevo carrito a un usario que ya tenga uno sin cerrar, se devolverá el error "El usuario ya tiene un carrito abierto".
+
 -------Información adicional-------
 
 ##Mongo Atlas

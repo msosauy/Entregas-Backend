@@ -2,17 +2,19 @@ import DbCartManager from "../dao/mongodb/db.CartManager.js";
 import { Carts } from "../dao/factory.js";
 import { Products } from "../dao/factory.js";
 import { Tickets } from "../dao/factory.js";
+import { Users } from "../dao/factory.js";
 import { cartModel } from "../dao/models/cartModel.js";
 
 const dbcartManager = new DbCartManager();
 const carts = new Carts();
 const products = new Products();
 const tickets = new Tickets();
+const users = new Users();
 
 //Crea un nuevo carrito con ID autogenerado
 export const newCart = async (req, res) => {
   try {
-    const newCartId = await dbcartManager.newCart();
+    const newCartId = await dbcartManager.newCart(req.user);
     return res.status(200).send({
       status: "success",
       success: `Nuevo carrito creado correctamente, ID: ${newCartId.id}, MongoID:${newCartId._id}`,
@@ -22,6 +24,11 @@ export const newCart = async (req, res) => {
       return res
         .status(500)
         .send({ status: "error", error: "No se pudo crear el nuevo carrito" });
+    }
+    if (error.message) {
+      return res
+        .status(500)
+        .send({ status: "error", error: error.message });
     }
     return res.status(500).send({ status: "error", error: "Algo salió mal" });
   }
@@ -239,18 +246,18 @@ export const cartPurchase = async (req, res) => {
     //Obtener ticket de compra
     const ticketData = await carts.getTicket(orderProducts, user);
     //Generar orden
-    // const isOrderDone = await tickets.generateTicket(ticketData);
-    // if (isOrderDone) {
-    //   //Restar stock de los productos selecionados.
-    //   await products.updateStock(orderProducts);
-    //   //Quitar los productos comprados del carrito
-    //   for (const item of orderProducts) {
-    //     await carts.removeProductFromCart(cartId, item._id);
-    //   }
-    //   //Devolver un array con los ids de los productos que no pudieron comprarse
-    // }
-    const data = { ticketData, orderProducts, outOfStock };
-    return res.status(200).send({ status: "success", success: "ok", data });
+    const isOrderDone = await tickets.generateTicket(ticketData);
+    if (isOrderDone) {
+      //Restar stock de los productos selecionados.
+      await products.updateStock(orderProducts);
+      //Quitar los productos comprados del carrito
+      for (const item of orderProducts) {
+        await carts.removeProductFromCart(cartId, item._id);
+      }
+      //Devolver un array con los ids de los productos que no pudieron comprarse
+      const data = { ticketData, orderProducts, outOfStock };
+      return res.status(200).send({ status: "success", success: "ok", data });
+    }
     return res
       .status(400)
       .send({ status: "error", error: "No se pudo cerrar la compra" });
@@ -258,4 +265,11 @@ export const cartPurchase = async (req, res) => {
     console.error("carts.controller.js_01", error);
     return res.status(500).send({ status: "success", error: error });
   }
+};
+
+export const getCartFromUser = async (req, res) => {
+  const user = req.user;
+
+  const getCartId = await users.getCartFromUser(user);
+  return res.send("OK")
 };

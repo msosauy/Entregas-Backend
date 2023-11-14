@@ -8,7 +8,8 @@ import {
   removeAllProductFromCart,
   updateCartProducts,
   updateProductQuantity,
-  cartPurchase
+  cartPurchase,
+  getCartFromUser
 } from "../controllers/carts.controller.js";
 
 const router = Router();
@@ -19,6 +20,9 @@ router.use((req, res, next) => {
 
 //Crea un nuevo carrito con ID autogenerado
 router.post("/", authUser, newCart);
+
+//Devuelve el carrito de un usuario
+router.get("/getcartfromuser", authUser, getCartFromUser);
 
 //Devuelve todos los productos de un carrito según su ID por params
 router.get("/:cid", authUser, getProdByIdByCartId);
@@ -38,6 +42,7 @@ router.put("/:cid", authUser, updateCartProducts );
 //actualiza la cantidad del producto indicado
 router.put("/:cid/product/:pid",  authUser, updateProductQuantity );
 
-router.post("/:cid/purchase", authUser, cartPurchase)
+router.post("/:cid/purchase", authUser, cartPurchase);
+
 
 export default router;

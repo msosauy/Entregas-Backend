@@ -12,16 +12,28 @@ const schema = new mongoose.Schema({
   cart: {
     type: [
       {
-        product: {
+        cart: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "carts",
-        }
+        },
       },
     ],
     default: [],
     _id: false,
   },
   role: { type: String, default: "user" },
+  tickets: {
+    type: [
+      {
+        ticket: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "tickets",
+        },
+      },
+    ],
+    default: [],
+    _id: false,
+  },
 });
 
 export const userModel = mongoose.model(collection, schema);

@@ -59,12 +59,18 @@ router.get("/products/realtimeproducts", authAdmin, async (req, res) => {
   }
 });
 
-router.get("/carts/cart", authUser, async (req, res) => {
+router.get("/cart", authUser, async (req, res) => {
   try {
     return res.render("cart", {style: "style.css"});
   } catch (error) {
     console.error(error);
   }
+});
+
+router.get("/cartorder/", authUser, async (req, res) => {
+  const user = req.user;
+  console.log(user);
+  return res.render("cartOrder", {style: "style.css"})
 });
 
 export default router;
