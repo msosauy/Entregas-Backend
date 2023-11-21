@@ -2,7 +2,7 @@ import { Router } from "express";
 import { authUser, authAdmin } from "../auth/authentication.js";
 import { getProducts, getProductById, addProduct, updateProduct, deleteProductById, mockingProducts } from "../controllers/products.controller.js";
 
-export const router = Router();
+const router = Router();
 
 router.use((req, res, next) => {
   next();

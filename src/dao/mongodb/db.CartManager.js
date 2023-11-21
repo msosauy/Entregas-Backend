@@ -1,6 +1,9 @@
 import { cartModel } from "../models/cartModel.js";
 import { productModel } from "../models/productModel.js";
 import { generateUniqueTicketCode } from "../../controllers/ticketsController.js";
+import DbUserManager from "../mongodb/db.UserManager.js";
+
+const userManager = new DbUserManager();
 
 export default class DbCartManager {
   getCarts = async () => {
@@ -8,7 +11,7 @@ export default class DbCartManager {
   };
 
   //Crea un nuevo carrito con ID autogenerado
-  newCart = async () => {
+  newCart = async (user) => {
     try {
       const cartList = await cartModel.find().sort({ id: -1 });
 
@@ -24,11 +27,21 @@ export default class DbCartManager {
         // products: [], no es necesario agregar el array vacío ya que mongoose lo crea por defecto
       };
 
+      await userManager.existCart(user) //Si el usuario tiene un carrito en proceso no se crea el nuevo carrito
+      
       const result = await cartModel.create(cart);
-      return result;
+
+      const addCartToUser = await userManager.addCartToUser(
+        user._id,
+        result._id
+      );
+
+      if (addCartToUser) {
+        return result;
+      }
     } catch (error) {
-      console.error(error);
-      throw new Error("No se pudo crear el carrito");
+      console.error("asd", error);
+      throw new Error(error);
     }
   };
 
@@ -160,7 +173,14 @@ export default class DbCartManager {
     for (const item of cartProducts) {
       const product = await productModel.findById(item.product);
       if (item.quantity > product.stock) {
-        outOfStock.push(product);
+        outOfStock.push({
+          _id: product._id,
+          code: product.code,
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          quantity: item.quantity,
+        });
       } else {
         orderProducts.push({
           _id: product._id,

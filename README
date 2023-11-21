@@ -10,6 +10,10 @@
 CORRECCIONES de TUTOR: 
 1. Se agregó un cart.handlebars para la vista del carrito y la compra.
 2. Se agregó el envío de mail al cerra la compra.
+6. Agregué un campo "tickets" al modelo de "user" para guardar el id del ticket que genere con la compra.
+
+7. En el caso de que se intente agergar un nuevo carrito a un usario que ya tenga uno sin cerrar, se devolverá el error "El usuario ya tiene un carrito abierto".
+
 -------Información adicional-------
 
 ##Mongo Atlas
@@ -31,6 +35,10 @@ Role: ADMIN
 USER: user@gmail.com
 CLAVE: user098
 Role: USER
+
+### CLAVE GOOGLE GMAIL
+
+ifpp omlx zwzb rmoc
 
 
 ### Privilegios:

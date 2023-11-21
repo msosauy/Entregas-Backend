@@ -2,17 +2,21 @@ import DbCartManager from "../dao/mongodb/db.CartManager.js";
 import { Carts } from "../dao/factory.js";
 import { Products } from "../dao/factory.js";
 import { Tickets } from "../dao/factory.js";
+import { Users } from "../dao/factory.js";
 import { cartModel } from "../dao/models/cartModel.js";
+import { productModel } from "../dao/models/productModel.js";
+import { sendMail } from "../controllers/notification.controller.js";
 
 const dbcartManager = new DbCartManager();
 const carts = new Carts();
 const products = new Products();
 const tickets = new Tickets();
+const users = new Users();
 
 //Crea un nuevo carrito con ID autogenerado
 export const newCart = async (req, res) => {
   try {
-    const newCartId = await dbcartManager.newCart();
+    const newCartId = await dbcartManager.newCart(req.user);
     return res.status(200).send({
       status: "success",
       success: `Nuevo carrito creado correctamente, ID: ${newCartId.id}, MongoID:${newCartId._id}`,
@@ -22,6 +26,9 @@ export const newCart = async (req, res) => {
       return res
         .status(500)
         .send({ status: "error", error: "No se pudo crear el nuevo carrito" });
+    }
+    if (error.message) {
+      return res.status(500).send({ status: "error", error: error.message });
     }
     return res.status(500).send({ status: "error", error: "Algo salió mal" });
   }
@@ -230,7 +237,7 @@ export const updateProductQuantity = async (req, res) => {
 //Cerrar compra
 export const cartPurchase = async (req, res) => {
   const cartId = +req.params.cid;
-  const user = req.session.user;
+  const user = req.user;
 
   try {
     //chequear STOCK
@@ -246,15 +253,55 @@ export const cartPurchase = async (req, res) => {
       for (const item of orderProducts) {
         await carts.removeProductFromCart(cartId, item._id);
       }
+
+      
       //Devolver un array con los ids de los productos que no pudieron comprarse
       const data = { ticketData, orderProducts, outOfStock };
+      //Envío de mail 
+      const mailSent = await sendMail(data);
+
       return res.status(200).send({ status: "success", success: "ok", data });
     }
     return res
       .status(400)
-      .send({ status: "error", error: "No se pudo cerrar la compra" });
+      .send({ status: "error", error: "No se pudo cerrar la compra, vuelva a intentarlo" });
   } catch (error) {
     console.error("carts.controller.js_01", error);
     return res.status(500).send({ status: "success", error: error });
+  }
+};
+
+export const getCartFromUser = async (req, res) => {
+  const user = req.user;
+
+  let orderProducts = [];
+  let cartId;
+  
+  try {
+    const cartFromUser = await users.getCartFromUser(user); //Obtenemos el _id del carrito desde el usuario
+    const cartProducts = await carts.getProductsFromCartId(
+      cartFromUser.cart.id
+    ); //Obtenemos los productos de ese carrito
+
+    cartId = cartFromUser.cart.id;
+    
+    for (const item of cartProducts) {
+      const product = await productModel.findById(item.product);
+      orderProducts.push({
+        _id: product._id,
+        code: product.code,
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        quantity: item.quantity,
+      });
+    }
+    const totalAmount = await carts.calculateTotalAmount(orderProducts);
+
+    const payload = {orderProducts, totalAmount, cartId}
+    
+    return res.status(200).send({ status: "success", payload });
+  } catch (error) {
+    return res.status(400).send({ status: "error", error: error.message });
   }
 };
