@@ -10,7 +10,6 @@ const transport = nodemailer.createTransport({
 });
 
 export const sendMail = async (data) => {
-    console.log(data.ticketData.purchaser);
   const result = await transport.sendMail({
     from: `Coder test <pruebacoder@yopmail.com>`,
     to: data.ticketData.purchaser,
@@ -26,4 +25,5 @@ export const sendMail = async (data) => {
             `,
     attachments: [],
   });
+  return result
 };

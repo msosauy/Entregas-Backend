@@ -5,7 +5,7 @@ import { Tickets } from "../dao/factory.js";
 import { Users } from "../dao/factory.js";
 import { cartModel } from "../dao/models/cartModel.js";
 import { productModel } from "../dao/models/productModel.js";
-import { sendMail } from "../notifications/notification.js";
+import { sendMail } from "../controllers/notification.controller.js";
 
 const dbcartManager = new DbCartManager();
 const carts = new Carts();
@@ -264,7 +264,7 @@ export const cartPurchase = async (req, res) => {
     }
     return res
       .status(400)
-      .send({ status: "error", error: "No se pudo cerrar la compra" });
+      .send({ status: "error", error: "No se pudo cerrar la compra, vuelva a intentarlo" });
   } catch (error) {
     console.error("carts.controller.js_01", error);
     return res.status(500).send({ status: "success", error: error });
