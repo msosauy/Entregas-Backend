@@ -6,15 +6,17 @@ const transport = nodemailer.createTransport({
   service: "gmail",
   port: 587,
   auth: {
-    user: "uy.msosa@dmail.com",
+    user: "uy.msosa@gmail.com",
     pass: "ifpp omlx zwzb rmoc",
   },
 });
 
 router.get("/mail", async (req, res) => {
+  const body = req.body;
+  
   const result = await transport.sendMail({
     from: `Coder test <pruebacoder@yopmail.com>`,
-    to: `pruebacoder@yopmail.com`,
+    to: `pruebacoder1@yopmail.com`,
     subject: `Correo de prueba`,
     html: `
     <div>

@@ -5,6 +5,7 @@ import { Tickets } from "../dao/factory.js";
 import { Users } from "../dao/factory.js";
 import { cartModel } from "../dao/models/cartModel.js";
 import { productModel } from "../dao/models/productModel.js";
+import { sendMail } from "../notifications/notification.js";
 
 const dbcartManager = new DbCartManager();
 const carts = new Carts();
@@ -252,8 +253,13 @@ export const cartPurchase = async (req, res) => {
       for (const item of orderProducts) {
         await carts.removeProductFromCart(cartId, item._id);
       }
+
+      
       //Devolver un array con los ids de los productos que no pudieron comprarse
       const data = { ticketData, orderProducts, outOfStock };
+      //Envío de mail 
+      const mailSent = await sendMail(data);
+
       return res.status(200).send({ status: "success", success: "ok", data });
     }
     return res
