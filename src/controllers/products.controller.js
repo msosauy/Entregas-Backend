@@ -2,6 +2,9 @@ import { Products } from "../dao/factory.js";
 import { emitProducts } from "../sockets/SocketHandler.js";
 import ProductDTO from "../dao/dto/productDTO.js";
 import { generateProduct } from "../utils.js";
+import CustomError from "../services/errors/CustomError.js";
+import EErrors from "../services/errors/enums.js";
+import {generateAddProductErrorInfo} from "../services/errors/info.js";
 
 const productService = new Products();
 
@@ -47,7 +50,8 @@ export const getProductById = async (req, res) => {
 };
 // //Agrega un nuevo producto
 export const addProduct = async (req, res) => {
-  let { title, description, code, price, status, stock, category, thumbnails } = req.body;
+  let { title, description, code, price, status, stock, category, thumbnails } =
+    req.body;
 
   status = JSON.parse(status);
 
@@ -112,9 +116,14 @@ export const addProduct = async (req, res) => {
 
   //Chequeamos que status sea un BOOLEAN
   if (typeof status != "boolean") {
-    return res.status(400).send({
-      status: "error",
-      error: "STATUS debe ser un boolean",
+    // return res.status(400).send({
+    //   status: "error",
+    //   error: "STATUS debe ser un boolean",
+    // });
+    CustomError.cerateError({
+      message: "STATUS debe ser un boolean",
+      code: EErrors.INVALID_TYPES_ERROR,
+      cause: generateAddProductErrorInfo({title, description, code, price, status, stock, category, thumbnails})
     });
   }
 
@@ -145,8 +154,11 @@ export const addProduct = async (req, res) => {
 
     if (resultAdd === "Producto agregado correctamente") {
       return res
-      .status(201)
-      .send({ status: "success", success: "Producto agregado correctamente" });
+        .status(201)
+        .send({
+          status: "success",
+          success: "Producto agregado correctamente",
+        });
     }
   } catch (err) {
     if (err.message === "Codigo de producto existente") {
@@ -306,7 +318,7 @@ export const deleteProductById = async (req, res) => {
 export const mockingProducts = (req, res) => {
   const products = [];
   for (let i = 0; i < 100; i++) {
-    products.push(generateProduct())
+    products.push(generateProduct());
   }
-  res.send({status: "success", payload: products});
+  res.send({ status: "success", payload: products });
 };

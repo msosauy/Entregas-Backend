@@ -119,12 +119,15 @@ export default class DbProductManager {
       const newStock = productToUpdate.stock - item.quantity;
 
       const updateResponse = await productModel.updateOne(
-        {_id: item._id},{stock: newStock}
+        { _id: item._id },
+        { stock: newStock }
       );
 
       if (updateResponse.acknowledged === false) {
-        console.error(`No se pudo actualizar el stock del producto ${item._id}`);
-      };
+        console.error(
+          `No se pudo actualizar el stock del producto ${item._id}`
+        );
+      }
     }
   };
 }

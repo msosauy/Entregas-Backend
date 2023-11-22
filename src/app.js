@@ -15,6 +15,7 @@ import MongoStore from "connect-mongo";
 import passport from "passport";
 import { initializePassport } from "./config/passport.config.js";
 import env from "./config/enviroment.config.js";
+import errorHandler from "./middlewares/errors/index.js";
 
 const app = express();
 const PORT = env.port;
@@ -41,7 +42,8 @@ app.use(
   
   initializePassport();
   app.use(passport.initialize());
-  app.use(passport.session())
+  app.use(passport.session());
+  app.use(errorHandler);
   
   app.use(cookieParser(cookieSecret)); // secret para firmar las cookies accedemos con req.signedCookies
   app.use(express.json());
