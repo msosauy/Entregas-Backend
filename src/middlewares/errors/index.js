@@ -12,3 +12,5 @@ export default (error, req, res, next) => {
       break;
   }
 };
+
+//dale sincronizate bosta
