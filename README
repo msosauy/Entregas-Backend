@@ -1,7 +1,8 @@
-1. Para iniciar la app usamos: 
+1.a Para iniciar la app usamos: 
     Production (port 80): node src/app.js || npm start
     Development (Persistence = MONGODB (mongoDB)) (port 8080): node src/app.js --dev
     Development (Persistence = MEMORY (file system)) (port 8080): node src/app.js
+1.b Para correr el test usamos = npm run test
 2. Se incluyeron los archivos de las variables de ambiente en el .gitignore para facilitar el testing.
 3. DTO productDTO agrega la propiedad "active: true" al crear un nuevo producto desde "localhost/views/product/realtimeproducts"
 4. Se eleimina la información sensible en session.router.js antes de devolverlo al frontend a traves del userDTO.js.
@@ -51,3 +52,5 @@ USER: Puede acceder a todos los endpoints de "carts.router.js", de los endpoints
 
 La validación del token se hace en el archivo src/auth/authentication.js
 Al loguearse con usuario y contraseña se redirige al usuario al endpoint /session/current el cual valida el token a traves de la signedCookie.
+
+// "test": "echo \"Error: no test specified\" && exit 1",
