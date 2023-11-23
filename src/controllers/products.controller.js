@@ -4,7 +4,7 @@ import ProductDTO from "../dao/dto/productDTO.js";
 import { generateProduct } from "../utils.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enums.js";
-import {generateAddProductErrorInfo} from "../services/errors/info.js";
+import { generateAddProductErrorInfo } from "../services/errors/info.js";
 
 const productService = new Products();
 
@@ -53,8 +53,10 @@ export const addProduct = async (req, res) => {
   let { title, description, code, price, status, stock, category, thumbnails } =
     req.body;
 
-  status = JSON.parse(status);
+  status = JSON.parse(status); //convierte a boolean
 
+  try {
+    
   //Chequeamos que no falten datos requeridos
   const evaluateRequired = [
     { name: "title", value: title },
@@ -68,9 +70,23 @@ export const addProduct = async (req, res) => {
 
   for (const el of evaluateRequired) {
     if (el.value === null || el.value === undefined || el.value === "") {
-      return res.status(400).send({
-        status: "error",
-        error: `${el.name.toUpperCase()} debe contener un valor`,
+      // return res.status(400).send({
+      //   status: "error",
+      //   error: `${el.name.toUpperCase()} debe contener un valor`,
+      // });
+      CustomError.cerateError({
+        message: `${el.name.toUpperCase()} debe contener un valor`,
+        code: EErrors.INVALID_TYPES_ERROR,
+        cause: generateAddProductErrorInfo({
+          title,
+          description,
+          code,
+          price,
+          status,
+          stock,
+          category,
+          thumbnails,
+        }),
       });
     }
   }
@@ -116,15 +132,14 @@ export const addProduct = async (req, res) => {
 
   //Chequeamos que status sea un BOOLEAN
   if (typeof status != "boolean") {
-    // return res.status(400).send({
-    //   status: "error",
-    //   error: "STATUS debe ser un boolean",
-    // });
-    CustomError.cerateError({
-      message: "STATUS debe ser un boolean",
-      code: EErrors.INVALID_TYPES_ERROR,
-      cause: generateAddProductErrorInfo({title, description, code, price, status, stock, category, thumbnails})
+    return res.status(400).send({
+      status: "error",
+      error: "STATUS debe ser un boolean",
     });
+  }
+  } catch (error) {
+    console.error(error.message, error.cause);
+    return
   }
 
   let productToDTO = {
@@ -153,12 +168,10 @@ export const addProduct = async (req, res) => {
     await emitProducts();
 
     if (resultAdd === "Producto agregado correctamente") {
-      return res
-        .status(201)
-        .send({
-          status: "success",
-          success: "Producto agregado correctamente",
-        });
+      return res.status(201).send({
+        status: "success",
+        success: "Producto agregado correctamente",
+      });
     }
   } catch (err) {
     if (err.message === "Codigo de producto existente") {

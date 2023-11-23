@@ -43,7 +43,6 @@ app.use(
   initializePassport();
   app.use(passport.initialize());
   app.use(passport.session());
-  app.use(errorHandler);
   
   app.use(cookieParser(cookieSecret)); // secret para firmar las cookies accedemos con req.signedCookies
   app.use(express.json());
@@ -56,6 +55,8 @@ app.use(
   app.use("/session", sessionRouter);
   app.use("/api/cookies", cookiesRouter);
   app.use("/api/notification", notificationRouter);
+  
+  app.use(errorHandler);
   
   const server = app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
