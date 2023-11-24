@@ -49,97 +49,100 @@ export const getProductById = async (req, res) => {
   return res.status(200).send({ status: "success", success: product });
 };
 // //Agrega un nuevo producto
-export const addProduct = async (req, res) => {
+export const addProduct = async (req, res, next) => {
   let { title, description, code, price, status, stock, category, thumbnails } =
     req.body;
 
   status = JSON.parse(status); //convierte a boolean
 
   try {
-    
-  //Chequeamos que no falten datos requeridos
-  const evaluateRequired = [
-    { name: "title", value: title },
-    { name: "description", value: description },
-    { name: "code", value: code },
-    { name: "price", value: price },
-    { name: "status", value: JSON.parse(status) },
-    { name: "stock", value: stock },
-    { name: "category", value: category },
-  ];
+    //Chequeamos que no falten datos requeridos
+    const evaluateRequired = [
+      { name: "title", value: title },
+      { name: "description", value: description },
+      { name: "code", value: code },
+      { name: "price", value: price },
+      { name: "status", value: JSON.parse(status) },
+      { name: "stock", value: stock },
+      { name: "category", value: category },
+    ];
 
-  for (const el of evaluateRequired) {
-    if (el.value === null || el.value === undefined || el.value === "") {
-      // return res.status(400).send({
-      //   status: "error",
-      //   error: `${el.name.toUpperCase()} debe contener un valor`,
-      // });
-      CustomError.cerateError({
-        message: `${el.name.toUpperCase()} debe contener un valor`,
-        code: EErrors.INVALID_TYPES_ERROR,
-        cause: generateAddProductErrorInfo({
-          title,
-          description,
-          code,
-          price,
-          status,
-          stock,
-          category,
-          thumbnails,
-        }),
-      });
+    //verificamos que los valores no sea null, undefined o string vacio
+    for (const el of evaluateRequired) {
+      if (el.value === null || el.value === undefined || el.value === "") {
+        // return res.status(400).send({
+        //   status: "error",
+        //   error: `${el.name.toUpperCase()} debe contener un valor`,
+        // });
+        next(
+          CustomError.createError({
+            message: `${el.name.toUpperCase()} debe contener un valor`,
+            code: EErrors.INVALID_TYPES_ERROR,
+            cause: generateAddProductErrorInfo({
+              title,
+              description,
+              code,
+              price,
+              status,
+              stock,
+              category,
+              thumbnails,
+            }),
+          })
+        );
+        return;
+      }
     }
-  }
 
-  //Chequeamos que title, description, code, category sean un STRING
-  const evaluateString = [
-    { name: "title", value: title },
-    { name: "description", value: description },
-    { name: "code", value: code },
-    { name: "category", value: category },
-  ];
+    //Chequeamos que title, description, code, category sean un STRING
+    const evaluateString = [
+      { name: "title", value: title },
+      { name: "description", value: description },
+      { name: "code", value: code },
+      { name: "category", value: category },
+    ];
 
-  for (const el of evaluateString) {
-    if (typeof el.value != "string") {
+    for (const el of evaluateString) {
+      if (typeof el.value != "string") {
+        return res.status(400).send({
+          status: "error",
+          error: `${el.name.toUpperCase()} debe ser un STRING`,
+        });
+      }
+    }
+
+    //Chequeamos que price y stock sean un número pero no un número/string
+    const evaluateNum = [
+      { name: "price", value: price },
+      { name: "stock", value: stock },
+    ];
+
+    for (const el of evaluateNum) {
+      if (typeof el.value === "string") {
+        return res.status(400).send({
+          status: "error",
+          error: `${el.name.toUpperCase()} no puede ser un STRING, debe ser un NÚMERO`,
+        });
+      }
+
+      if (isNaN(el.value)) {
+        return res.status(400).send({
+          status: "error",
+          error: `${el.name.toUpperCase()} debe ser un NUMBER`,
+        });
+      }
+    }
+
+    //Chequeamos que status sea un BOOLEAN
+    if (typeof status != "boolean") {
       return res.status(400).send({
         status: "error",
-        error: `${el.name.toUpperCase()} debe ser un STRING`,
+        error: "STATUS debe ser un boolean",
       });
     }
-  }
-
-  //Chequeamos que price y stock sean un número pero no un número/string
-  const evaluateNum = [
-    { name: "price", value: price },
-    { name: "stock", value: stock },
-  ];
-
-  for (const el of evaluateNum) {
-    if (typeof el.value === "string") {
-      return res.status(400).send({
-        status: "error",
-        error: `${el.name.toUpperCase()} no puede ser un STRING, debe ser un NÚMERO`,
-      });
-    }
-
-    if (isNaN(el.value)) {
-      return res.status(400).send({
-        status: "error",
-        error: `${el.name.toUpperCase()} debe ser un NUMBER`,
-      });
-    }
-  }
-
-  //Chequeamos que status sea un BOOLEAN
-  if (typeof status != "boolean") {
-    return res.status(400).send({
-      status: "error",
-      error: "STATUS debe ser un boolean",
-    });
-  }
   } catch (error) {
     console.error(error.message, error.cause);
-    return
+    return;
   }
 
   let productToDTO = {

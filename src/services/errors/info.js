@@ -1,5 +1,5 @@
 export const generateAddProductErrorInfo = (product) => {
-    return `info.js:
+    return `
     Una o mas de las propiedades del usuario está imcompleta o no es valida
     Lista de prodpiedades:
     *title : debe ser un string, y se recibió [${product.title} tipo: ${typeof(product.title)}]

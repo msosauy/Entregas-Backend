@@ -62,6 +62,7 @@ app.use(
     console.log(`Server running on port ${PORT}`);
   });
   
+  
   //Creamos una instancia del servidor en SocketHandler
   const io = new Server(server);
   SoketHandler(io);
