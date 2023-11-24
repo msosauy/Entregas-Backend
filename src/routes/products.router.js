@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { authUser, authAdmin } from "../auth/authentication.js";
 import { getProducts, getProductById, addProduct, updateProduct, deleteProductById, mockingProducts } from "../controllers/products.controller.js";
-import errorHandler from "../middlewares/errors/index.js";
 
 const router = Router();
 
@@ -20,4 +19,5 @@ router.post("/", authAdmin, addProduct);
 router.put("/:pid", authAdmin, updateProduct);
 // //Elimina un producto según su ID
 router.delete("/:pid", authUser, deleteProductById);
+
 export default router;
