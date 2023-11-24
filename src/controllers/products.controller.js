@@ -70,10 +70,6 @@ export const addProduct = async (req, res, next) => {
     //verificamos que los valores no sea null, undefined o string vacio
     for (const el of evaluateRequired) {
       if (el.value === null || el.value === undefined || el.value === "") {
-        // return res.status(400).send({
-        //   status: "error",
-        //   error: `${el.name.toUpperCase()} debe contener un valor`,
-        // });
         next(
           CustomError.createError({
             message: `${el.name.toUpperCase()} debe contener un valor`,
