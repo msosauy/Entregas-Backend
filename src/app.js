@@ -15,7 +15,6 @@ import MongoStore from "connect-mongo";
 import passport from "passport";
 import { initializePassport } from "./config/passport.config.js";
 import env from "./config/enviroment.config.js";
-import errorHandler from "./middlewares/errors/index.js";
 
 const app = express();
 const PORT = env.port;

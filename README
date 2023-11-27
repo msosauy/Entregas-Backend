@@ -33,7 +33,7 @@ CLAVE: Cod3r123
 Role: ADMIN
 
 
-USER: user@gmail.com
+USER: user@user.com
 CLAVE: user098
 Role: USER
 
@@ -54,3 +54,29 @@ La validación del token se hace en el archivo src/auth/authentication.js
 Al loguearse con usuario y contraseña se redirige al usuario al endpoint /session/current el cual valida el token a traves de la signedCookie.
 
 // "test": "echo \"Error: no test specified\" && exit 1",
+
+Geroduct:
+
+try {
+    if () {
+        CustomError.createError({
+          status: 400,  
+          message: `${el.name.toUpperCase()} errorMessage[value]`,
+          code: EErrors.INVALID_TYPES_ERROR,
+          cause: generateAddProductErrorInfo({
+            title,
+            description,
+            code,
+            price,
+            status,
+            stock,
+            category,
+            thumbnails,
+          }),
+        });
+    }
+} catch (error) {
+    console.error(error.message, error.cause);
+    return res.status(error.status).send(handleError(error));
+}
+

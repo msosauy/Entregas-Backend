@@ -1,3 +1,4 @@
+import { errMessage } from "../../test/handleError.js";
 import { productModel } from "../models/productModel.js";
 
 export default class DbProductManager {
@@ -55,8 +56,7 @@ export default class DbProductManager {
     const resultCode = await productModel.findOne({ code: product.code });
 
     if (resultCode !== null) {
-      console.error("El codigo de producto ya existe");
-      return "El codigo de producto ya existe";
+      return errMessage.PRODUCT_EXIST;
     }
 
     //ordena todos los productos por ID de forma descendente
@@ -78,7 +78,7 @@ export default class DbProductManager {
     try {
       const addResult = await productModel.insertMany(newProduct);
       if (addResult) {
-        return "Producto agregado correctamente";
+        return errMessage.PRODUCT_ADDED;
       }
     } catch (error) {
       console.error("addResult db.ProductManager", error);

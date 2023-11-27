@@ -4,7 +4,11 @@ import ProductDTO from "../dao/dto/productDTO.js";
 import { generateProduct } from "../utils.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enums.js";
-import { generateAddProductErrorInfo } from "../services/errors/info.js";
+import {
+  generateAddProductErrorInfo,
+  valueNotValid,
+} from "../services/errors/info.js";
+import { errMessage, handleError } from "../test/handleError.js";
 
 const productService = new Products();
 
@@ -22,31 +26,47 @@ export const getProducts = async (req, res) => {
       _query,
       _sort
     );
-    console.log("01", products);
     return res.status(200).send(products);
   } catch (error) {
     console.error(error);
-    return res.status(400).send({ status: "error", error: error });
+    return res.status(500).send({ status: "error", error: error });
   }
 };
 // //Busca un producto por ID por params
 export const getProductById = async (req, res) => {
-  const searchId = +req.params.pid;
+  const searchId = req.params.pid;
 
-  if (isNaN(searchId)) {
-    return res
-      .status(400)
-      .send({ status: "error", error: "searchId debe ser un numero" });
+  try {
+    if (isNaN(searchId)) {
+      const el = {
+        name: "searchId",
+        value: searchId,
+      };
+      const type = "NUMBER";
+
+      CustomError.createError({
+        status: 400,
+        message: `searchId ${errMessage.MUST_BE_NUMBER}`,
+        cause: valueNotValid(el, type),
+        code: EErrors.INVALID_TYPES_ERROR,
+      });
+    }
+
+    const product = await productService.getProductById(searchId);
+
+    if (product === null) {
+      CustomError.createError({
+        status: 400,
+        message: errMessage.PRODUCT_NOT_EXIST,
+        cause: errMessage.PRODUCT_NOT_EXIST,
+        code: EErrors.DATABASE_ERROR,
+      });
+    }
+    return res.status(200).send({ status: "success", success: product });
+  } catch (error) {
+    console.error(error.message, error.cause);
+    return res.status(error.status).send(handleError(error));
   }
-
-  const product = await productService.getProductById(searchId);
-
-  if (product === null) {
-    return res
-      .status(400)
-      .send({ status: "error", error: "El producto no existe" });
-  }
-  return res.status(200).send({ status: "success", success: product });
 };
 // //Agrega un nuevo producto
 export const addProduct = async (req, res) => {
@@ -71,7 +91,8 @@ export const addProduct = async (req, res) => {
     for (const el of evaluateRequired) {
       if (el.value === null || el.value === undefined || el.value === "") {
         CustomError.createError({
-          message: `${el.name.toUpperCase()} debe contener un valor`,
+          status: 400,
+          message: `${el.name.toUpperCase()} ${errMessage.VALUE_MISS}`,
           code: EErrors.INVALID_TYPES_ERROR,
           cause: generateAddProductErrorInfo({
             title,
@@ -97,9 +118,20 @@ export const addProduct = async (req, res) => {
 
     for (const el of evaluateString) {
       if (typeof el.value != "string") {
-        return res.status(400).send({
-          status: "error",
-          error: `${el.name.toUpperCase()} debe ser un STRING`,
+        CustomError.createError({
+          status: 400,
+          message: `${el.name.toUpperCase()} ${errMessage.MUST_BE_STRING}`,
+          code: EErrors.INVALID_TYPES_ERROR,
+          cause: generateAddProductErrorInfo({
+            title,
+            description,
+            code,
+            price,
+            status,
+            stock,
+            category,
+            thumbnails,
+          }),
         });
       }
     }
@@ -112,32 +144,65 @@ export const addProduct = async (req, res) => {
 
     for (const el of evaluateNum) {
       if (typeof el.value === "string") {
-        return res.status(400).send({
-          status: "error",
-          error: `${el.name.toUpperCase()} no puede ser un STRING, debe ser un NÚMERO`,
+        CustomError.createError({
+          status: 400,
+          message: `${el.name.toUpperCase()} ${
+            errMessage.MUST_BE_NUMBER_NOT_STRING
+          }`,
+          code: EErrors.INVALID_TYPES_ERROR,
+          cause: generateAddProductErrorInfo({
+            title,
+            description,
+            code,
+            price,
+            status,
+            stock,
+            category,
+            thumbnails,
+          }),
         });
       }
 
       if (isNaN(el.value)) {
-        return res.status(400).send({
-          status: "error",
-          error: `${el.name.toUpperCase()} debe ser un NUMBER`,
+        CustomError.createError({
+          status: 400,
+          message: `${el.name.toUpperCase()} ${errMessage.MUST_BE_NUMBER}`,
+          code: EErrors.INVALID_TYPES_ERROR,
+          cause: generateAddProductErrorInfo({
+            title,
+            description,
+            code,
+            price,
+            status,
+            stock,
+            category,
+            thumbnails,
+          }),
         });
       }
     }
 
     //Chequeamos que status sea un BOOLEAN
     if (typeof status != "boolean") {
-      return res.status(400).send({
-        status: "error",
-        error: "STATUS debe ser un boolean",
+      CustomError.createError({
+        status: 400,
+        message: `${status.name.toUpperCase()} ${errMessage.MUST_BE_BOOLEAN}`,
+        code: EErrors.INVALID_TYPES_ERROR,
+        cause: generateAddProductErrorInfo({
+          title,
+          description,
+          code,
+          price,
+          status,
+          stock,
+          category,
+          thumbnails,
+        }),
       });
     }
   } catch (error) {
     console.error(error.message, error.cause);
-    return res
-      .status(400)
-      .send({ status: "error", error: error.message, cause: error.cause });
+    return res.status(error.status).send(handleError(error));
   }
 
   let productToDTO = {
@@ -156,30 +221,26 @@ export const addProduct = async (req, res) => {
   try {
     const resultAdd = await productService.addProduct(newProduct);
 
-    if (resultAdd === "El codigo de producto ya existe") {
-      return res.status(201).send({
-        status: "error",
-        error: "El codigo de producto ya existe",
+    if (resultAdd === errMessage.PRODUCT_EXIST) {
+      CustomError.createError({
+        status: 201,
+        message: errMessage.PRODUCT_EXIST,
+        code: EErrors.DATABASE_ERROR,
+        cause: errMessage.PRODUCT_EXIST,
       });
     }
 
     await emitProducts();
 
-    if (resultAdd === "Producto agregado correctamente") {
+    if (resultAdd === errMessage.PRODUCT_ADDED) {
       return res.status(201).send({
         status: "success",
-        success: "Producto agregado correctamente",
+        success: errMessage.PRODUCT_ADDED,
       });
     }
-  } catch (err) {
-    if (err.message === "Codigo de producto existente") {
-      return res
-        .status(409)
-        .send({ status: "error", error: "Codigo de producto existente" });
-    }
-    return res
-      .status(500)
-      .send({ status: "error", error: "No se pudo agregar el producto" });
+  } catch (error) {
+    console.error(error.message, error.cause);
+    return res.status(error.status).send(handleError(error));
   }
 };
 // //Busca un producto por ID y lo modifica
@@ -197,102 +258,128 @@ export const updateProduct = async (req, res) => {
     thumbnails,
   } = req.body;
 
-  //Chequeamos que no falten datos requeridos
-  const evaluateRequired = [
-    { name: "title", value: title },
-    { name: "description", value: description },
-    { name: "code", value: code },
-    { name: "price", value: price },
-    { name: "status", value: status },
-    { name: "stock", value: stock },
-    { name: "category", value: category },
-    { name: "thumbnails", value: thumbnails },
-  ];
+  try {
+    //Chequeamos que no falten datos requeridos
+    const evaluateRequired = [
+      { name: "title", value: title },
+      { name: "description", value: description },
+      { name: "code", value: code },
+      { name: "price", value: price },
+      { name: "status", value: status },
+      { name: "stock", value: stock },
+      { name: "category", value: category },
+      { name: "thumbnails", value: thumbnails },
+    ];
 
-  for (const el of evaluateRequired) {
-    if (el.value === null || el.value === undefined || el.value === "") {
-      return res.status(400).send({
-        status: "error",
-        error: `${el.name.toUpperCase()} debe contener un valor`,
-      });
-    }
-  }
-  //Chequeamos que title, description, code, category sean un STRING
-  const evaluateString = [
-    { name: "title", value: title },
-    { name: "description", value: description },
-    { name: "code", value: code },
-    { name: "category", value: category },
-  ];
-
-  for (const el of evaluateString) {
-    if (typeof el.value != "string") {
-      return res.status(400).send({
-        status: "error",
-        error: `${el.name.toUpperCase()} debe ser un STRING`,
-      });
-    }
-  }
-
-  //Chequeamos que price y stock sean un número pero no un número/string
-  const evaluateNum = [
-    { name: "price", value: price },
-    { name: "stock", value: stock },
-  ];
-
-  for (const el of evaluateNum) {
-    if (typeof el.value === "string") {
-      return res.status(400).send({
-        status: "error",
-        error: `${el.name.toUpperCase()} no puede ser un STRING`,
-      });
-    }
-
-    if (isNaN(el.value)) {
-      return res.status(400).send({
-        status: "error",
-        error: `${el.name.toUpperCase()} debe ser un NUMBER`,
-      });
-    }
-  }
-
-  //Chequeamos que status sea un BOOLEAN
-  if (typeof status != "boolean") {
-    return res.status(400).send({
-      status: "error",
-      error: "STATUS debe ser un boolean",
-    });
-  }
-
-  //compara los 2 productos y retorna un objeto solo con los campos a editar
-  const compareProduct = (originalProd, toUpdateProd) => {
-    const differences = {};
-
-    for (const key in originalProd) {
-      if (toUpdateProd.hasOwnProperty(key)) {
-        if (originalProd[key] !== toUpdateProd[key]) {
-          differences[key] = toUpdateProd[key];
-        }
+    for (const el of evaluateRequired) {
+      if (el.value === null || el.value === undefined || el.value === "") {
+        CustomError.createError({
+          status: 400,
+          message: `${el.name.toUpperCase()} ${errMessage.VALUE_MISS}`,
+          cause: generateAddProductErrorInfo({
+            title,
+            description,
+            code,
+            price,
+            status,
+            stock,
+            category,
+            thumbnails,
+          }),
+          code: EErrors.INVALID_TYPES_ERROR,
+        });
       }
     }
-    return differences;
-  };
+    //Chequeamos que title, description, code, category sean un STRING
+    const evaluateString = [
+      { name: "title", value: title },
+      { name: "description", value: description },
+      { name: "code", value: code },
+      { name: "category", value: category },
+    ];
 
-  const originalProduct = await productService.getProductById(__id);
-  const toUpdateProduct = { id: __id, ...req.body };
+    for (const el of evaluateString) {
+      if (typeof el.value != "string") {
+        const type = "STRING";
+        CustomError.createError({
+          status: 400,
+          message: `${el.name.toUpperCase()} ${errMessage.MUST_BE_STRING}`,
+          cause: valueNotValid(el, type),
+          code: EErrors.INVALID_TYPES_ERROR,
+        });
+      }
+    }
 
-  const resutlCompare = compareProduct(originalProduct, toUpdateProduct);
+    //Chequeamos que price y stock sean un número pero no un número/string
+    const evaluateNum = [
+      { name: "price", value: price },
+      { name: "stock", value: stock },
+    ];
 
-  try {
+    for (const el of evaluateNum) {
+      if (typeof el.value === "string") {
+        const type = "STRING";
+        CustomError.createError({
+          status: 400,
+          message: `${el.name.toUpperCase()} ${errMessage.CANT_BE_STRING}`,
+          cause: valueNotValid(el, type),
+          code: EErrors.INVALID_TYPES_ERROR,
+        });
+      }
+
+      if (isNaN(el.value)) {
+        const type = "NUMBER";
+        CustomError.createError({
+          status: 400,
+          message: `${el.name.toUpperCase()} ${errMessage.MUST_BE_NUMBER}`,
+          cause: valueNotValid(el, type),
+          code: EErrors.INVALID_TYPES_ERROR,
+        });
+      }
+    }
+
+    //Chequeamos que status sea un BOOLEAN
+    if (typeof status != "boolean") {
+      const el = {
+        name: "STATUS",
+        value: status,
+      }
+      const type = "BOOLEAN";
+        CustomError.createError({
+          status: 400,
+          message: `${el.name} ${errMessage.MUST_BE_BOOLEAN}`,
+          cause: valueNotValid(el, type),
+          code: EErrors.INVALID_TYPES_ERROR,
+        });
+    }
+
+    //compara los 2 productos y retorna un objeto solo con los campos a editar
+    const compareProduct = (originalProd, toUpdateProd) => {
+      const differences = {};
+
+      for (const key in originalProd) {
+        if (toUpdateProd.hasOwnProperty(key)) {
+          if (originalProd[key] !== toUpdateProd[key]) {
+            differences[key] = toUpdateProd[key];
+          }
+        }
+      }
+      return differences;
+    };
+
+    const originalProduct = await productService.getProductById(__id);
+    const toUpdateProduct = { id: __id, ...req.body };
+
+    const resutlCompare = compareProduct(originalProduct, toUpdateProduct);
+
     await productService.updateProduct(__id, resutlCompare);
     return res.status(201).send({
       status: "success",
-      success: "Producto actualizado correctamente",
+      success: errMessage.PRODUCT_UPDATED,
     });
-  } catch (err) {
-    return res
-      .status(400)
-      .send({ status: "error", error: "No se pudo actualizar el producto" });
+  } catch (error) {
+    console.error(error.message, error.cause);
+    return res.status(error.status).send(handleError(error));
   }
 };
 // //Elimina un producto según su ID
@@ -302,27 +389,22 @@ export const deleteProductById = async (req, res) => {
   try {
     const result = await productService.deleteProduct(pid);
     if (result.acknowledged === true && result.deletedCount === 0) {
-      return res
-        .status(404)
-        .send({ status: "error", error: "El articulo no existe" });
+      CustomError.createError({
+        status: 400,
+        message: errMessage.PRODUCT_DONT_EXIST,
+        cause: errMessage.PRODUCT_DONT_EXIST,
+        code: EErrors.DATABASE_ERROR,
+      });
     }
 
     await emitProducts();
 
     return res
       .status(200)
-      .send({ status: "success", success: "Producto eliminado correctamente" });
+      .send({ status: "success", success: errMessage.PRODUCT_REMOVED });
   } catch (error) {
-    if (error.message === "El articulo no existe") {
-      return res.status(404).send({
-        status: "error",
-        error: "El articulo no existe",
-      });
-    }
-    return res.status(500).send({
-      status: "error",
-      error: "No se pudo eliminar el producto",
-    });
+    console.error(error.message, error.cause);
+    return res.status(error.status).send(handleError(error));
   }
 };
 //Mocking products
