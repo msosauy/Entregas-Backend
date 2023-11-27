@@ -391,8 +391,8 @@ export const deleteProductById = async (req, res) => {
     if (result.acknowledged === true && result.deletedCount === 0) {
       CustomError.createError({
         status: 400,
-        message: errMessage.PRODUCT_DONT_EXIST,
-        cause: errMessage.PRODUCT_DONT_EXIST,
+        message: errMessage.PRODUCT_NOT_EXIST,
+        cause: errMessage.PRODUCT_NOT_EXIST,
         code: EErrors.DATABASE_ERROR,
       });
     }

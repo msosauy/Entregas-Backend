@@ -107,7 +107,7 @@ export default class DbProductManager {
   deleteProduct = async (removeId) => {
     const result = await productModel.deleteOne({ id: removeId });
     if (result.acknowledged === true && result.deletedCount === 0) {
-      throw new Error("El articulo no existe");
+      throw new Error(errMessage.PRODUCT_NOT_EXIST);
     }
     return result;
   };
