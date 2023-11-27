@@ -49,7 +49,7 @@ export const getProductById = async (req, res) => {
   return res.status(200).send({ status: "success", success: product });
 };
 // //Agrega un nuevo producto
-export const addProduct = async (req, res, next) => {
+export const addProduct = async (req, res) => {
   let { title, description, code, price, status, stock, category, thumbnails } =
     req.body;
 
@@ -70,23 +70,20 @@ export const addProduct = async (req, res, next) => {
     //verificamos que los valores no sea null, undefined o string vacio
     for (const el of evaluateRequired) {
       if (el.value === null || el.value === undefined || el.value === "") {
-        next(
-          CustomError.createError({
-            message: `${el.name.toUpperCase()} debe contener un valor`,
-            code: EErrors.INVALID_TYPES_ERROR,
-            cause: generateAddProductErrorInfo({
-              title,
-              description,
-              code,
-              price,
-              status,
-              stock,
-              category,
-              thumbnails,
-            }),
-          })
-        );
-        return;
+        CustomError.createError({
+          message: `${el.name.toUpperCase()} debe contener un valor`,
+          code: EErrors.INVALID_TYPES_ERROR,
+          cause: generateAddProductErrorInfo({
+            title,
+            description,
+            code,
+            price,
+            status,
+            stock,
+            category,
+            thumbnails,
+          }),
+        });
       }
     }
 
@@ -138,7 +135,9 @@ export const addProduct = async (req, res, next) => {
     }
   } catch (error) {
     console.error(error.message, error.cause);
-    return;
+    return res
+      .status(400)
+      .send({ status: "error", error: error.message, cause: error.cause });
   }
 
   let productToDTO = {

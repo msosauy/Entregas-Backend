@@ -56,8 +56,6 @@ app.use(
   app.use("/api/cookies", cookiesRouter);
   app.use("/api/notification", notificationRouter);
   
-  app.use(errorHandler);
-  
   const server = app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });

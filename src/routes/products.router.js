@@ -4,7 +4,7 @@ import { getProducts, getProductById, addProduct, updateProduct, deleteProductBy
 
 const router = Router();
 
-router.use((req, res, next) => {
+router.use((error, req, res, next) => {
   next();
 });
 //Devuelve todos los productos o la cantidad de productos indicada con query ?limit=number
