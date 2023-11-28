@@ -73,6 +73,9 @@ export const addProduct = async (req, res) => {
   let { title, description, code, price, status, stock, category, thumbnails } =
     req.body;
 
+  // if (typeof(status) != "number" || typeof(status) != "string") {
+  // }
+  // console.log(typeof(status));
   status = JSON.parse(status); //convierte a boolean
 
   try {
@@ -182,23 +185,27 @@ export const addProduct = async (req, res) => {
       }
     }
 
+    const evaluateBoolean = [{ name: "status", value: status }];
+
     //Chequeamos que status sea un BOOLEAN
-    if (typeof status != "boolean") {
-      CustomError.createError({
-        status: 400,
-        message: `${status.name.toUpperCase()} ${errMessage.MUST_BE_BOOLEAN}`,
-        code: EErrors.INVALID_TYPES_ERROR,
-        cause: generateAddProductErrorInfo({
-          title,
-          description,
-          code,
-          price,
-          status,
-          stock,
-          category,
-          thumbnails,
-        }),
-      });
+    for (const el of evaluateBoolean) {
+      if (typeof el.value != "boolean") {
+        CustomError.createError({
+          status: 400,
+          message: `${el.name.toUpperCase()} ${errMessage.MUST_BE_BOOLEAN}`,
+          code: EErrors.INVALID_TYPES_ERROR,
+          cause: generateAddProductErrorInfo({
+            title,
+            description,
+            code,
+            price,
+            status,
+            stock,
+            category,
+            thumbnails,
+          }),
+        });
+      }
     }
   } catch (error) {
     console.error(error.message, error.cause);
@@ -343,14 +350,14 @@ export const updateProduct = async (req, res) => {
       const el = {
         name: "STATUS",
         value: status,
-      }
+      };
       const type = "BOOLEAN";
-        CustomError.createError({
-          status: 400,
-          message: `${el.name} ${errMessage.MUST_BE_BOOLEAN}`,
-          cause: valueNotValid(el, type),
-          code: EErrors.INVALID_TYPES_ERROR,
-        });
+      CustomError.createError({
+        status: 400,
+        message: `${el.name} ${errMessage.MUST_BE_BOOLEAN}`,
+        cause: valueNotValid(el, type),
+        code: EErrors.INVALID_TYPES_ERROR,
+      });
     }
 
     //compara los 2 productos y retorna un objeto solo con los campos a editar
