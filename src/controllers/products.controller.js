@@ -72,10 +72,7 @@ export const getProductById = async (req, res) => {
 export const addProduct = async (req, res) => {
   let { title, description, code, price, status, stock, category, thumbnails } =
     req.body;
-
-  // if (typeof(status) != "number" || typeof(status) != "string") {
-  // }
-  // console.log(typeof(status));
+    
   status = JSON.parse(status); //convierte a boolean
 
   try {

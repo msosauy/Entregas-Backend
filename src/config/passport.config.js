@@ -8,6 +8,7 @@ const LocalStrategy = local.Strategy;
 const GitHubStrategy = gitHubStrategy.Strategy;
 
 export const initializePassport = () => {
+  //REGISTER
   passport.use(
     "register",
     new LocalStrategy(
@@ -38,6 +39,7 @@ export const initializePassport = () => {
     )
   );
 
+  //LOGIN
   passport.use(
     "login",
     new LocalStrategy(
@@ -61,6 +63,7 @@ export const initializePassport = () => {
     )
   );
 
+  //GITHUB
   passport.use(
     "github",
     new GitHubStrategy(

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import passport from "passport";
 import { generateToken, authToken } from "../auth/authentication.js";
-import  {restorePassword} from "../controllers/session.controller.js";
+import { restorePassword } from "../controllers/session.controller.js";
 import UserDTO from "../dao/dto/userDTO.js";
 
 const router = Router();
