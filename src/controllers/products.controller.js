@@ -208,7 +208,7 @@ export const addProduct = async (req, res) => {
       }
     }
   } catch (error) {
-    console.error(error.message, error.cause);
+    req.logger.error(error.message + " | " + error.cause);
     return res.status(error.status).send(handleError(error));
   }
 
