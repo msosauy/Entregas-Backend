@@ -1,4 +1,4 @@
-import { errMessage } from "../../test/handleError.js";
+import { errMessage } from "../../middlewares/errors/handleError.js";
 import { productModel } from "../models/productModel.js";
 
 export default class DbProductManager {

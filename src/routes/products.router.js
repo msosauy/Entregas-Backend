@@ -7,6 +7,7 @@ const router = Router();
 router.use((error, req, res, next) => {
   next();
 });
+
 //Devuelve todos los productos o la cantidad de productos indicada con query ?limit=number
 router.get("/", authUser, getProducts);
 //Mocking

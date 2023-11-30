@@ -8,7 +8,7 @@ import {
   generateAddProductErrorInfo,
   valueNotValid,
 } from "../services/errors/info.js";
-import { errMessage, handleError } from "../test/handleError.js";
+import { errMessage, handleError } from "../middlewares/errors/handleError.js";
 
 const productService = new Products();
 
@@ -28,7 +28,7 @@ export const getProducts = async (req, res) => {
     );
     return res.status(200).send(products);
   } catch (error) {
-    console.error(error);
+    req.logger.error(error.message)
     return res.status(500).send({ status: "error", error: error });
   }
 };
@@ -64,7 +64,7 @@ export const getProductById = async (req, res) => {
     }
     return res.status(200).send({ status: "success", success: product });
   } catch (error) {
-    console.error(error.message, error.cause);
+    req.logger.warning(error.message, error.cause);
     return res.status(error.status).send(handleError(error));
   }
 };
@@ -246,7 +246,8 @@ export const addProduct = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error(error.message, error.cause);
+    req.logger.fatal("error test");
+    // req.logger.error(error.message, error.cause);
     return res.status(error.status).send(handleError(error));
   }
 };
