@@ -11,6 +11,10 @@ const transport = nodemailer.createTransport({
   },
 });
 
+router.use((req, res, next) => {
+  next();
+});
+
 router.get("/mail", async (req, res) => {
   const body = req.body;
   

@@ -38,6 +38,6 @@ export const errMessage = {
     // INVALID_SESSION: 'La sesión no es válida.',
 };
   
-export const handleError = (error) => {
-    return {status: `${error.name} ${error.status}`, error: error.message, cause: error.cause}
+export const handleError = (error, req, res) => {
+    res.status(error.statusCode).send({status: `${error.name} ${error.status}`, error: error.message, cause: error.cause});
 };

@@ -45,7 +45,7 @@ export const getProductById = async (req, res) => {
       const type = "NUMBER";
 
       CustomError.createError({
-        status: 400,
+        statusCode: 400,
         message: `searchId ${errMessage.MUST_BE_NUMBER}`,
         cause: valueNotValid(el, type),
         code: EErrors.INVALID_TYPES_ERROR,
@@ -56,7 +56,7 @@ export const getProductById = async (req, res) => {
 
     if (product === null) {
       CustomError.createError({
-        status: 400,
+        statusCode: 400,
         message: errMessage.PRODUCT_NOT_EXIST,
         cause: errMessage.PRODUCT_NOT_EXIST,
         code: EErrors.DATABASE_ERROR,
@@ -64,18 +64,14 @@ export const getProductById = async (req, res) => {
     }
     return res.status(200).send({ status: "success", success: product });
   } catch (error) {
-    req.logger.warning(error.message, error.cause);
-    return res.status(error.status).send(handleError(error));
+    req.logger.error(error.message, error.cause);
+    return handleError(error, req, res)
   }
 };
 // //Agrega un nuevo producto
 export const addProduct = async (req, res) => {
-  let { title, description, code, price, status, stock, category, thumbnails } =
-    req.body;
+  let { title, description, code, price, status, stock, category, thumbnails } = req.body;
 
-  // if (typeof(status) != "number" || typeof(status) != "string") {
-  // }
-  // console.log(typeof(status));
   status = JSON.parse(status); //convierte a boolean
 
   try {
@@ -94,7 +90,7 @@ export const addProduct = async (req, res) => {
     for (const el of evaluateRequired) {
       if (el.value === null || el.value === undefined || el.value === "") {
         CustomError.createError({
-          status: 400,
+          statusCode: 400,
           message: `${el.name.toUpperCase()} ${errMessage.VALUE_MISS}`,
           code: EErrors.INVALID_TYPES_ERROR,
           cause: generateAddProductErrorInfo({
@@ -122,7 +118,7 @@ export const addProduct = async (req, res) => {
     for (const el of evaluateString) {
       if (typeof el.value != "string") {
         CustomError.createError({
-          status: 400,
+          statusCode: 400,
           message: `${el.name.toUpperCase()} ${errMessage.MUST_BE_STRING}`,
           code: EErrors.INVALID_TYPES_ERROR,
           cause: generateAddProductErrorInfo({
@@ -148,7 +144,7 @@ export const addProduct = async (req, res) => {
     for (const el of evaluateNum) {
       if (typeof el.value === "string") {
         CustomError.createError({
-          status: 400,
+          statusCode: 400,
           message: `${el.name.toUpperCase()} ${
             errMessage.MUST_BE_NUMBER_NOT_STRING
           }`,
@@ -168,7 +164,7 @@ export const addProduct = async (req, res) => {
 
       if (isNaN(el.value)) {
         CustomError.createError({
-          status: 400,
+          statusCode: 400,
           message: `${el.name.toUpperCase()} ${errMessage.MUST_BE_NUMBER}`,
           code: EErrors.INVALID_TYPES_ERROR,
           cause: generateAddProductErrorInfo({
@@ -191,7 +187,7 @@ export const addProduct = async (req, res) => {
     for (const el of evaluateBoolean) {
       if (typeof el.value != "boolean") {
         CustomError.createError({
-          status: 400,
+          statusCode: 400,
           message: `${el.name.toUpperCase()} ${errMessage.MUST_BE_BOOLEAN}`,
           code: EErrors.INVALID_TYPES_ERROR,
           cause: generateAddProductErrorInfo({
@@ -209,7 +205,7 @@ export const addProduct = async (req, res) => {
     }
   } catch (error) {
     req.logger.error(error.message + " | " + error.cause);
-    return res.status(error.status).send(handleError(error));
+    return handleError(error, req, res);
   }
 
   let productToDTO = {
@@ -246,8 +242,7 @@ export const addProduct = async (req, res) => {
       });
     }
   } catch (error) {
-    req.logger.fatal("error test");
-    // req.logger.error(error.message, error.cause);
+    req.logger.error(error.message, error.cause);
     return res.status(error.status).send(handleError(error));
   }
 };
@@ -282,7 +277,7 @@ export const updateProduct = async (req, res) => {
     for (const el of evaluateRequired) {
       if (el.value === null || el.value === undefined || el.value === "") {
         CustomError.createError({
-          status: 400,
+          statusCode: 400,
           message: `${el.name.toUpperCase()} ${errMessage.VALUE_MISS}`,
           cause: generateAddProductErrorInfo({
             title,
@@ -310,7 +305,7 @@ export const updateProduct = async (req, res) => {
       if (typeof el.value != "string") {
         const type = "STRING";
         CustomError.createError({
-          status: 400,
+          statusCode: 400,
           message: `${el.name.toUpperCase()} ${errMessage.MUST_BE_STRING}`,
           cause: valueNotValid(el, type),
           code: EErrors.INVALID_TYPES_ERROR,
@@ -328,7 +323,7 @@ export const updateProduct = async (req, res) => {
       if (typeof el.value === "string") {
         const type = "STRING";
         CustomError.createError({
-          status: 400,
+          statusCode: 400,
           message: `${el.name.toUpperCase()} ${errMessage.CANT_BE_STRING}`,
           cause: valueNotValid(el, type),
           code: EErrors.INVALID_TYPES_ERROR,
@@ -338,7 +333,7 @@ export const updateProduct = async (req, res) => {
       if (isNaN(el.value)) {
         const type = "NUMBER";
         CustomError.createError({
-          status: 400,
+          statusCode: 400,
           message: `${el.name.toUpperCase()} ${errMessage.MUST_BE_NUMBER}`,
           cause: valueNotValid(el, type),
           code: EErrors.INVALID_TYPES_ERROR,
@@ -354,7 +349,7 @@ export const updateProduct = async (req, res) => {
       };
       const type = "BOOLEAN";
       CustomError.createError({
-        status: 400,
+        statusCode: 400,
         message: `${el.name} ${errMessage.MUST_BE_BOOLEAN}`,
         cause: valueNotValid(el, type),
         code: EErrors.INVALID_TYPES_ERROR,
@@ -386,8 +381,8 @@ export const updateProduct = async (req, res) => {
       success: errMessage.PRODUCT_UPDATED,
     });
   } catch (error) {
-    console.error(error.message, error.cause);
-    return res.status(error.status).send(handleError(error));
+    req.logger.error(error.message, error.cause);
+    return handleError(error, req, res);
   }
 };
 // //Elimina un producto según su ID
