@@ -15,42 +15,39 @@ export default class DbCartManager {
 
   //Crea un nuevo carrito con ID autogenerado
   newCart = async (user) => {
-      const cartList = await cartModel.find().sort({ id: -1 });
+    const cartList = await cartModel.find().sort({ id: -1 });
 
-      let newCartId;
-      if (cartList.length === 0) {
-        newCartId = 1;
-      } else {
-        newCartId = cartList[0].id + 1;
-      }
+    let newCartId;
+    if (cartList.length === 0) {
+      newCartId = 1;
+    } else {
+      newCartId = cartList[0].id + 1;
+    }
 
-      const cart = {
-        id: newCartId,
-        // products: [], no es necesario agregar el array vacío ya que mongoose lo crea por defecto
-      };
+    const cart = {
+      id: newCartId,
+      // products: [], no es necesario agregar el array vacío ya que mongoose lo crea por defecto
+    };
 
-      //Si el usuario tiene un carrito en proceso no se crea el nuevo carrito
-      const existCart = await userManager.existCart(user);
+    //Si el usuario tiene un carrito en proceso no se crea el nuevo carrito
+    const existCart = await userManager.existCart(user);
 
-      // Si el carrito existe retornamos el error
-      if (existCart) {
-        CustomError.createError({
-          statusCode: 400,
-          message: errMessage.CART_EXIST,
-          code: EErrors.DATABASE_ERROR,
-          cause: `El ususario ${user.email} ya tiene un carrito abierto`,
-        });
-      }
-      const result = await cartModel.create(cart);
+    // Si el carrito existe retornamos el error
+    if (existCart) {
+      CustomError.createError({
+        statusCode: 400,
+        message: errMessage.CART_EXIST,
+        code: EErrors.DATABASE_ERROR,
+        cause: `El ususario ${user.email} ya tiene un carrito abierto`,
+      });
+    }
+    const result = await cartModel.create(cart);
 
-      const addCartToUser = await userManager.addCartToUser(
-        user._id,
-        result._id
-      );
+    const addCartToUser = await userManager.addCartToUser(user._id, result._id);
 
-      if (addCartToUser) {
-        return result;
-      }
+    if (addCartToUser) {
+      return result;
+    }
   };
 
   //Devuelve todos los productos de un carrito según su ID
@@ -59,7 +56,12 @@ export default class DbCartManager {
       const result = await cartModel.findOne({ id: cid });
       return result.products;
     } catch (error) {
-      console.log(error);
+      CustomError.createError({
+        statusCode: 500,
+        message: error.message,
+        code: EErrors.DATABASE_ERROR,
+        cause: error.message,
+      });
     }
   };
 
@@ -87,24 +89,25 @@ export default class DbCartManager {
 
   //Elimina un producto del carrito indicado por ID
   removeProductFromCart = async (cartId, productId) => {
-    try {
-      const doesProductExist = await cartModel.findOne({
-        id: cartId,
-        "products.product": productId,
-      });
+    const doesProductExist = await cartModel.findOne({
+      id: cartId,
+      "products.product": productId,
+    });
 
-      if (doesProductExist) {
-        const remove = await cartModel.updateOne(
-          { id: cartId },
-          { $pull: { products: { product: productId } } }
-        );
-        return remove;
-      }
-      return "El producto no existe en este carrito";
-    } catch (error) {
-      console.error("db.CartManager.js", error);
-      throw new Error(error);
+    if (doesProductExist) {
+      const remove = await cartModel.updateOne(
+        { id: cartId },
+        { $pull: { products: { product: productId } } }
+      );
+      return remove;
     }
+
+    CustomError.createError({
+      statusCode: 400,
+      message: errMessage.CART_PRODUCT_NOT_EXIST,
+      code: EErrors.DATABASE_ERROR,
+      cause: `El producto con ID: ${productId} no existe en este carrito`,
+    });
   };
 
   //Elimina todos los productos del carrito indicado por ID

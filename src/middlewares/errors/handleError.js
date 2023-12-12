@@ -17,6 +17,7 @@ export const errMessage = {
     CART_EXIST: "Ya existe un carrito para este usuario",
     CART_NOT_EXIST: "El carrito no existe",
     CART_EMPTY: "El carrito está vacío",
+    CART_PRODUCT_NOT_EXIST: "El producto no existe en este carrito"
     // INVALID_PRODUCT: 'El producto no es válido.',
     // PRODUCT_NOT_FOUND: 'El producto no se encuentra.',
     // ERROR_GETTING_PRODUCTS: 'Error al obtener los productos.',
