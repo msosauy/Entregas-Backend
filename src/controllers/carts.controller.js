@@ -9,6 +9,7 @@ import { sendMail } from "../controllers/notification.controller.js";
 import { errMessage, handleError } from "../middlewares/errors/handleError.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enums.js";
+import { valueNotValid } from "../services/errors/info.js";
 
 const dbcartManager = new DbCartManager();
 const carts = new Carts();
@@ -18,12 +19,6 @@ const users = new Users();
 
 //Crea un nuevo carrito con ID autogenerado
 export const newCart = async (req, res) => {
-  CustomError.createError({
-    statusCode: 400,
-    message: errMessage.CART_EXIST,
-    code: EErrors.DATABASE_ERROR,
-    cause: `El ususario coso ya tiene un carrito abierto`,
-  });
   try {
     const newCartId = await dbcartManager.newCart(req.user);
     return res.status(200).send({
@@ -31,48 +26,57 @@ export const newCart = async (req, res) => {
       success: `Nuevo carrito creado correctamente, ID: ${newCartId.id}, MongoID:${newCartId._id}`,
     });
   } catch (error) {
-    console.log("coso1", error);
     req.logger.error(error.message, error.cause);
     return handleError(error, req, res);
   }
 };
 //Devuelve todos los productos de un carrito según su ID por params
 export const getProdByIdByCartId = async (req, res) => {
-  const cid = +req.params.cid;
-
-  if (isNaN(cid)) {
-    return res
-      .status(400)
-      .send({ status: "error", error: "/:cid debe ser un numero" });
-  }
-
-  //primero chequeamos que el carrito exista
-  const cartExist = await cartModel.findOne({ id: cid });
-  if (!cartExist) {
-    return res
-      .status(404)
-      .send({ status: "error", error: "El carrito no existe" });
-  }
-
-  //si el carrito existe pero está vacío devolvemos:
-  if (cartExist.products.length === 0) {
-    return res
-      .status(200)
-      .send({ status: "succes", succes: "El carrito está vacío" });
-  }
+  const cid = req.params.cid;
 
   try {
+    if (isNaN(cid)) {
+      const el = {
+        name: "/:cid",
+        value: cid,
+      };
+      const type = "NUMBER";
+      CustomError.createError({
+        statusCode: 400,
+        message: `${el.name} ${errMessage.MUST_BE_NUMBER}`,
+        code: EErrors.INVALID_TYPES_ERROR,
+        cause: valueNotValid(el, type),
+      });
+    }
+
+    //primero chequeamos que el carrito exista
+    const cartExist = await cartModel.findOne({ id: cid });
+    if (!cartExist) {
+      CustomError.createError({
+        statusCode: 400,
+        message: errMessage.CART_NOT_EXIST,
+        code: EErrors.DATABASE_ERROR,
+        cause: `El carrito con id: ${cid} no existe`,
+      });
+    }
+
+    //si el carrito existe pero está vacío devolvemos:
+    if (cartExist.products.length === 0) {
+      CustomError.createError({
+        statusCode: 400,
+        message: errMessage.CART_EMPTY,
+        code: EErrors.DATABASE_ERROR,
+        cause: `El carrito con id: ${cid} ya fue creado, pero está vacío`,
+      });
+    }
+
     const populateCart = await cartModel
       .findOne({ id: cid })
       .populate("products.product");
     return res.status(200).send(populateCart);
   } catch (error) {
-    if (error.message === "El carrito no existe") {
-      return res
-        .status(404)
-        .send({ status: "error", error: "El carrito no existe" });
-    }
-    res.status(500).send({ status: "error", error: "Algo no salió bien" });
+    req.logger.error(error.message, error.cause);
+    return handleError(error, req, res);
   }
 };
 //Agrega el producto indicado por ID, al carrito indicado por ID
@@ -257,17 +261,17 @@ export const cartPurchase = async (req, res) => {
         await carts.removeProductFromCart(cartId, item._id);
       }
 
-      
       //Devolver un array con los ids de los productos que no pudieron comprarse
       const data = { ticketData, orderProducts, outOfStock };
-      //Envío de mail 
+      //Envío de mail
       const mailSent = await sendMail(data);
 
       return res.status(200).send({ status: "success", success: "ok", data });
     }
-    return res
-      .status(400)
-      .send({ status: "error", error: "No se pudo cerrar la compra, vuelva a intentarlo" });
+    return res.status(400).send({
+      status: "error",
+      error: "No se pudo cerrar la compra, vuelva a intentarlo",
+    });
   } catch (error) {
     console.error("carts.controller.js_01", error);
     return res.status(500).send({ status: "success", error: error });
@@ -279,7 +283,7 @@ export const getCartFromUser = async (req, res) => {
 
   let orderProducts = [];
   let cartId;
-  
+
   try {
     const cartFromUser = await users.getCartFromUser(user); //Obtenemos el _id del carrito desde el usuario
     const cartProducts = await carts.getProductsFromCartId(
@@ -287,7 +291,7 @@ export const getCartFromUser = async (req, res) => {
     ); //Obtenemos los productos de ese carrito
 
     cartId = cartFromUser.cart.id;
-    
+
     for (const item of cartProducts) {
       const product = await productModel.findById(item.product);
       orderProducts.push({
@@ -301,8 +305,8 @@ export const getCartFromUser = async (req, res) => {
     }
     const totalAmount = await carts.calculateTotalAmount(orderProducts);
 
-    const payload = {orderProducts, totalAmount, cartId}
-    
+    const payload = { orderProducts, totalAmount, cartId };
+
     return res.status(200).send({ status: "success", payload });
   } catch (error) {
     return res.status(400).send({ status: "error", error: error.message });

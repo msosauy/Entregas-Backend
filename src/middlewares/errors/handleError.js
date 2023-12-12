@@ -15,6 +15,8 @@ export const errMessage = {
     PRODUCT_REMOVED: "Producto eliminado correctamente",
     //CARTS
     CART_EXIST: "Ya existe un carrito para este usuario",
+    CART_NOT_EXIST: "El carrito no existe",
+    CART_EMPTY: "El carrito está vacío",
     // INVALID_PRODUCT: 'El producto no es válido.',
     // PRODUCT_NOT_FOUND: 'El producto no se encuentra.',
     // ERROR_GETTING_PRODUCTS: 'Error al obtener los productos.',
@@ -41,5 +43,5 @@ export const errMessage = {
 };
   
 export const handleError = (error, req, res) => {
-    res.status(error.statusCode).send({status: `${error.name} ${error.status}`, error: error.message, cause: error.cause});
+    res.status(error.statusCode).send({status: `${error.name} ${error.statusCode}`, error: error.message, cause: error.cause});
 };

@@ -15,7 +15,6 @@ export default class DbCartManager {
 
   //Crea un nuevo carrito con ID autogenerado
   newCart = async (user) => {
-    try {
       const cartList = await cartModel.find().sort({ id: -1 });
 
       let newCartId;
@@ -52,9 +51,6 @@ export default class DbCartManager {
       if (addCartToUser) {
         return result;
       }
-    } catch (error) {
-      throw new Error(error);
-    }
   };
 
   //Devuelve todos los productos de un carrito según su ID
