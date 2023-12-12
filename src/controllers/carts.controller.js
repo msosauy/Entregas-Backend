@@ -6,6 +6,9 @@ import { Users } from "../dao/factory.js";
 import { cartModel } from "../dao/models/cartModel.js";
 import { productModel } from "../dao/models/productModel.js";
 import { sendMail } from "../controllers/notification.controller.js";
+import { errMessage, handleError } from "../middlewares/errors/handleError.js";
+import CustomError from "../services/errors/CustomError.js";
+import EErrors from "../services/errors/enums.js";
 
 const dbcartManager = new DbCartManager();
 const carts = new Carts();
@@ -15,6 +18,12 @@ const users = new Users();
 
 //Crea un nuevo carrito con ID autogenerado
 export const newCart = async (req, res) => {
+  CustomError.createError({
+    statusCode: 400,
+    message: errMessage.CART_EXIST,
+    code: EErrors.DATABASE_ERROR,
+    cause: `El ususario coso ya tiene un carrito abierto`,
+  });
   try {
     const newCartId = await dbcartManager.newCart(req.user);
     return res.status(200).send({
@@ -22,15 +31,9 @@ export const newCart = async (req, res) => {
       success: `Nuevo carrito creado correctamente, ID: ${newCartId.id}, MongoID:${newCartId._id}`,
     });
   } catch (error) {
-    if (error.message === "No se pudo crear el carrito") {
-      return res
-        .status(500)
-        .send({ status: "error", error: "No se pudo crear el nuevo carrito" });
-    }
-    if (error.message) {
-      return res.status(500).send({ status: "error", error: error.message });
-    }
-    return res.status(500).send({ status: "error", error: "Algo salió mal" });
+    console.log("coso1", error);
+    req.logger.error(error.message, error.cause);
+    return handleError(error, req, res);
   }
 };
 //Devuelve todos los productos de un carrito según su ID por params

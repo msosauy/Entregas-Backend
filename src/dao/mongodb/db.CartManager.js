@@ -2,6 +2,9 @@ import { cartModel } from "../models/cartModel.js";
 import { productModel } from "../models/productModel.js";
 import { generateUniqueTicketCode } from "../../controllers/ticketsController.js";
 import DbUserManager from "../mongodb/db.UserManager.js";
+import CustomError from "../../services/errors/CustomError.js";
+import { errMessage } from "../../middlewares/errors/handleError.js";
+import EErrors from "../../services/errors/enums.js";
 
 const userManager = new DbUserManager();
 
@@ -27,8 +30,18 @@ export default class DbCartManager {
         // products: [], no es necesario agregar el array vacío ya que mongoose lo crea por defecto
       };
 
-      await userManager.existCart(user) //Si el usuario tiene un carrito en proceso no se crea el nuevo carrito
-      
+      //Si el usuario tiene un carrito en proceso no se crea el nuevo carrito
+      const existCart = await userManager.existCart(user);
+
+      // Si el carrito existe retornamos el error
+      if (existCart) {
+        CustomError.createError({
+          statusCode: 400,
+          message: errMessage.CART_EXIST,
+          code: EErrors.DATABASE_ERROR,
+          cause: `El ususario ${user.email} ya tiene un carrito abierto`,
+        });
+      }
       const result = await cartModel.create(cart);
 
       const addCartToUser = await userManager.addCartToUser(
@@ -40,7 +53,6 @@ export default class DbCartManager {
         return result;
       }
     } catch (error) {
-      console.error("asd", error);
       throw new Error(error);
     }
   };

@@ -13,6 +13,8 @@ export const errMessage = {
     PRODUCT_UPDATED: "Producto actualizado correctamente",
     PRODUCT_DONT_EXIST: "El articulo no existe",
     PRODUCT_REMOVED: "Producto eliminado correctamente",
+    //CARTS
+    CART_EXIST: "Ya existe un carrito para este usuario",
     // INVALID_PRODUCT: 'El producto no es válido.',
     // PRODUCT_NOT_FOUND: 'El producto no se encuentra.',
     // ERROR_GETTING_PRODUCTS: 'Error al obtener los productos.',
