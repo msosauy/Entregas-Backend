@@ -1,6 +1,6 @@
 export default class CustomError {
   static createError({
-    status = 500,
+    statusCode = 500,
     message,
     cause,
     code = 1,
@@ -9,7 +9,7 @@ export default class CustomError {
     const error = new Error(message, { cause });
     error.name = name;
     error.code = code;
-    error.status = status;
+    error.statusCode = statusCode;
     throw error;
   }
 }

@@ -6,6 +6,10 @@ import UserDTO from "../dao/dto/userDTO.js";
 
 const router = Router();
 
+router.use((req, res, next) => {
+  next();
+});
+
 //Login passport
 router.post(
   "/login",

@@ -1,0 +1,44 @@
+error: STATUS debe contener un valorUna o mas de las propiedades del usuario está imcompleta o no es valida
+    Lista de prodpiedades:
+    *title : debe ser un string, y se recibió [Nuevo producto tipo: string]
+    *description : debe ser un string, y se recibió [New VPN de alto rendimiento tipo: string]
+    *code : debe ser un número, y se recibió [New Product1 tipo: string]
+    *price : debe ser un número, y se recibió [888 tipo: number]
+    *status : debe ser un boolean, y se recibió [null tipo: object]
+    *stock : debe ser un número, y se recibió [88 tipo: number]
+    *category : debe ser un string, y se recibió [Security tipo: string]
+    *thumbnails : debe ser un string, y se recibió [src/public/img/imagen12.jpg,src/public/img/imagen12_thumb.jpg tipo: object]
+    
+error: STATUS debe contener un valor cause: Una o mas de las propiedades del usuario está imcompleta o no es valida
+    Lista de prodpiedades:
+    *title : debe ser un string, y se recibió [Nuevo producto tipo: string]
+    *description : debe ser un string, y se recibió [New VPN de alto rendimiento tipo: string]
+    *code : debe ser un número, y se recibió [New Product1 tipo: string]
+    *price : debe ser un número, y se recibió [888 tipo: number]
+    *status : debe ser un boolean, y se recibió [null tipo: object]
+    *stock : debe ser un número, y se recibió [88 tipo: number]
+    *category : debe ser un string, y se recibió [Security tipo: string]
+    *thumbnails : debe ser un string, y se recibió [src/public/img/imagen12.jpg,src/public/img/imagen12_thumb.jpg tipo: object]
+    
+error: STATUS debe contener un valor | Una o mas de las propiedades del usuario está imcompleta o no es valida
+    Lista de prodpiedades:
+    *title : debe ser un string, y se recibió [Nuevo producto tipo: string]
+    *description : debe ser un string, y se recibió [New VPN de alto rendimiento tipo: string]
+    *code : debe ser un número, y se recibió [New Product1 tipo: string]
+    *price : debe ser un número, y se recibió [888 tipo: number]
+    *status : debe ser un boolean, y se recibió [null tipo: object]
+    *stock : debe ser un número, y se recibió [88 tipo: number]
+    *category : debe ser un string, y se recibió [Security tipo: string]
+    *thumbnails : debe ser un string, y se recibió [src/public/img/imagen12.jpg,src/public/img/imagen12_thumb.jpg tipo: object]
+    
+error: El carrito no existe || El carrito con ID: 2 no existe
+error: El carrito no existe || El carrito con ID: 2 no existe
+error: El carrito no existe || El carrito con ID: 2 no existe
+fatal: log level: fatal
+error: log level: error
+fatal: log level: fatal
+error: log level: error
+fatal: log level: fatal
+error: log level: error
+fatal: log level: fatal
+error: log level: error

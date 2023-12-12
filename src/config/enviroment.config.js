@@ -17,4 +17,5 @@ export default {
   mongo_url: process.env.MONGO_URL,
   cookie_secret: process.env.COOKIE_SECRET,
   persistence: persistenceSelected,
+  logger: process.env.LOGGER,
 };

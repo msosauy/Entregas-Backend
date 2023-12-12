@@ -2,6 +2,9 @@ import { cartModel } from "../models/cartModel.js";
 import { productModel } from "../models/productModel.js";
 import { generateUniqueTicketCode } from "../../controllers/ticketsController.js";
 import DbUserManager from "../mongodb/db.UserManager.js";
+import CustomError from "../../services/errors/CustomError.js";
+import { errMessage } from "../../middlewares/errors/handleError.js";
+import EErrors from "../../services/errors/enums.js";
 
 const userManager = new DbUserManager();
 
@@ -12,36 +15,38 @@ export default class DbCartManager {
 
   //Crea un nuevo carrito con ID autogenerado
   newCart = async (user) => {
-    try {
-      const cartList = await cartModel.find().sort({ id: -1 });
+    const cartList = await cartModel.find().sort({ id: -1 });
 
-      let newCartId;
-      if (cartList.length === 0) {
-        newCartId = 1;
-      } else {
-        newCartId = cartList[0].id + 1;
-      }
+    let newCartId;
+    if (cartList.length === 0) {
+      newCartId = 1;
+    } else {
+      newCartId = cartList[0].id + 1;
+    }
 
-      const cart = {
-        id: newCartId,
-        // products: [], no es necesario agregar el array vacío ya que mongoose lo crea por defecto
-      };
+    const cart = {
+      id: newCartId,
+      // products: [], no es necesario agregar el array vacío ya que mongoose lo crea por defecto
+    };
 
-      await userManager.existCart(user) //Si el usuario tiene un carrito en proceso no se crea el nuevo carrito
-      
-      const result = await cartModel.create(cart);
+    //Si el usuario tiene un carrito en proceso no se crea el nuevo carrito
+    const existCart = await userManager.existCart(user);
 
-      const addCartToUser = await userManager.addCartToUser(
-        user._id,
-        result._id
-      );
+    // Si el carrito existe retornamos el error
+    if (existCart) {
+      CustomError.createError({
+        statusCode: 400,
+        message: errMessage.CART_EXIST,
+        code: EErrors.DATABASE_ERROR,
+        cause: `El ususario ${user.email} ya tiene un carrito abierto`,
+      });
+    }
+    const result = await cartModel.create(cart);
 
-      if (addCartToUser) {
-        return result;
-      }
-    } catch (error) {
-      console.error("asd", error);
-      throw new Error(error);
+    const addCartToUser = await userManager.addCartToUser(user._id, result._id);
+
+    if (addCartToUser) {
+      return result;
     }
   };
 
@@ -51,7 +56,12 @@ export default class DbCartManager {
       const result = await cartModel.findOne({ id: cid });
       return result.products;
     } catch (error) {
-      console.log(error);
+      CustomError.createError({
+        statusCode: 500,
+        message: error.message,
+        code: EErrors.DATABASE_ERROR,
+        cause: error.message,
+      });
     }
   };
 
@@ -79,24 +89,25 @@ export default class DbCartManager {
 
   //Elimina un producto del carrito indicado por ID
   removeProductFromCart = async (cartId, productId) => {
-    try {
-      const doesProductExist = await cartModel.findOne({
-        id: cartId,
-        "products.product": productId,
-      });
+    const doesProductExist = await cartModel.findOne({
+      id: cartId,
+      "products.product": productId,
+    });
 
-      if (doesProductExist) {
-        const remove = await cartModel.updateOne(
-          { id: cartId },
-          { $pull: { products: { product: productId } } }
-        );
-        return remove;
-      }
-      return "El producto no existe en este carrito";
-    } catch (error) {
-      console.error("db.CartManager.js", error);
-      throw new Error(error);
+    if (doesProductExist) {
+      const remove = await cartModel.updateOne(
+        { id: cartId },
+        { $pull: { products: { product: productId } } }
+      );
+      return remove;
     }
+
+    CustomError.createError({
+      statusCode: 400,
+      message: errMessage.CART_PRODUCT_NOT_EXIST,
+      code: EErrors.DATABASE_ERROR,
+      cause: `El producto con ID: ${productId} no existe en este carrito`,
+    });
   };
 
   //Elimina todos los productos del carrito indicado por ID

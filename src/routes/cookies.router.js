@@ -1,8 +1,12 @@
 import { Router } from "express";
 
 const router = Router();
-
 const cookieName = "localCookie";
+
+router.use((req, res, next) => {
+  next();
+});
+
 
 router.post("/setcookie/token", (req, res) => {
   const headerToken = req.headers.authorization;

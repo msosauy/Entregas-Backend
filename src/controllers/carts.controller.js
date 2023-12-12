@@ -6,6 +6,10 @@ import { Users } from "../dao/factory.js";
 import { cartModel } from "../dao/models/cartModel.js";
 import { productModel } from "../dao/models/productModel.js";
 import { sendMail } from "../controllers/notification.controller.js";
+import { errMessage, handleError } from "../middlewares/errors/handleError.js";
+import CustomError from "../services/errors/CustomError.js";
+import EErrors from "../services/errors/enums.js";
+import { valueNotValid } from "../services/errors/info.js";
 
 const dbcartManager = new DbCartManager();
 const carts = new Carts();
@@ -22,70 +26,76 @@ export const newCart = async (req, res) => {
       success: `Nuevo carrito creado correctamente, ID: ${newCartId.id}, MongoID:${newCartId._id}`,
     });
   } catch (error) {
-    if (error.message === "No se pudo crear el carrito") {
-      return res
-        .status(500)
-        .send({ status: "error", error: "No se pudo crear el nuevo carrito" });
-    }
-    if (error.message) {
-      return res.status(500).send({ status: "error", error: error.message });
-    }
-    return res.status(500).send({ status: "error", error: "Algo salió mal" });
+    req.logger.error(`${error.message} || ${error.cause}`);
+    return handleError(error, req, res);
   }
 };
 //Devuelve todos los productos de un carrito según su ID por params
 export const getProdByIdByCartId = async (req, res) => {
-  const cid = +req.params.cid;
-
-  if (isNaN(cid)) {
-    return res
-      .status(400)
-      .send({ status: "error", error: "/:cid debe ser un numero" });
-  }
-
-  //primero chequeamos que el carrito exista
-  const cartExist = await cartModel.findOne({ id: cid });
-  if (!cartExist) {
-    return res
-      .status(404)
-      .send({ status: "error", error: "El carrito no existe" });
-  }
-
-  //si el carrito existe pero está vacío devolvemos:
-  if (cartExist.products.length === 0) {
-    return res
-      .status(200)
-      .send({ status: "succes", succes: "El carrito está vacío" });
-  }
+  const cid = req.params.cid;
 
   try {
+    if (isNaN(cid)) {
+      const el = {
+        name: "/:cid",
+        value: cid,
+      };
+      const type = "NUMBER";
+      CustomError.createError({
+        statusCode: 400,
+        message: `${el.name} ${errMessage.MUST_BE_NUMBER}`,
+        code: EErrors.INVALID_TYPES_ERROR,
+        cause: valueNotValid(el, type),
+      });
+    }
+
+    //primero chequeamos que el carrito exista
+    const cartExist = await cartModel.findOne({ id: cid });
+    if (!cartExist) {
+      CustomError.createError({
+        statusCode: 400,
+        message: errMessage.CART_NOT_EXIST,
+        code: EErrors.DATABASE_ERROR,
+        cause: `El carrito con id: ${cid} no existe`,
+      });
+    }
+
+    //si el carrito existe pero está vacío devolvemos:
+    if (cartExist.products.length === 0) {
+      CustomError.createError({
+        statusCode: 400,
+        message: errMessage.CART_EMPTY,
+        code: EErrors.DATABASE_ERROR,
+        cause: `El carrito con id: ${cid} ya fue creado, pero está vacío`,
+      });
+    }
+
     const populateCart = await cartModel
       .findOne({ id: cid })
       .populate("products.product");
     return res.status(200).send(populateCart);
   } catch (error) {
-    if (error.message === "El carrito no existe") {
-      return res
-        .status(404)
-        .send({ status: "error", error: "El carrito no existe" });
-    }
-    res.status(500).send({ status: "error", error: "Algo no salió bien" });
+    req.logger.error(`${error.message} || ${error.cause}`);
+    return handleError(error, req, res);
   }
 };
-//Agrega el producto indicado por ID, al carrito indicado por ID
+//Agrega el producto indicado por ID, al carrito indicado por ID (recive un _id de mongoDB)
 export const addProductByIdToCartById = async (req, res) => {
-  const cartId = +req.params.cid;
+  const cartId = req.params.cid;
   const productId = req.params.pid;
 
-  //primero chequeamos que el carrito exista
-  const cartExist = await cartModel.findOne({ id: cartId });
-  if (!cartExist) {
-    return res
-      .status(404)
-      .send({ status: "error", error: "El carrito no existe" });
-  }
-
   try {
+    //primero chequeamos que el carrito exista
+    const cartExist = await cartModel.findOne({ id: cartId });
+    if (!cartExist) {
+      CustomError.createError({
+        statusCode: 400,
+        message: errMessage.CART_NOT_EXIST,
+        code: EErrors.DATABASE_ERROR,
+        cause: `El carrito con ID: ${cartId} no existe`,
+      });
+    }
+
     const resultAdd = await dbcartManager.addProductToCart(cartId, productId);
 
     return res.status(201).send({
@@ -94,12 +104,8 @@ export const addProductByIdToCartById = async (req, res) => {
       cart: resultAdd,
     });
   } catch (error) {
-    console.error(error);
-
-    res.status(500).send({
-      status: "error",
-      error: "No se pudo agregar el producto",
-    });
+    req.logger.error(`${error.message} || ${error.cause}`);
+    return handleError(error, req, res);
   }
 };
 //Elimina un producto del carrito indicado por ID
@@ -107,15 +113,18 @@ export const removeProductByIdFromCartById = async (req, res) => {
   const cartId = +req.params.cid;
   const productId = req.params.pid;
 
-  //primero chequeamos que el carrito exista
-  const cartExist = await cartModel.findOne({ id: cartId });
-  if (!cartExist) {
-    return res
-      .status(404)
-      .send({ status: "error", error: "El carrito no existe" });
-  }
-
   try {
+    //primero chequeamos que el carrito exista
+    const cartExist = await cartModel.findOne({ id: cartId });
+    if (!cartExist) {
+      CustomError.createError({
+        statusCode: 400,
+        message: errMessage.CART_NOT_EXIST,
+        code: EErrors.DATABASE_ERROR,
+        cause: `El carrito con ID: ${cartId} no existe`,
+      });
+    }
+
     const resultRemove = await dbcartManager.removeProductFromCart(
       cartId,
       productId
@@ -127,37 +136,27 @@ export const removeProductByIdFromCartById = async (req, res) => {
         success: "Producto eliminado correctamente",
       });
     }
-
-    if (resultRemove === "El producto no existe en este carrito") {
-      return res.status(400).send({
-        status: "error",
-        error: "El producto no existe en este carrito",
-      });
-    }
   } catch (error) {
-    console.error("router ERROR", error);
-    if (error.message === "El producto no existe en este carrito") {
-      return res.status(400).send({
-        status: "error",
-        error: "El producto no existe en este carrito",
-      });
-    }
-    return res.status(400).send({ status: "error", error: error });
+    req.logger.error(`${error.message} || ${error.cause}`);
+    return handleError(error, req, res);
   }
 };
 //Elimina todos los productos de un carrito
 export const removeAllProductFromCart = async (req, res) => {
   const cartId = +req.params.cid;
 
-  //primero chequeamos que el carrito exista
-  const cartExist = await cartModel.findOne({ id: cartId });
-  if (!cartExist) {
-    return res
-      .status(404)
-      .send({ status: "error", error: "El carrito no existe" });
-  }
-
   try {
+    //primero chequeamos que el carrito exista
+    const cartExist = await cartModel.findOne({ id: cartId });
+    if (!cartExist) {
+      CustomError.createError({
+        statusCode: 400,
+        message: errMessage.CART_NOT_EXIST,
+        code: EErrors.DATABASE_ERROR,
+        cause: `El carrito con ID: ${cartId} no existe`,
+      });
+    }
+
     const resultRemove = await dbcartManager.removeAllProductFromCart(cartId);
     if (resultRemove.acknowledged === true) {
       return res
@@ -165,7 +164,8 @@ export const removeAllProductFromCart = async (req, res) => {
         .send({ status: "success", success: "Carrito vaciado correctamente" });
     }
   } catch (error) {
-    console.error(error);
+    req.logger.error(`${error.message} || ${error.cause}`);
+    return handleError(error, req, res);
   }
 };
 //Actualiza todos los productos de un carrito
@@ -173,15 +173,18 @@ export const updateCartProducts = async (req, res) => {
   const cartId = +req.params.cid;
   const productList = req.body;
 
-  //primero chequeamos que el carrito exista
-  const cartExist = await cartModel.findOne({ id: cartId });
-  if (!cartExist) {
-    return res
-      .status(404)
-      .send({ status: "error", error: "El carrito no existe" });
-  }
-
   try {
+    //primero chequeamos que el carrito exista
+    const cartExist = await cartModel.findOne({ id: cartId });
+    if (!cartExist) {
+      CustomError.createError({
+        statusCode: 400,
+        message: errMessage.CART_NOT_EXIST,
+        code: EErrors.DATABASE_ERROR,
+        cause: `El carrito con ID: ${cartId} no existe`,
+      });
+    }
+
     const resultUpdate = await dbcartManager.updateCartProducts(
       cartId,
       productList
@@ -197,8 +200,8 @@ export const updateCartProducts = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error(error);
-    return;
+    req.logger.error(`${error.message} || ${error.cause}`);
+    return handleError(error, req, res);
   }
 };
 //actualiza la cantidad del producto indicado
@@ -209,13 +212,16 @@ export const updateProductQuantity = async (req, res) => {
 
   //primero chequeamos que el carrito exista
   const cartExist = await cartModel.findOne({ id: cartId });
-  if (!cartExist) {
-    return res
-      .status(404)
-      .send({ status: "error", error: "El carrito no existe" });
-  }
-
   try {
+    if (!cartExist) {
+      CustomError.createError({
+        statusCode: 400,
+        message: errMessage.CART_NOT_EXIST,
+        code: EErrors.DATABASE_ERROR,
+        cause: `El carrito con ID: ${cartId} no existe`,
+      });
+    }
+
     const cartUpdate = await dbcartManager.quantityUpdate(
       cartId,
       productId,
@@ -230,8 +236,8 @@ export const updateProductQuantity = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error(error);
-    return;
+    req.logger.error(`${error.message} || ${error.cause}`);
+    return handleError(error, req, res);
   }
 };
 //Cerrar compra
@@ -254,20 +260,26 @@ export const cartPurchase = async (req, res) => {
         await carts.removeProductFromCart(cartId, item._id);
       }
 
-      
       //Devolver un array con los ids de los productos que no pudieron comprarse
       const data = { ticketData, orderProducts, outOfStock };
-      //Envío de mail 
+      //Envío de mail
       const mailSent = await sendMail(data);
 
       return res.status(200).send({ status: "success", success: "ok", data });
     }
-    return res
-      .status(400)
-      .send({ status: "error", error: "No se pudo cerrar la compra, vuelva a intentarlo" });
+    CustomError.createError({
+      statusCode: 500,
+      message: errMessage.CART_NOT_EXIST,
+      code: EErrors.DATABASE_ERROR,
+      cause: `El carrito con ID: ${cartId} no existe`,
+    });
   } catch (error) {
-    console.error("carts.controller.js_01", error);
-    return res.status(500).send({ status: "success", error: error });
+    if (error.statusCode === 500) {
+      req.logger.fatal(`${error.message} || ${error.cause}`);
+      return handleError(error, req, res);
+    }
+    req.logger.error(`${error.message} || ${error.cause}`);
+    return handleError(error, req, res);
   }
 };
 
@@ -276,7 +288,7 @@ export const getCartFromUser = async (req, res) => {
 
   let orderProducts = [];
   let cartId;
-  
+
   try {
     const cartFromUser = await users.getCartFromUser(user); //Obtenemos el _id del carrito desde el usuario
     const cartProducts = await carts.getProductsFromCartId(
@@ -284,7 +296,7 @@ export const getCartFromUser = async (req, res) => {
     ); //Obtenemos los productos de ese carrito
 
     cartId = cartFromUser.cart.id;
-    
+
     for (const item of cartProducts) {
       const product = await productModel.findById(item.product);
       orderProducts.push({
@@ -298,10 +310,11 @@ export const getCartFromUser = async (req, res) => {
     }
     const totalAmount = await carts.calculateTotalAmount(orderProducts);
 
-    const payload = {orderProducts, totalAmount, cartId}
-    
+    const payload = { orderProducts, totalAmount, cartId };
+
     return res.status(200).send({ status: "success", payload });
   } catch (error) {
-    return res.status(400).send({ status: "error", error: error.message });
+    req.logger.error(`${error.message} || ${error.cause}`);
+    return handleError(error, req, res);
   }
 };
