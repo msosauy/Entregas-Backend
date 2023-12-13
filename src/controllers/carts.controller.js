@@ -261,18 +261,12 @@ export const cartPurchase = async (req, res) => {
       }
 
       //Devolver un array con los ids de los productos que no pudieron comprarse
-      const data = { ticketData, orderProducts, outOfStock };
+      const data = { ticketData, orderProducts, outOfStock, user };
       //Envío de mail
       const mailSent = await sendMail(data);
 
       return res.status(200).send({ status: "success", success: "ok", data });
     }
-    CustomError.createError({
-      statusCode: 500,
-      message: errMessage.CART_NOT_EXIST,
-      code: EErrors.DATABASE_ERROR,
-      cause: `El carrito con ID: ${cartId} no existe`,
-    });
   } catch (error) {
     if (error.statusCode === 500) {
       req.logger.fatal(`${error.message} || ${error.cause}`);
