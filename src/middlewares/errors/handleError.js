@@ -17,7 +17,11 @@ export const errMessage = {
     CART_EXIST: "Ya existe un carrito para este usuario",
     CART_NOT_EXIST: "El carrito no existe",
     CART_EMPTY: "El carrito está vacío",
-    CART_PRODUCT_NOT_EXIST: "El producto no existe en este carrito"
+    CART_PRODUCT_NOT_EXIST: "El producto no existe en este carrito",
+    //SESSION
+    SESSION_MUST_BE_EMAIL: "Debes ingresar un mail",
+    SESSION_DON_EXIST: "El correo no pertenece a ninguna cuenta",
+    SESSION_USER_NOT_FOUND: "El usuario no existe",
 };
   
 export const handleError = (error, req, res) => {

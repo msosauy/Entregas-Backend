@@ -20,7 +20,7 @@ router.get("/register", (req, res) => {
 });
 
 router.get("/resetpassword", (req, res) => {
-  return res.status(200).render("resetpassword", { style: "style.css" });
+  return res.status(200).render("requestresetpassword", { style: "style.css" });
 });
 
 router.get("/chat", authUser, async (req, res) => {

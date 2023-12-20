@@ -1,7 +1,7 @@
 import { Router } from "express";
 import passport from "passport";
 import { generateToken, authToken } from "../auth/authentication.js";
-import { restorePassword } from "../controllers/session.controller.js";
+import { requestRestorePassword, restorePassword } from "../controllers/session.controller.js";
 import UserDTO from "../dao/dto/userDTO.js";
 
 const router = Router();
@@ -75,7 +75,9 @@ router.get("/failRegister", async (req, res) => {
   return res.send({ error: "Falló el registro" });
 });
 
-router.post("/restorepassword", restorePassword);
+router.post("/restorepassword/:email", restorePassword);
+
+router.post("/requestrestorepassword", requestRestorePassword);
 
 router.get("/profile", (req, res) => {
   res.send({ user: req.session.user });

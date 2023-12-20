@@ -5,7 +5,7 @@ import { Tickets } from "../dao/factory.js";
 import { Users } from "../dao/factory.js";
 import { cartModel } from "../dao/models/cartModel.js";
 import { productModel } from "../dao/models/productModel.js";
-import { sendMail } from "../controllers/notification.controller.js";
+import { sendMailPurchase } from "../controllers/notification.controller.js";
 import { errMessage, handleError } from "../middlewares/errors/handleError.js";
 import CustomError from "../services/errors/CustomError.js";
 import EErrors from "../services/errors/enums.js";
@@ -263,7 +263,7 @@ export const cartPurchase = async (req, res) => {
       //Devolver un array con los ids de los productos que no pudieron comprarse
       const data = { ticketData, orderProducts, outOfStock, user };
       //Envío de mail
-      const mailSent = await sendMail(data);
+      const mailSent = await sendMailPurchase(data);
 
       return res.status(200).send({ status: "success", success: "ok", data });
     }
