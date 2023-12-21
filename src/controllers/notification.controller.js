@@ -36,7 +36,7 @@ export const sendMailRestorePassword = async (user) => {
     html: `
             <div>
               <h1>Recuperar contraseña</h1>
-              <p><a href="http://localhost:8080/session/restorepassword/${user.email}">RECUPERAR CONTRASEÑA</a></p>
+              <p><a href="http://localhost:8080/views/restorepassword/${user.email}/${new Date()}">RECUPERAR CONTRASEÑA</a></p>
               <p></p>
             </div>
             `,

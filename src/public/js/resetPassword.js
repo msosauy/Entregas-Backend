@@ -8,23 +8,23 @@ form.addEventListener("submit", (event) => {
   data.forEach((value, key) => (obj[key] = value));
 
   try {
-    fetch("/session/restorepassword", {
+    fetch("/session/updatepassword", {
       method: "POST",
       body: JSON.stringify(obj),
       headers: {
         "Content-Type": "application/json",
       },
-    }).then((response) => response.json())
-    .then((data) => {
-        console.log("resetPassword.js", data);
-        if (data.status === "success" && data.success === "Clave restablecida correctamente") {
-            alert(data.success)
-            window.location.replace("/views/login")
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          alert(data.error);
         }
-        if(data.status === "error") {
-            alert(data.error)
+        if (data.success) {
+          alert("Contraseña actualizada correctamente");
+          window.location.replace("/views/login");
         }
-    });
+      });
   } catch (error) {
     console.error("resetPassword.js", error);
   }

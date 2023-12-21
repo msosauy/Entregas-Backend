@@ -22,6 +22,7 @@ export const errMessage = {
     SESSION_MUST_BE_EMAIL: "Debes ingresar un mail",
     SESSION_DON_EXIST: "El correo no pertenece a ninguna cuenta",
     SESSION_USER_NOT_FOUND: "El usuario no existe",
+    SESSION_PASS_REPEAT: "No se puede ingresar la misma contraseña",
 };
   
 export const handleError = (error, req, res) => {

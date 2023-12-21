@@ -17,9 +17,11 @@ form.addEventListener("submit", (event) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
-        if (data.status == "error 400") {
+        if (data.error) {
           alert(`Error: ${data.error} | Causa: ${data.cause}`);
+        }
+        if (data.success) {
+          alert(data.success);
         }
       });
   } catch (error) {

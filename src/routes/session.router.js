@@ -75,7 +75,7 @@ router.get("/failRegister", async (req, res) => {
   return res.send({ error: "Falló el registro" });
 });
 
-router.post("/restorepassword/:email", restorePassword);
+router.post("/updatepassword/", restorePassword);
 
 router.post("/requestrestorepassword", requestRestorePassword);
 
