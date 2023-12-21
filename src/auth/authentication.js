@@ -40,6 +40,20 @@ export const authUser = (req, res, next) => {
   }
 };
 
+export const authPremium = (req, res, next) => {
+  try {
+    if (!req.session?.user) {
+      return res.redirect("/views/login");
+    }
+    if (req.session?.user.role === "premium" || req.session?.user.role === "admin") {
+      return next();
+    }
+    return res.status(401).render("notAllowed", { style: "style.css" });
+  } catch (error) {
+    console.error("authPremium", error);
+  }
+};
+
 export const authAdmin = (req, res, next) => {
   try {
     if (!req.session?.user) {
@@ -48,7 +62,7 @@ export const authAdmin = (req, res, next) => {
     if (req.session?.user.role === "admin") {
       return next();
     }
-    return res.status(401).render("notAdmin", { style: "style.css" });
+    return res.status(401).render("notAllowed", { style: "style.css" });
   } catch (error) {
     console.error("authAdmin", error);
   }

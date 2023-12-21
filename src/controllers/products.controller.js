@@ -9,6 +9,7 @@ import {
   valueNotValid,
 } from "../services/errors/info.js";
 import { errMessage, handleError } from "../middlewares/errors/handleError.js";
+import { userModel } from "../dao/models/userModel.js";
 
 const productService = new Products();
 
@@ -209,6 +210,8 @@ export const addProduct = async (req, res) => {
     return handleError(error, req, res);
   }
 
+  const _user = await userModel.findOne({email: req.user.email});
+
   let productToDTO = {
     title,
     description,
@@ -218,6 +221,7 @@ export const addProduct = async (req, res) => {
     status,
     category,
     code,
+    owner: _user._id,
   };
 
   let newProduct = new ProductDTO(productToDTO);
@@ -263,6 +267,20 @@ export const updateProduct = async (req, res) => {
   } = req.body;
 
   try {
+
+    //Chequeamos que el producto pertenezca al usuario
+    const product = await productService.getProductById(__id);
+    const productOwner = await userModel.findById(product.owner);
+    
+    if (product.owner != req.user.id && req.user.role != "admin") {
+      CustomError.createError({
+        statusCode: 401,
+        message: errMessage.PRODUCT_NOT_OWNER,
+        cause: `${errMessage.PRODUCT_NOT_OWNER} porque fue creado por ${productOwner.email}`,
+        code: EErrors.DATABASE_ERROR,
+      });
+    };
+    
     //Chequeamos que no falten datos requeridos
     const evaluateRequired = [
       { name: "title", value: title },
@@ -391,6 +409,21 @@ export const deleteProductById = async (req, res) => {
   const pid = +req.params.pid;
 
   try {
+
+    //Chequeamos que el producto pertenezca al usuario
+    const product = await productService.getProductById(pid);
+    const productOwner = await userModel.findById(product.owner);
+    
+    if (product.owner != req.user.id && req.user.role != "admin") {
+      CustomError.createError({
+        statusCode: 401,
+        message: errMessage.PRODUCT_NOT_OWNER,
+        cause: `${errMessage.PRODUCT_NOT_OWNER} porque fue creado por ${productOwner.email}`,
+        code: EErrors.DATABASE_ERROR,
+      });
+    };
+    
+    
     const result = await productService.deleteProduct(pid);
     if (result.acknowledged === true && result.deletedCount === 0) {
       CustomError.createError({
@@ -407,8 +440,8 @@ export const deleteProductById = async (req, res) => {
       .status(200)
       .send({ status: "success", success: errMessage.PRODUCT_REMOVED });
   } catch (error) {
-    console.error(`${error.message} || ${error.cause}`);
-    return res.status(error.status).send(handleError(error));
+    req.logger.error(`${error.message} || ${error.cause}`);
+    return handleError(error, req, res);
   }
 };
 //Mocking products

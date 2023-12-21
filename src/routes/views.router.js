@@ -1,7 +1,7 @@
 import { Router } from "express";
 import DbProductManager from "../dao/mongodb/db.ProductManager.js";
 import DbMessagesManager from "../dao/mongodb/db.MessagesManager.js";
-import { authAdmin, authUser } from "../auth/authentication.js";
+import { authAdmin, authUser, authPremium } from "../auth/authentication.js";
 import { validateMailTime } from "../controllers/session.controller.js";
 
 const router = Router();
@@ -68,7 +68,7 @@ router.get("/products", authUser, async (req, res) => {
   }
 });
 
-router.get("/products/realtimeproducts", authAdmin, async (req, res) => {
+router.get("/products/realtimeproducts", authPremium, async (req, res) => {
   try {
     return res.status(200).render("realTimeProducts", { style: "style.css" });
   } catch (error) {

@@ -44,7 +44,7 @@ const productSchema = new mongoose.Schema({
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
-    default: "admin"
+    default: "6552f16f7e512191f9ec4b72"
   }
 });
 productSchema.plugin(mongoosePaginate);
