@@ -91,11 +91,26 @@ export const addProductByIdToCartById = async (req, res) => {
       CustomError.createError({
         statusCode: 400,
         message: errMessage.CART_NOT_EXIST,
-        code: EErrors.DATABASE_ERROR,
         cause: `El carrito con ID: ${cartId} no existe`,
+        code: EErrors.DATABASE_ERROR,
       });
     }
+    //primero chequeamos que el producto exista
+    const product = await productModel.findById(productId);
 
+    // //cuequeamos que el usuario sea el owner del producto
+    const productOwner = await users.getUserById(product.owner);
+
+    // //si el product es suyo no lo puede agregar al carrito, si es addmin si
+    if (productOwner.email === req.user.email && req.user.role !== "admin") {
+      CustomError.createError({
+        statusCode: 400,
+        message: errMessage.CART_CANT_ADD_OWNER_PRODUCT,
+        cause: `${errMessage.CART_CANT_ADD_OWNER_PRODUCT}, porque fue creado por ${productOwner.email}`,
+        code: EErrors.DATABASE_ERROR,
+      });
+    };
+    
     const resultAdd = await dbcartManager.addProductToCart(cartId, productId);
 
     return res.status(201).send({

@@ -19,6 +19,7 @@ export const errMessage = {
     CART_NOT_EXIST: "El carrito no existe",
     CART_EMPTY: "El carrito está vacío",
     CART_PRODUCT_NOT_EXIST: "El producto no existe en este carrito",
+    CART_CANT_ADD_OWNER_PRODUCT: "No puedes agregar un producto creado por ti mismo",
     //SESSION
     SESSION_MUST_BE_EMAIL: "Debes ingresar un mail",
     SESSION_DON_EXIST: "El correo no pertenece a ninguna cuenta",
@@ -28,4 +29,4 @@ export const errMessage = {
   
 export const handleError = (error, req, res) => {
     res.status(error.statusCode).send({status: `${error.name} ${error.statusCode}`, error: error.message, cause: error.cause});
-};
+};  
