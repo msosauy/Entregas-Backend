@@ -25,8 +25,11 @@ export const errMessage = {
     SESSION_DON_EXIST: "El correo no pertenece a ninguna cuenta",
     SESSION_USER_NOT_FOUND: "El usuario no existe",
     SESSION_PASS_REPEAT: "No se puede ingresar la misma contraseña",
+    //USERS
+    USER_ALREADY_PREMIUM: "El usuario ya es PREMIUM",
+    USER_NOT_EXIST: "El usuario no existe",
 };
   
 export const handleError = (error, req, res) => {
-    res.status(error.statusCode).send({status: `${error.name} ${error.statusCode}`, error: error.message, cause: error.cause});
+    res.status(error.statusCode? error.statusCode : 400).send({status: `${error.name} ${error.statusCode}`, error: error.message, cause: error.cause});
 };  
