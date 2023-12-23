@@ -32,6 +32,9 @@ USER: adminCoder@coder.com
 CLAVE: Cod3r123
 Role: ADMIN
 
+USER: premium@coder.com
+CLAVE: premium098
+Role: PREMIUM
 
 USER: user@user.com
 CLAVE: user098

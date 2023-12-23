@@ -1,7 +1,8 @@
 import { Router } from "express";
 import DbProductManager from "../dao/mongodb/db.ProductManager.js";
 import DbMessagesManager from "../dao/mongodb/db.MessagesManager.js";
-import { authAdmin, authUser } from "../auth/authentication.js";
+import { authAdmin, authUser, authPremium } from "../auth/authentication.js";
+import { validateMailTime } from "../controllers/session.controller.js";
 
 const router = Router();
 const dbProductManager = new DbProductManager();
@@ -9,6 +10,25 @@ const dbMessagesManager = new DbMessagesManager();
 
 router.use((req, res, next) => {
   next();
+});
+
+router.get("/restorepassword/:email/:date", (req, res) => {
+  const reqemail = req.params.email;
+  const requestDate = new Date(req.params.date);
+
+  if (!reqemail || !requestDate) {
+    return res
+      .status(200)
+      .render("requestresetpassword", { style: "style.css" });
+  }
+
+  const result = validateMailTime(requestDate);
+
+  if (result) {
+    return res.status(200).render("resetpassword", { reqemail, style: "style.css" });
+  }
+
+  return res.status(200).render("requestresetpassword", { style: "style.css" });
 });
 
 router.get("/login", (req, res) => {
@@ -20,7 +40,7 @@ router.get("/register", (req, res) => {
 });
 
 router.get("/resetpassword", (req, res) => {
-  return res.status(200).render("resetpassword", { style: "style.css" });
+  return res.status(200).render("requestresetpassword", { style: "style.css" });
 });
 
 router.get("/chat", authUser, async (req, res) => {
@@ -48,7 +68,7 @@ router.get("/products", authUser, async (req, res) => {
   }
 });
 
-router.get("/products/realtimeproducts", authAdmin, async (req, res) => {
+router.get("/products/realtimeproducts", authPremium, async (req, res) => {
   try {
     return res.status(200).render("realTimeProducts", { style: "style.css" });
   } catch (error) {
@@ -61,7 +81,7 @@ router.get("/products/realtimeproducts", authAdmin, async (req, res) => {
 
 router.get("/cart", authUser, async (req, res) => {
   try {
-    return res.render("cart", {style: "style.css"});
+    return res.render("cart", { style: "style.css" });
   } catch (error) {
     console.error(error);
   }

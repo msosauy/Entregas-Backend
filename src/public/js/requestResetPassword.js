@@ -6,9 +6,9 @@ form.addEventListener("submit", (event) => {
   const obj = {};
 
   data.forEach((value, key) => (obj[key] = value));
-
+  
   try {
-    fetch("/session/updatepassword", {
+    fetch("/session/requestrestorepassword", {
       method: "POST",
       body: JSON.stringify(obj),
       headers: {
@@ -18,14 +18,13 @@ form.addEventListener("submit", (event) => {
       .then((response) => response.json())
       .then((data) => {
         if (data.error) {
-          alert(data.error);
+          alert(`Error: ${data.error} | Causa: ${data.cause}`);
         }
         if (data.success) {
-          alert("Contraseña actualizada correctamente");
-          window.location.replace("/views/login");
+          alert(data.success);
         }
       });
   } catch (error) {
-    console.error("resetPassword.js", error);
+    console.error(error);
   }
 });

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authUser } from "../auth/authentication.js";
+import { authPremium, authUser } from "../auth/authentication.js";
 import {
   newCart,
   getProdByIdByCartId,
@@ -19,7 +19,7 @@ router.use((req, res, next) => {
 });
 
 //Crea un nuevo carrito con ID autogenerado
-router.post("/", authUser, newCart);
+router.post("/", authPremium, newCart);
 
 //Devuelve el carrito de un usuario
 router.get("/getcartfromuser", authUser, getCartFromUser);
@@ -28,7 +28,7 @@ router.get("/getcartfromuser", authUser, getCartFromUser);
 router.get("/:cid", authUser, getProdByIdByCartId);
 
 //Agrega el producto indicado por ID, al carrito indicado por ID
-router.post("/:cid/product/:pid", authUser, addProductByIdToCartById);
+router.post("/:cid/product/:pid", authPremium, addProductByIdToCartById);
 
 //Elimina un producto del carrito indicado por ID
 router.delete("/:cid/product/:pid", authUser, removeProductByIdFromCartById);

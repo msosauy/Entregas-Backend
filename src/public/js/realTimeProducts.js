@@ -9,7 +9,7 @@ fetch("/session/profile", {
 })
   .then((response) => response.json())
   .then((data) => {
-    let userInfo = `<h2>Nombre: ${data.user.name} - Email: ${data.user.email} - Edad: ${data.user.age}</h2>`;
+    let userInfo = `<h2>Nombre: ${data.user.first_name} - Email: ${data.user.email} - Edad: ${data.user.age}</h2>`;
     userLogin.innerHTML = userInfo;
   });
 

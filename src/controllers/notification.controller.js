@@ -9,7 +9,7 @@ const transport = nodemailer.createTransport({
   },
 });
 
-export const sendMail = async (data) => {
+export const sendMailPurchase = async (data) => {
   const result = await transport.sendMail({
     from: data.user.email,
     to: data.ticketData.purchaser,
@@ -26,4 +26,21 @@ export const sendMail = async (data) => {
     attachments: [],
   });
   return result
+};
+
+export const sendMailRestorePassword = async (user) => {
+  const result = await transport.sendMail({
+    from: user.email,
+    to: user.email,
+    subject: `Recuperar contraseña`,
+    html: `
+            <div>
+              <h1>Recuperar contraseña</h1>
+              <p><a href="http://localhost:8080/views/restorepassword/${user.email}/${new Date()}">RECUPERAR CONTRASEÑA</a></p>
+              <p></p>
+            </div>
+            `,
+    attachments: [],
+  });
+  return result;
 };

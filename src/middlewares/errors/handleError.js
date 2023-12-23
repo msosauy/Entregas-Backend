@@ -13,13 +13,23 @@ export const errMessage = {
     PRODUCT_UPDATED: "Producto actualizado correctamente",
     PRODUCT_DONT_EXIST: "El articulo no existe",
     PRODUCT_REMOVED: "Producto eliminado correctamente",
+    PRODUCT_NOT_OWNER: "No puedes modificar este producto",
     //CARTS
     CART_EXIST: "Ya existe un carrito para este usuario",
     CART_NOT_EXIST: "El carrito no existe",
     CART_EMPTY: "El carrito está vacío",
-    CART_PRODUCT_NOT_EXIST: "El producto no existe en este carrito"
+    CART_PRODUCT_NOT_EXIST: "El producto no existe en este carrito",
+    CART_CANT_ADD_OWNER_PRODUCT: "No puedes agregar un producto creado por ti mismo",
+    //SESSION
+    SESSION_MUST_BE_EMAIL: "Debes ingresar un mail",
+    SESSION_DON_EXIST: "El correo no pertenece a ninguna cuenta",
+    SESSION_USER_NOT_FOUND: "El usuario no existe",
+    SESSION_PASS_REPEAT: "No se puede ingresar la misma contraseña",
+    //USERS
+    USER_ALREADY_PREMIUM: "El usuario ya es PREMIUM",
+    USER_NOT_EXIST: "El usuario no existe",
 };
   
 export const handleError = (error, req, res) => {
-    res.status(error.statusCode).send({status: `${error.name} ${error.statusCode}`, error: error.message, cause: error.cause});
-};
+    res.status(error.statusCode? error.statusCode : 400).send({status: `${error.name} ${error.statusCode}`, error: error.message, cause: error.cause});
+};  

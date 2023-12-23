@@ -29,4 +29,6 @@ export default class DbUserManager {
     const mongoUser = await userModel.findById(user._id).populate("cart.cart");
     return mongoUser.cart[0];
   };
+
+  getUserById = async (_id) => await userModel.findById(_id);
 }

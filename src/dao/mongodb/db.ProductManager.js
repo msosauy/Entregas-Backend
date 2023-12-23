@@ -73,6 +73,7 @@ export default class DbProductManager {
       code: product.code,
       id: productList[0].id + 1,
       active: product.active,
+      owner: product.owner,
     };
 
     try {

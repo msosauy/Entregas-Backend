@@ -1,6 +1,7 @@
 import express from "express";
 import productsRouter from "./routes/products.router.js";
 import cartsRouter from "./routes/carts.router.js";
+import userRouter from "./routes/users.router.js";
 import viewsRouter from "./routes/views.router.js";
 import sessionRouter from "./routes/session.router.js";
 import cookiesRouter from "./routes/cookies.router.js";
@@ -54,6 +55,7 @@ app.use(addLogger);
 app.use("/api/products", productsRouter);
 app.use("/views", viewsRouter);
 app.use("/api/carts", cartsRouter);
+app.use("/api/users", userRouter);
 app.use("/session", sessionRouter);
 app.use("/api/cookies", cookiesRouter);
 app.use("/loggertest", loggerRouter);
