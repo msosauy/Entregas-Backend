@@ -49,7 +49,7 @@ router.get("/premium/:uid", async (req, res) => {
       });
     }
   } catch (error) {
-    req.logger.error(`${error.message} || ${error.cause? error.cause : ""}`);
+    req.logger.error(`${error.message} || ${error.cause ? error.cause : ""}`);
     return handleError(error, req, res);
   }
 });
