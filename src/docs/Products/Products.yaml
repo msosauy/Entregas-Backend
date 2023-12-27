@@ -1,0 +1,76 @@
+paths:
+  /api/products:
+    get:
+      summary: Obtiene todos los productos paginados
+      tags:
+        - Products
+      parameters:
+        - $ref: "#/components/parameters/token"
+      responses:
+        200:
+          description: Devuelve todos los productos paginados [default, limit 10, page 1, query null, sort 1]
+        401:
+          description: El usuario no está autenticado
+        500:
+          description: Error del servidor
+  /api/products/{id}:
+components:
+  responses:
+    
+
+  schemas:
+    Product:
+      required:
+        - title
+        - description
+        - price
+        - stock
+        - category
+        - code
+      properties:
+        _id:
+          type: string
+          description: ID autogenerado por mongoDB
+        title:
+          type: string
+          description: Nombre del producto
+        description:
+          type: string
+          description: Descripción del producto
+        price:
+          type: number
+          description: Precio del producto
+        stock:
+          type: number
+          description: Stock del producto
+        status:
+          type: boolean
+          description: Estado del producto
+        category:
+          type: string
+          description: Categoría del producto
+        code:
+          type: string
+          description: Código único del producto
+        active:
+          type: boolean
+          description: Estado del producto
+        owner:
+          type: string
+          description: ID del usuario que creó el producto
+          $ref: "#/components/schemas/User"
+      example:
+        title: Producto 1
+        description: Descripción del producto 1
+        price: 100
+        stock: 10
+        category: Networking
+        code: ABC123
+        owner: 6578c8cac3a7aff7d85b5efa
+  parameters:
+    token:
+      name: authentication
+      in: header
+      description: Token de autenticación
+      required: true
+      type: string
