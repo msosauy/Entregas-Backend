@@ -1,0 +1,76 @@
+paths:
+  /views/login:
+    get:
+      summary: Renderiza la vista de login
+      tags:
+        - Views
+      responses:
+        200:
+          description: Renderiza la vista de login
+  /views/restorepassword/:email/:date:
+    get:
+      summary: Renderiza la vista de restaurar contraseña
+      tags:
+        - Views
+      parameters:
+        - name: email
+          in: path
+          description: Recibe el email del usuario
+          required: true
+          type: string
+        - name: date
+          in: path
+          description: Recibe la fecha de creación del token
+          required: true
+          type: string
+      responses:
+        200:
+          description: Renderiza la vista de restaurar contraseña
+  /views/register:
+    get:
+      summary: Renderiza la vista de registro
+      tags:
+        - Views
+      responses:
+        200:
+          description: Renderiza la vista de registro
+  /views/restorepassword:
+    get:
+      summary: Renderiza la vista de restaurar contraseña
+      tags:
+        - Views
+      responses:
+        200:
+          description: Renderiza la vista de restaurar contraseña
+  /views/chat:
+    get:
+      summary: Renderiza la vista de chat
+      tags:
+        - Views
+      responses:
+        200:
+          description: Renderiza la vista de chat
+  /views/products:
+    get:
+      summary: Renderiza la vista de productos
+      tags:
+        - Views
+      responses:
+        200:
+          description: Renderiza la vista de productos
+  /views/products/realtimeroducts:
+    get:
+      summary: Renderiza la vista de productos en tiempo real (sockets)
+      tags:
+        - Views
+      responses:
+        200:
+          description: Renderiza la vista de productos en tiempo real
+  /views/cart:
+    get:
+      summary: Renderiza la vista de carrito según el usuario logueado
+      tags:
+        - Views
+      responses:
+        200:
+          description: Renderiza la vista de carrito

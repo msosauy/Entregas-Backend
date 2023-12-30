@@ -231,7 +231,7 @@ export const addProduct = async (req, res) => {
 
     if (resultAdd === errMessage.PRODUCT_EXIST) {
       CustomError.createError({
-        status: 201,
+        status: 400,
         message: errMessage.PRODUCT_EXIST,
         code: EErrors.DATABASE_ERROR,
         cause: errMessage.PRODUCT_EXIST,

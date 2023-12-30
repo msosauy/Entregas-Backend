@@ -7,6 +7,18 @@ router.use((req, res, next) => {
   next();
 });
 
+router.get("/getcookie", (req, res) => {
+  res.send(req.signedCookies);
+});
+
+router.get("/deleteCookie", (req, res) => {
+  res
+    .clearCookie(cookieName)
+    .send({
+      success: "success",
+      message: `Se eliminó la cookie ${cookieName}`,
+    });
+});
 
 router.post("/setcookie/token", (req, res) => {
   const headerToken = req.headers.authorization;
@@ -21,19 +33,6 @@ router.post("/setcookie/token", (req, res) => {
   return res
     .cookie("authorization", token, { maxAge: 600000, signed: true })
     .send({ status: "success" });
-});
-
-router.get("/getcookie", (req, res) => {
-  res.send(req.signedCookies);
-});
-
-router.get("/deleteCookie", (req, res) => {
-  res
-    .clearCookie(cookieName)
-    .send({
-      success: "success",
-      message: `Se eliminó la cookie ${cookieName}`,
-    });
 });
 
 export default router;

@@ -24,7 +24,7 @@ router.get("/premium/:uid", async (req, res) => {
       //Verificamos que el usuario exista
       if (!editUser) {
         CustomError.createError({
-          statusCode: 400,
+          statusCode: 404,
           message: errMessage.USER_NOT_EXIST,
           cause: `El usuario con ID: ${uid} no existe`,
           code: EErrors.DATABASE_ERROR,
@@ -49,7 +49,7 @@ router.get("/premium/:uid", async (req, res) => {
       });
     }
   } catch (error) {
-    req.logger.error(`${error.message} || ${error.cause? error.cause : ""}`);
+    req.logger.error(`${error.message} || ${error.cause ? error.cause : ""}`);
     return handleError(error, req, res);
   }
 });

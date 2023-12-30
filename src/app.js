@@ -17,6 +17,9 @@ import passport from "passport";
 import { initializePassport } from "./config/passport.config.js";
 import env from "./config/enviroment.config.js";
 import { addLogger } from "./middlewares/logging/logger.js";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express";
+import swaggerOptions from "./config/swagger.config.js";
 
 const app = express();
 const PORT = env.port;
@@ -51,6 +54,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname + "/public"));
 
 app.use(addLogger);
+
+app.use("/apidocs", swaggerUiExpress.serve, swaggerUiExpress.setup(swaggerJSDoc(swaggerOptions)));
 
 app.use("/api/products", productsRouter);
 app.use("/views", viewsRouter);

@@ -9,12 +9,12 @@ router.use((error, req, res, next) => {
 });
 
 //Devuelve todos los productos o la cantidad de productos indicada con query ?limit=number
-router.get("/", authUser, getProducts);
-//Mocking
-router.get("/mockingproducts", mockingProducts);
+router.get("/", authPremium, getProducts);
 // //Busca un producto por ID por params
 router.get("/:pid", authUser, getProductById);
-// //Agrega un nuevo producto
+//Mocking
+router.get("/mockingproducts", mockingProducts);
+//Agrega un nuevo producto
 router.post("/", authPremium, addProduct);
 // //Busca un producto por ID y lo modifica
 router.put("/:pid", authPremium, updateProduct);

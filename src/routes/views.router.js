@@ -12,6 +12,10 @@ router.use((req, res, next) => {
   next();
 });
 
+router.get("/login", (req, res) => {
+  return res.status(200).render("login", { style: "style.css" });
+});
+
 router.get("/restorepassword/:email/:date", (req, res) => {
   const reqemail = req.params.email;
   const requestDate = new Date(req.params.date);
@@ -29,10 +33,6 @@ router.get("/restorepassword/:email/:date", (req, res) => {
   }
 
   return res.status(200).render("requestresetpassword", { style: "style.css" });
-});
-
-router.get("/login", (req, res) => {
-  return res.status(200).render("login", { style: "style.css" });
 });
 
 router.get("/register", (req, res) => {

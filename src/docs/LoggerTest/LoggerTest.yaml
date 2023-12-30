@@ -1,0 +1,11 @@
+paths:
+  /loggertest:
+    get:
+      summary: Genera un log de la aplicación en todos los niveles del ambiente seleccionado
+      tags:
+        - LoggerTest
+      responses:
+        200:
+          description: Test de logger ejecutado correctamene!!
+        500:
+          description: Error del servidor

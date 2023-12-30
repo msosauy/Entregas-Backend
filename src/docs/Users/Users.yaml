@@ -1,0 +1,78 @@
+paths:
+  /api/users/premium/{uid}:
+    get:
+      summary: Cambia el ROL del usuario indicado por :uid a premium.
+      tags:
+        - Users
+      parameters:
+        - name: uid
+          in: path
+          description: Recibe el _id del usuario premium (mongoDB)
+          required: true
+          type: string
+        - $ref: '#/components/parameters/token'
+      responses:
+        200:
+          description: El usuario [user.email] es ahora premium
+        400:
+          description: El usuario ya es premium
+        401:
+          description: El usuario no está autenticado 
+        404:
+          description: El usuario no existe
+        500:
+          description: Error del servidor
+  
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - email
+        - age
+        - password
+        - role
+      properties:
+        _id:
+          type: string  
+          description: ID autogenerado por mongoDB
+        first_name:
+          type: string
+          description: Nombre del usuario
+        last_name:
+          type: string
+          description: Apellido del usuario
+        email:
+          type: string
+          description: Correo del usuario
+        age:
+          type: number
+          description: Edad del usuario
+        password:
+          type: string
+          description: Contraseña del usuario
+        role:
+          type: string
+          description: Rol del usuario (default = user)
+        cart:
+          type: array
+          description: Carrito del usuario
+        tickets:
+          type: array
+          description: Tickets de compra del usuario
+      example:
+        first_name: UserFirstName,
+        last_name: UserLastName,
+        email: username@mail.com,
+        age: 18,
+        password: a9l2kfjs$l.1,
+  parameters:
+    token:
+      name: token
+      in: header
+      description: Token de autenticación
+      required: true
+      type: string
