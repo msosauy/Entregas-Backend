@@ -1,0 +1,144 @@
+paths:
+  /session/current:
+    get:
+      summary: Obtiene el usuario logueado
+      tags:
+        - Session
+      parameters:
+        - $ref: "#/components/parameters/token"
+      responses:
+        200:
+          description: Devuelve el usuario logueado
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/User"
+        401:
+          description: El usuario no está autenticado
+        500:
+          description: Error del servidor
+  /session/failLogin:
+    get:
+      summary: Renderiza la vista de login con mensaje de error
+      tags:
+        - Session
+      responses:
+        200:
+          description: Renderiza la vista de login con mensaje de error
+  /session/github:
+    get:
+      summary: Autentica al usuario con GitHub
+      tags:
+        - Session
+      responses:
+        200:
+          description: Autentica al usuario con GitHub
+  /session/github/callback:
+    get:
+      summary: Callback de GitHub
+      tags:
+        - Session
+      responses:
+        200:
+          description: Callback de GitHub
+  /session/profile:
+    get:
+      summary: Obtiene el perfil del usuario logueado
+      tags:
+        - Session
+      parameters:
+        - $ref: "#/components/parameters/token"
+      responses:
+        200:
+          description: Devuelve el perfil del usuario logueado
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/User"
+        401:
+          description: El usuario no está autenticado
+        500:
+          description: Error del servidor
+  /session/logout:
+    get:
+      summary: Cierra la sesión del usuario logueado
+      tags:
+        - Session
+      parameters:
+        - $ref: "#/components/parameters/token"
+      responses:
+        200:
+          description: Logout OK
+        401:
+          description: El usuario no está autenticado
+        500:
+          description: Error del servidor
+  /session/failRegister:
+    get:
+      summary: Renderiza la vista de registro con mensaje de error
+      tags:
+        - Session
+      responses:
+        200:
+          description: Renderiza la vista de registro con mensaje de error
+  /session/register:
+    post:
+      summary: Renderiza register si falla el failregister
+      tags:
+        - Session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/User"
+      responses:
+        201:
+          description: Usuario registrado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/User"
+        400:
+          description: El email ya existe
+        500:
+          description: Error del servidor
+  /session/updatepassword:
+    post:
+      summary: Actualiza la contraseña del usuario logueado
+      tags:
+        - Session
+      parameters:
+        - $ref: "#/components/parameters/token"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/User"
+      responses:
+        200:
+          description: Contraseña actualizada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/User"
+        401:
+          description: El usuario no está autenticado
+        500:
+          description: Error del servidor
+  /session/requestrestorepassword:
+    post:
+      summary: Envia un email con un link para restaurar la contraseña
+      tags:
+        - Session
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/User"
+      responses:
+        200:
+          description: Email enviado correctamente
+        404:
+          description: El usuario no existe
+        500:
+          description: Error del servidor

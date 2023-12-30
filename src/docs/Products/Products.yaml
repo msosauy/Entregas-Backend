@@ -13,11 +13,124 @@ paths:
           description: El usuario no está autenticado
         500:
           description: Error del servidor
-  /api/products/{id}:
-components:
-  responses:
-    
+    post:
+      summary: Agrega un nuevo producto
+      tags:
+        - Products
+      parameters:
+        - $ref: "#/components/parameters/token"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/Product"
+      responses:
+        201:
+          description: Producto agregado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Product"
+        400:
+          description: El codigo de producto ya existe
+        401:
+          description: El usuario no está autenticado
+        500:
+          description: Error del servidor
+  /api/products/{pid}:
+    get:
+      summary: Obtiene un producto por ID
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          description: Recibe el id del producto
+          required: true
+          type: string
+        - $ref: "#/components/parameters/token"
+      responses:
+        200:
+          description: Devuelve un producto por ID
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Product"
+        401:
+          description: El usuario no está autenticado
+        404:
+          description: Producto no encontrado
+        500:
+          description: Error del servidor
+    put:
+      summary: Actualiza un producto por ID
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          description: Recibe el id del producto
+          required: true
+          type: string
+        - $ref: "#/components/parameters/token"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/Product"
+      responses:
+        201:
+          description: Producto actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Product"
+        401:
+          description: El usuario no está autenticado
+        404:
+          description: Producto no encontrado
+        500:
+          description: Error del servidor
+    delete:
+      summary: Elimina un producto por ID
+      tags:
+        - Products
+      parameters:
+        - name: pid
+          in: path
+          description: Recibe el ID del producto
+          required: true
+          type: string
+        - $ref: "#/components/parameters/token"
+      responses:
+        200:
+          description: Producto eliminado correctamente
+        401:
+          description: El usuario no está autenticado
+        404:
+          description: Producto no encontrado
+        500:
+          description: Error del servidor
+  /api/products/mockingproducts:
+    get:
+      summary: Genera 100 productos mockeados
+      tags:
+        - Products
+      parameters:
+        - $ref: "#/components/parameters/token"
+      responses:
+        200:
+          description: Devuelve todos los productos mockeados
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Product"
+        401:
+          description: El usuario no está autenticado
+        500:
+          description: Error del servidor
 
+components:
   schemas:
     Product:
       required:

@@ -1,7 +1,10 @@
 import { Router } from "express";
 import passport from "passport";
 import { generateToken, authToken } from "../auth/authentication.js";
-import { requestRestorePassword, restorePassword } from "../controllers/session.controller.js";
+import {
+  requestRestorePassword,
+  restorePassword,
+} from "../controllers/session.controller.js";
 import UserDTO from "../dao/dto/userDTO.js";
 
 const router = Router();
@@ -10,26 +13,7 @@ router.use((req, res, next) => {
   next();
 });
 
-//Login passport
-router.post(
-  "/login",
-  passport.authenticate("login", { failureRedirect: "/faillogin" }),
-  async (req, res) => {
-    if (!req.user) {
-      return res
-        .status(400)
-        .send({ status: "error", error: "Credenciales invalidas" });
-    }
-    delete req.user.password;
-    const newToken = generateToken(req.user);
-    req.session.user = req.user;
-    return res.status(200).send({
-      status: "success",
-      success: "Logueado correctamente",
-      token: newToken,
-    });
-  }
-);
+
 
 router.get("/current", authToken, (req, res) => {
   const user = new UserDTO(req.user);
@@ -58,27 +42,6 @@ router.get(
   }
 );
 
-//Register (si recibe false en el done pasa a failregister)
-router.post(
-  "/register",
-  passport.authenticate("register", { failureRedirect: "/failregister" }),
-  async (req, res) => {
-    return res
-      .status(200)
-      .send({ status: "success", success: "Usuario registrado correctamente" });
-  }
-);
-
-//Register fail register
-router.get("/failRegister", async (req, res) => {
-  console.error("Fallo la estrategia");
-  return res.send({ error: "Falló el registro" });
-});
-
-router.post("/updatepassword/", restorePassword);
-
-router.post("/requestrestorepassword", requestRestorePassword);
-
 router.get("/profile", (req, res) => {
   res.send({ user: req.session.user });
 });
@@ -92,5 +55,47 @@ router.get("/logout", (req, res) => {
     }
   });
 });
+
+//Register fail register
+router.get("/failRegister", async (req, res) => {
+  console.error("Fallo la estrategia");
+  return res.send({ error: "Falló el registro" });
+});
+
+//Login passport
+router.post(
+  "/login",
+  passport.authenticate("login", { failureRedirect: "/faillogin" }),
+  async (req, res) => {
+    if (!req.user) {
+      return res
+        .status(400)
+        .send({ status: "error", error: "Credenciales invalidas" });
+    }
+    delete req.user.password;
+    const newToken = generateToken(req.user);
+    req.session.user = req.user;
+    return res.status(200).send({
+      status: "success",
+      success: "Logueado correctamente",
+      token: newToken,
+    });
+  }
+);
+
+//Register (si recibe false en el done pasa a failregister)
+router.post(
+  "/register",
+  passport.authenticate("register", { failureRedirect: "/failregister" }),
+  async (req, res) => {
+    return res
+      .status(200)
+      .send({ status: "success", success: "Usuario registrado correctamente" });
+  }
+);
+
+router.post("/updatepassword/", restorePassword);
+
+router.post("/requestrestorepassword", requestRestorePassword);
 
 export default router;

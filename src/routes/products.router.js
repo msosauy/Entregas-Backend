@@ -12,7 +12,6 @@ router.use((error, req, res, next) => {
 router.get("/", authPremium, getProducts);
 // //Busca un producto por ID por params
 router.get("/:pid", authUser, getProductById);
-// //Agrega un nuevo producto
 //Mocking
 router.get("/mockingproducts", mockingProducts);
 //Agrega un nuevo producto

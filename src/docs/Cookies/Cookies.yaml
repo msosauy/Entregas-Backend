@@ -1,0 +1,53 @@
+paths:
+  /api/cookies/getcookie:
+    get:
+      summary: Obtiene la cookie del usuario logueado autofirmada
+      tags:
+        - Cookies
+      responses:
+        200:
+          description: Devuelve todas las cookies
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Cookie"
+        500:
+          description: Error del servidor
+    post:
+      summary: Agrega una nueva cookie
+      tags:
+        - Cookies
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#components/schemas/Cookie"
+      responses:
+        201:
+          description: Cookie agregada correctamente
+          content:
+            application/json:
+              schema:
+                $ref: "#components/schemas/Cookie"
+        500:
+          description: Error del servidor
+  /api/cookies/deleteCookie:
+    get:
+      summary: Elimina la cookie del usuario logueado
+      tags:
+        - Cookies
+      responses:
+        200:
+          description: Cookie eliminada correctamente
+        500:
+          description: Error del servidor
+  /api/cookies/setCookie/token:
+    post:
+      summary: Recibe el token a través del header
+      tags:
+        - Cookies
+      responses:
+        200:
+          description: Success
+        500:
+          description: Error del servidor

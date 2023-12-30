@@ -21,7 +21,7 @@ const users = new Users();
 export const newCart = async (req, res) => {
   try {
     const newCartId = await dbcartManager.newCart(req.user);
-    return res.status(200).send({
+    return res.status(201).send({
       status: "success",
       success: `Nuevo carrito creado correctamente, ID: ${newCartId.id}, MongoID:${newCartId._id}`,
     });
@@ -244,7 +244,7 @@ export const updateProductQuantity = async (req, res) => {
     );
 
     if (cartUpdate) {
-      return res.status(200).send({
+      return res.status(201).send({
         status: "success",
         success: "Carrito actualizado correctamente",
         cart: cartUpdate,
@@ -280,7 +280,7 @@ export const cartPurchase = async (req, res) => {
       //Envío de mail
       const mailSent = await sendMailPurchase(data);
 
-      return res.status(200).send({ status: "success", success: "ok", data });
+      return res.status(200).send({ status: "success", success: "Compra realizada correctamente", data });
     }
   } catch (error) {
     if (error.statusCode === 500) {
