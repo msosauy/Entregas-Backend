@@ -131,4 +131,10 @@ export default class DbProductManager {
       }
     }
   };
+
+  //Recibe el code de un producto y lo reronará si existe
+  getProductByCode = async (_code) => {
+    const product = await productModel.findOne({ code: _code });
+    return product;
+  };
 }
