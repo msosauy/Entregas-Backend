@@ -109,8 +109,8 @@ export const addProductByIdToCartById = async (req, res) => {
         cause: `${errMessage.CART_CANT_ADD_OWNER_PRODUCT}, porque fue creado por ${productOwner.email}`,
         code: EErrors.DATABASE_ERROR,
       });
-    };
-    
+    }
+
     const resultAdd = await dbcartManager.addProductToCart(cartId, productId);
 
     return res.status(201).send({
@@ -280,7 +280,11 @@ export const cartPurchase = async (req, res) => {
       //Envío de mail
       const mailSent = await sendMailPurchase(data);
 
-      return res.status(200).send({ status: "success", success: "Compra realizada correctamente", data });
+      return res.status(200).send({
+        status: "success",
+        success: "Compra realizada correctamente",
+        data,
+      });
     }
   } catch (error) {
     if (error.statusCode === 500) {
@@ -322,6 +326,21 @@ export const getCartFromUser = async (req, res) => {
     const payload = { orderProducts, totalAmount, cartId };
 
     return res.status(200).send({ status: "success", payload });
+  } catch (error) {
+    req.logger.error(`${error.message} || ${error.cause}`);
+    return handleError(error, req, res);
+  }
+};
+
+export const removeCartFromUser = async (req, res) => {
+  const user = req.user;
+  try {
+    user.cart = [];
+    await user.save();
+    res.status(200).send({
+      status: "success",
+      success: "Carrito eliminado correctamente",
+    });
   } catch (error) {
     req.logger.error(`${error.message} || ${error.cause}`);
     return handleError(error, req, res);

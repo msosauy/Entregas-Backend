@@ -31,7 +31,7 @@ export const authUser = (req, res, next) => {
     if (!req.session?.user) {
       return res.redirect("/views/login");
     }
-    if (req.session?.user.role === "user") {
+    if (req.session?.user.role === "user" || req.session?.user.role === "premium") {
       return next();
     }
     return res.status(401).render("notUser", { style: "style.css" });

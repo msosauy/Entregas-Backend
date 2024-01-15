@@ -9,8 +9,11 @@ try {
   })
     .then((response) => response.json())
     .then((data) => {
-      console.log(data);
-      let userInfo = `<h2> Nombre: ${data.user.first_name} - Email: ${data.user.email} - Edad: ${data.user.age} - ROL: ${data.user.admin? "Administrador" : "Usuario"}</h2>`;
+      let userInfo = `<h2> Nombre: ${data.user.first_name} - Email: ${
+        data.user.email
+      } - Edad: ${data.user.age} - ROL: ${
+        data.user.admin ? "Administrador" : "Usuario"
+      }</h2>`;
       userLogin.innerHTML = userInfo;
     });
 } catch (error) {
@@ -28,4 +31,36 @@ logout.addEventListener("click", () => {
       window.location.replace("/views/login");
     }
   });
-})
+});
+
+//ADD product to cart
+let buttons = document.querySelectorAll('button[id^="addToCart-"]');
+
+buttons.forEach((button) => {
+  button.addEventListener("click", function () {
+    const productId = button.dataset.id;
+    let cartId;
+
+    fetch("/api/carts/getcartfromuser", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        cartId = data.payload.cartId;
+
+        fetch(`/api/carts/${cartId}/product/${productId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            alert(data.success);
+          });
+      });
+  });
+});

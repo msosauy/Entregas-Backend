@@ -29,7 +29,7 @@ export const getProducts = async (req, res) => {
     );
     return res.status(200).send(products);
   } catch (error) {
-    req.logger.error(error.message)
+    req.logger.error(error.message);
     return res.status(500).send({ status: "error", error: error });
   }
 };
@@ -66,14 +66,38 @@ export const getProductById = async (req, res) => {
     return res.status(200).send({ status: "success", success: product });
   } catch (error) {
     req.logger.error(`${error.message} || ${error.cause}`);
-    return handleError(error, req, res)
+    return handleError(error, req, res);
   }
 };
+//Busca un producto por code por params
+export const getProductByCode = async (req, res) => {
+  const searchCode = req.params.code;
+
+  try {
+    const product = await productService.getProductByCode(searchCode);
+
+    if (product === null) {
+      CustomError.createError({
+        statusCode: 400,
+        message: errMessage.PRODUCT_NOT_EXIST,
+        cause: errMessage.PRODUCT_NOT_EXIST,
+        code: EErrors.DATABASE_ERROR,
+      });
+    }
+
+    return res.status(200).send({ status: "success", success: product });
+    
+  } catch (error) {
+    req.logger.error(`${error.message} || ${error.cause}`);
+    return handleError(error, req, res);
+  }
+};
+
 // //Agrega un nuevo producto
 export const addProduct = async (req, res) => {
   let { title, description, code, price, status, stock, category, thumbnails } =
     req.body;
-    
+
   status = JSON.parse(status); //convierte a boolean
 
   try {
@@ -210,7 +234,7 @@ export const addProduct = async (req, res) => {
     return handleError(error, req, res);
   }
 
-  const _user = await userModel.findOne({email: req.user.email});
+  const _user = await userModel.findOne({ email: req.user.email });
 
   let productToDTO = {
     title,
@@ -267,11 +291,10 @@ export const updateProduct = async (req, res) => {
   } = req.body;
 
   try {
-
     //Chequeamos que el producto pertenezca al usuario
     const product = await productService.getProductById(__id);
     const productOwner = await userModel.findById(product.owner);
-    
+
     if (product.owner != req.user.id && req.user.role != "admin") {
       CustomError.createError({
         statusCode: 401,
@@ -279,8 +302,8 @@ export const updateProduct = async (req, res) => {
         cause: `${errMessage.PRODUCT_NOT_OWNER} porque fue creado por ${productOwner.email}`,
         code: EErrors.DATABASE_ERROR,
       });
-    };
-    
+    }
+
     //Chequeamos que no falten datos requeridos
     const evaluateRequired = [
       { name: "title", value: title },
@@ -409,11 +432,10 @@ export const deleteProductById = async (req, res) => {
   const pid = +req.params.pid;
 
   try {
-
     //Chequeamos que el producto pertenezca al usuario
     const product = await productService.getProductById(pid);
     const productOwner = await userModel.findById(product.owner);
-    
+
     if (product.owner != req.user.id && req.user.role != "admin") {
       CustomError.createError({
         statusCode: 401,
@@ -421,9 +443,8 @@ export const deleteProductById = async (req, res) => {
         cause: `${errMessage.PRODUCT_NOT_OWNER} porque fue creado por ${productOwner.email}`,
         code: EErrors.DATABASE_ERROR,
       });
-    };
-    
-    
+    }
+
     const result = await productService.deleteProduct(pid);
     if (result.acknowledged === true && result.deletedCount === 0) {
       CustomError.createError({

@@ -5,6 +5,7 @@ import DbUserManager from "../mongodb/db.UserManager.js";
 import CustomError from "../../services/errors/CustomError.js";
 import { errMessage } from "../../middlewares/errors/handleError.js";
 import EErrors from "../../services/errors/enums.js";
+import { userModel } from "../models/userModel.js";
 
 const userManager = new DbUserManager();
 
