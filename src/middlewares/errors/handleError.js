@@ -28,6 +28,8 @@ export const errMessage = {
     //USERS
     USER_ALREADY_PREMIUM: "El usuario ya es PREMIUM",
     USER_NOT_EXIST: "El usuario no existe",
+    //FILES
+    FILE_NOT_FOUND: "Debes seleccionar un archivo",
 };
   
 export const handleError = (error, req, res) => {

@@ -1,9 +1,22 @@
+import multer from "multer";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
 import bcrypt from "bcrypt";
 import { fakerES_MX } from "@faker-js/faker";
 
 const faker = fakerES_MX;
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, __dirname + "public/img/uploads");
+  },
+  filename: (req, file, cb) => {
+    // const ext = file.originalname.split(".").pop();
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
+export const uploader = multer({ storage });
 
 export const generateProduct = () => {
   return {

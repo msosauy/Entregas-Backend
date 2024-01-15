@@ -29,7 +29,9 @@ router.get("/restorepassword/:email/:date", (req, res) => {
   const result = validateMailTime(requestDate);
 
   if (result) {
-    return res.status(200).render("resetpassword", { reqemail, style: "style.css" });
+    return res
+      .status(200)
+      .render("resetpassword", { reqemail, style: "style.css" });
   }
 
   return res.status(200).render("requestresetpassword", { style: "style.css" });
@@ -56,8 +58,18 @@ router.get("/chat", authUser, async (req, res) => {
 });
 
 router.get("/products", authUser, async (req, res) => {
+  const _limit = +req.query.limit || 10;
+  const _page = +req.query.page || 1;
+  const _query = req.query.query || null;
+  const _sort = +req.query.sort || null;
+
   try {
-    const products = await dbProductManager.getProducts();
+    const products = await dbProductManager.getProducts(
+      _limit,
+      _page,
+      _query,
+      _sort
+    );
     products.payload = products.payload.map((doc) => doc.toObject());
     return res.status(200).render("home", { products, style: "style.css" });
   } catch (error) {
@@ -82,6 +94,14 @@ router.get("/products/realtimeproducts", authPremium, async (req, res) => {
 router.get("/cart", authUser, async (req, res) => {
   try {
     return res.render("cart", { style: "style.css" });
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+router.get("/admin", authPremium, async (req, res) => {
+  try {
+    return res.render("addproduct", { style: "style.css" });
   } catch (error) {
     console.error(error);
   }

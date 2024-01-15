@@ -27,18 +27,14 @@ export default class DbProductManager {
           hasPrevPage: products.hasPrevPage,
           hasNextPage: products.hasNextPage,
           prevLink: products.hasPrevPage
-            ? `localhost:8080/api/products/?limit=${_limit}&page=${
-                products.prevPage
-              }${_query ? `&query=${_query}` : ""}${
-                _sort ? `&sort=${_sort}` : ""
-              }`
+            ? `/views/products/?limit=${_limit}&page=${products.prevPage}${
+                _query ? `&query=${_query}` : ""
+              }${_sort ? `&sort=${_sort}` : ""}`
             : null,
           nextLink: products.hasNextPage
-            ? `localhost:8080/api/products/?limit=${_limit}&page=${
-                products.nextPage
-              }${_query ? `&query=${_query}` : ""}${
-                _sort ? `&sort=${_sort}` : ""
-              }`
+            ? `/views/products/?limit=${_limit}&page=${products.nextPage}${
+                _query ? `&query=${_query}` : ""
+              }${_sort ? `&sort=${_sort}` : ""}`
             : null,
         };
       }

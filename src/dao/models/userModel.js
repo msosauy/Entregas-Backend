@@ -1,4 +1,4 @@
-  import mongoose from "mongoose";
+import mongoose from "mongoose";
 
 const collection = "usersHash";
 
@@ -33,6 +33,20 @@ const schema = new mongoose.Schema({
     default: [],
     _id: false,
   },
+  documents: {
+    name: { type: String, require: true },
+    reference: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "documents",
+        },
+      ],
+    },
+    default: [],
+    _id: false,
+  },
+  last_connection: { type: Date },
 });
 
 export const userModel = mongoose.model(collection, schema);

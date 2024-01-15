@@ -6,14 +6,13 @@ import {
   restorePassword,
 } from "../controllers/session.controller.js";
 import UserDTO from "../dao/dto/userDTO.js";
+import { userModel } from "../dao/models/userModel.js";
 
 const router = Router();
 
 router.use((req, res, next) => {
   next();
 });
-
-
 
 router.get("/current", authToken, (req, res) => {
   const user = new UserDTO(req.user);
@@ -46,7 +45,12 @@ router.get("/profile", (req, res) => {
   res.send({ user: req.session.user });
 });
 
-router.get("/logout", (req, res) => {
+router.get("/logout", async (req, res) => {
+  //resgistra la hora de desconexion en user.model last_connection
+  const last_connection = await userModel.updateOne(
+    { _id: req.user._id },
+    { last_connection: new Date() }
+  );
   req.session.destroy((error) => {
     if (!error) {
       res.status(200).send({ status: "success", success: "Logout OK" });
@@ -75,6 +79,11 @@ router.post(
     delete req.user.password;
     const newToken = generateToken(req.user);
     req.session.user = req.user;
+    //resgistra la hora de conexion en user.model last_connection
+    const last_connection = await userModel.updateOne(
+      { _id: req.user._id },
+      { last_connection: new Date() }
+    );
     return res.status(200).send({
       status: "success",
       success: "Logueado correctamente",

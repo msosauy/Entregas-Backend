@@ -28,7 +28,7 @@ router.post("/", authUser, newCart);
 //Elimina el carrito de un usuario
 router.delete("/deletecartfromuser", authUser, removeCartFromUser);
 
-//Devuelve todos los productos de un carrito según su ID por params
+// //Devuelve todos los productos de un carrito según su ID por params
 router.get("/:cid", authUser, getProdByIdByCartId);
 
 //Agrega el producto indicado por ID, al carrito indicado por ID
