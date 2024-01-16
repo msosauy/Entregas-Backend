@@ -27,6 +27,7 @@ const productSchema = new mongoose.Schema({
   status: {
     type: Boolean,
     required: true,
+    default: true,
   },
   category: {
     type: String,
@@ -39,13 +40,14 @@ const productSchema = new mongoose.Schema({
   active: {
     type: Boolean,
     required: true,
+    default: true,
   },
   thumbnails: [String, String],
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "users",
-    default: "6552f16f7e512191f9ec4b72"
-  }
+    default: "6552f16f7e512191f9ec4b72",
+  },
 });
 productSchema.plugin(mongoosePaginate);
 

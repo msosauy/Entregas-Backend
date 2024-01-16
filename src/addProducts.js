@@ -1,23 +1,11 @@
-import { Router } from "express";
-import { authUser, authAdmin, authPremium } from "../auth/authentication.js";
-import {
-  getProducts,
-  getProductById,
-  addProduct,
-  updateProduct,
-  deleteProductById,
-  mockingProducts,
-  getProductByCode,
-} from "../controllers/products.controller.js";
+import mongoose from "mongoose";
+const MongoClient = require("mongodb").MongoClient;
 
-import { productModel } from "../dao/models/productModel.js";
+// URL de conexión a tu base de datos MongoDB
+const uri =
+  "mongodb+srv://msosa:OJ9bgeMIrDF7pkEV@cluster-coder.bxbohyn.mongodb.net/ecommerce";
 
-const router = Router();
-
-router.use((error, req, res, next) => {
-  next();
-});
-
+// Datos de productos
 const products = [
   {
     id: 1,
@@ -27,7 +15,7 @@ const products = [
     stock: 50,
     category: "Networking",
     code: "RTX1000",
-    thumbnails: ["/files/products/img1.jpg"],
+    thumbnails: ["/files/products/img1"],
     active: true,
   },
   {
@@ -38,7 +26,7 @@ const products = [
     stock: 30,
     category: "Networking",
     code: "SWT200",
-    thumbnails: ["/files/products/img2.jpg"],
+    thumbnails: ["/files/products/img2"],
     active: true,
   },
   {
@@ -50,7 +38,7 @@ const products = [
     stock: 40,
     category: "Networking",
     code: "DRW450",
-    thumbnails: ["/files/products/img3.jpg"],
+    thumbnails: ["/files/products/img3"],
     active: true,
   },
   {
@@ -61,7 +49,7 @@ const products = [
     stock: 20,
     category: "Networking",
     code: "SMM600",
-    thumbnails: ["/files/products/img4.jpg"],
+    thumbnails: ["/files/products/img4"],
     active: true,
   },
   {
@@ -72,7 +60,7 @@ const products = [
     stock: 25,
     category: "Gaming",
     code: "GRG1",
-    thumbnails: ["/files/products/img5.jpg"],
+    thumbnails: ["/files/products/img5"],
     active: true,
   },
   {
@@ -83,7 +71,7 @@ const products = [
     stock: 15,
     category: "Networking",
     code: "SPP800",
-    thumbnails: ["/files/products/img6.jpg"],
+    thumbnails: ["/files/products/img6"],
     active: true,
   },
   {
@@ -94,7 +82,7 @@ const products = [
     stock: 10,
     category: "Networking",
     code: "SWM300",
-    thumbnails: ["/files/products/img7.jpg"],
+    thumbnails: ["/files/products/img7"],
     active: true,
   },
   {
@@ -105,7 +93,7 @@ const products = [
     stock: 18,
     category: "Smart Home",
     code: "SHR1",
-    thumbnails: ["/files/products/img8.jpg"],
+    thumbnails: ["/files/products/img8"],
     active: true,
   },
   {
@@ -116,7 +104,7 @@ const products = [
     stock: 12,
     category: "Networking",
     code: "SMM800",
-    thumbnails: ["/files/products/img9.jpg"],
+    thumbnails: ["/files/products/img9"],
     active: true,
   },
   {
@@ -127,7 +115,7 @@ const products = [
     stock: 30,
     category: "Networking",
     code: "CRW200",
-    thumbnails: ["/files/products/img10.jpg"],
+    thumbnails: ["/files/products/img10"],
     active: true,
   },
   {
@@ -138,7 +126,7 @@ const products = [
     stock: 15,
     category: "Networking",
     code: "SPP1000",
-    thumbnails: ["/files/products/img11.jpg"],
+    thumbnails: ["/files/products/img11"],
     active: true,
   },
   {
@@ -149,7 +137,7 @@ const products = [
     stock: 20,
     category: "Gaming",
     code: "SGS300",
-    thumbnails: ["/files/products/img12.jpg"],
+    thumbnails: ["/files/products/img12"],
     active: true,
   },
   {
@@ -160,7 +148,7 @@ const products = [
     stock: 25,
     category: "Networking",
     code: "SWAP500",
-    thumbnails: ["/files/products/img13.jpg"],
+    thumbnails: ["/files/products/img13"],
     active: true,
   },
   {
@@ -171,7 +159,7 @@ const products = [
     stock: 10,
     category: "Networking",
     code: "SEE1200",
-    thumbnails: ["/files/products/img14.jpg"],
+    thumbnails: ["/files/products/img14"],
     active: true,
   },
   {
@@ -182,7 +170,7 @@ const products = [
     stock: 15,
     category: "Networking",
     code: "SHMW450",
-    thumbnails: ["/files/products/img15.jpg"],
+    thumbnails: ["/files/products/img15"],
     active: true,
   },
   {
@@ -194,7 +182,7 @@ const products = [
     stock: 25,
     category: "Networking",
     code: "CPP400",
-    thumbnails: ["/files/products/img16.jpg"],
+    thumbnails: ["/files/products/img16"],
     active: true,
   },
   {
@@ -205,7 +193,7 @@ const products = [
     stock: 20,
     category: "Gaming",
     code: "GRP2",
-    thumbnails: ["/files/products/img17.jpg"],
+    thumbnails: ["/files/products/img17"],
     active: true,
   },
   {
@@ -216,7 +204,7 @@ const products = [
     stock: 10,
     category: "Networking",
     code: "SOWAP300",
-    thumbnails: ["/files/products/img18.jpg"],
+    thumbnails: ["/files/products/img18"],
     active: true,
   },
   {
@@ -228,7 +216,7 @@ const products = [
     stock: 30,
     category: "Smart Home",
     code: "SS100",
-    thumbnails: ["/files/products/img19.jpg"],
+    thumbnails: ["/files/products/img19"],
     active: true,
   },
   {
@@ -240,7 +228,7 @@ const products = [
     stock: 15,
     category: "Networking",
     code: "SBCR700",
-    thumbnails: ["/files/products/img20.jpg"],
+    thumbnails: ["/files/products/img20"],
     active: true,
   },
   {
@@ -251,7 +239,7 @@ const products = [
     stock: 40,
     category: "Networking",
     code: "SPI200",
-    thumbnails: ["/files/products/img21.jpg"],
+    thumbnails: ["/files/products/img21"],
     active: true,
   },
   {
@@ -262,7 +250,7 @@ const products = [
     stock: 15,
     category: "Gaming",
     code: "SGS500",
-    thumbnails: ["/files/products/img22.jpg"],
+    thumbnails: ["/files/products/img22"],
     active: true,
   },
   {
@@ -274,7 +262,7 @@ const products = [
     stock: 20,
     category: "Networking",
     code: "SDWR300",
-    thumbnails: ["/files/products/img23.jpg"],
+    thumbnails: ["/files/products/img23"],
     active: true,
   },
   {
@@ -286,7 +274,7 @@ const products = [
     stock: 35,
     category: "Networking",
     code: "SCGS100",
-    thumbnails: ["/files/products/img24.jpg"],
+    thumbnails: ["/files/products/img24"],
     active: true,
   },
   {
@@ -298,31 +286,31 @@ const products = [
     stock: 25,
     category: "Networking",
     code: "SWRE200",
-    thumbnails: ["/files/products/img25.jpg"],
+    thumbnails: ["/files/products/img25"],
     active: true,
   },
 ];
-router.get("/addmockingproducts", (req, res) => {
-  products.forEach(async (product) => {
-    const newProduct = await productModel.insertMany(product);
+
+// Función para insertar productos en la base de datos
+async function insertProducts() {
+  const client = new mongoose(uri, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
   });
-  res.send("Productos agregados");
-});
 
-//Devuelve todos los productos o la cantidad de productos indicada con query ?limit=number
-router.get("/", authUser, getProducts);
-// //Busca un producto por ID por params
-router.get("/:pid", authUser, getProductById);
-//Busca un producto por code por params
-router.get("/code/:code", authPremium, getProductByCode);
-//Mocking
-router.get("/mockingproducts", mockingProducts);
-//Agrega un nuevo producto
-router.post("/", authPremium, addProduct);
-// //Busca un producto por ID y lo modifica
-router.put("/:pid", authPremium, updateProduct);
-// //Elimina un producto según su ID
-router.delete("/:pid", authPremium, deleteProductById);
+  try {
+    await client.connect();
+    console.log("Conectado a la base de datos");
 
+    const database = client.db();
+    const collection = database.collection("productsTest");
 
-export default router;
+    const result = await collection.insertMany(products);
+    console.log(`${result.insertedCount} productos insertados.`);
+  } finally {
+    await client.close();
+  }
+}
+
+// Ejecuta la función para insertar productos
+insertProducts();
