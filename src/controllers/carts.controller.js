@@ -304,6 +304,14 @@ export const getCartFromUser = async (req, res) => {
 
   try {
     const cartFromUser = await users.getCartFromUser(user); //Obtenemos el _id del carrito desde el usuario
+    if (!cartFromUser) {
+      CustomError.createError({
+        statusCode: 400,
+        message: errMessage.CART_NOT_EXIST,
+        code: EErrors.DATABASE_ERROR,
+        cause: `El carrito del usuario ${user.email} no existe`,
+      });
+    }
     const cartProducts = await carts.getProductsFromCartId(
       cartFromUser.cart.id
     ); //Obtenemos los productos de ese carrito

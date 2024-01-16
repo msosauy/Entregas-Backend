@@ -1,3 +1,56 @@
+const getCartOrCreate = async () => {
+  let _cartId;
+
+  const getCart = await fetch("/api/carts/getcartfromuser", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const getCartData = await getCart.json();
+
+  if (getCartData.error === "El carrito no existe") {
+    const createCart = await fetch("/api/carts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const createCartData = await createCart.json();
+    if (createCartData.success) {
+      const getCartRetry = await fetch("/api/carts/getcartfromuser", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const getCartRetryData = await getCartRetry.json();
+      _cartId = getCartRetryData.payload.cartId;
+    }
+  } else {
+    _cartId = getCartData.payload.cartId;
+  }
+  return _cartId;
+};
+
+const addProductToCart = async (cartId, productId) => {
+  fetch(`/api/carts/${cartId}/product/${productId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        alert("Producto agregado al carrito");
+      } else {
+        alert("Error al agregar el producto al carrito");
+      }
+    });
+};
 //User info
 const userLogin = document.getElementById("userLogin");
 try {
@@ -37,30 +90,9 @@ logout.addEventListener("click", () => {
 let buttons = document.querySelectorAll('button[id^="addToCart-"]');
 
 buttons.forEach((button) => {
-  button.addEventListener("click", function () {
+  button.addEventListener("click", async () => {
     const productId = button.dataset.id;
-    let cartId;
-
-    fetch("/api/carts/getcartfromuser", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        cartId = data.payload.cartId;
-
-        fetch(`/api/carts/${cartId}/product/${productId}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            alert(data.success);
-          });
-      });
+      const cartId = await getCartOrCreate();
+      await addProductToCart(cartId, productId);
   });
 });
