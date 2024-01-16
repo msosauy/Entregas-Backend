@@ -4,13 +4,14 @@
 <button><a href="/views/addproduct">Agregar Producto</a></button>
 <div id="pagination">
     <a href="{{products.prevLink}}">PREV</a>
+    <p>{{products.page}}</p>
     <a href="{{products.nextLink}}">NEXT</a>
 </div>
-<div>
-    <ul class="product-list">
+<div class="product-list">
         {{#each products.payload}}
         <div class="productsCard">
-            <h3>{{title}} - U$S {{price}}</h3>
+            <p>{{title}}</p>
+            <p>U$S {{price}}</p>
             <p>{{description}}</p>
             <img src="{{thumbnails.[0]}}" alt="{{title}}">
             <div class="actions">
@@ -18,7 +19,6 @@
             </div>
         </div>
         {{/each}}
-    </ul>
-</div>
+    </div>
 
-<script src="/js/home.js"></script>
+    <script src="/js/home.js"></script>
