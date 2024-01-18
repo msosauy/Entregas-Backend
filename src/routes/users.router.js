@@ -97,14 +97,14 @@ router.post("/:uid/documents", uploader.single("file"), (req, res) => {
       });
     }
 
-    if (profiles) {
+    // if (profiles) {
 
-    }
-    if (products) {
+    // }
+    // if (products) {
       
-    }
-    if (documents) {
-    }
+    // }
+    // if (documents) {
+    // }
 
     res.status(200).send({
       status: "success",

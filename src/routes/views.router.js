@@ -16,6 +16,10 @@ router.get("/login", (req, res) => {
   return res.status(200).render("login", { style: "style.css" });
 });
 
+router.get("/addproduct", authPremium, (req, res) => {
+  return res.status(200).render("addproduct", { style: "style.css" });
+});
+
 router.get("/restorepassword/:email/:date", (req, res) => {
   const reqemail = req.params.email;
   const requestDate = new Date(req.params.date);

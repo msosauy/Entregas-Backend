@@ -1,5 +1,3 @@
-const socket = window.io();
-
 const userLogin = document.getElementById("userLogin");
 fetch("/session/profile", {
   method: "GET",
@@ -25,38 +23,22 @@ logout.addEventListener("click", () => {
   });
 });
 
-socket.on("error", (errorMessage) => {
-  alert(errorMessage);
-});
-
-socket.on("realTimeProducts", (products) => {
-  let list = document.getElementById("ulProducts");
-
-  while (list.firstChild) {
-    list.removeChild(list.firstChild);
-  }
-  let returnList = "";
-
-  products.payload.forEach((el) => {
-    returnList =
-      returnList +
-      `<li>${el.id} ${el.title} - U$S ${el.price} - ${el.code}</li>`;
-  });
-
-  list.innerHTML = returnList;
-  returnList = "";
-});
-
 //agregar un nuevo producto
 document.getElementById("addProduct").addEventListener("click", () => {
   const title = document.getElementById("title").value;
   const description = document.getElementById("description").value;
   const code = document.getElementById("code").value;
   const price = document.getElementById("price").value;
-  const status = document.getElementById("status").value;
+  const _status = document.getElementById("status").value;
   const stock = document.getElementById("stock").value;
   const category = document.getElementById("category").value;
   const thumbnails = document.getElementById("thumbnails").value;
+
+  let status;
+  
+  if (_status === "on") {
+    status = true;
+  }
 
   if (
     !title ||
@@ -91,21 +73,26 @@ document.getElementById("addProduct").addEventListener("click", () => {
   })
     .then((response) => response.json())
     .then((data) => {
+      console.log(data);
       if (data.status === "error") {
-          alert(data.error);
+        alert(data.error);
       }
 
       if (data.status === "success") {
+        fetch("/api/users/1/documents", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          enctype: "multipart/form-data",
+          //enviar la imagen form-data en el body como file
+          body: JSON.stringify({ file: newProduct.thumbnails }),
+        });
+        
         alert(data.success);
       }
     })
     .catch((error) => {
-      console.error("realTimeProducts.js_catch_01", error);
+      console.error("addproduct.js_catch_01", error);
     });
-});
-
-//eliminar un producto
-document.getElementById("removeProduct").addEventListener("click", () => {
-  const removeId = document.getElementById("removeId").value;
-  socket.emit("removeById", parseInt(removeId));
 });
