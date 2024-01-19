@@ -24,7 +24,7 @@ logout.addEventListener("click", () => {
 });
 
 //agregar un nuevo producto
-document.getElementById("addProduct").addEventListener("click", () => {
+document.getElementById("addProduct").addEventListener("click", async () => {
   const title = document.getElementById("title").value;
   const description = document.getElementById("description").value;
   const code = document.getElementById("code").value;
@@ -35,7 +35,7 @@ document.getElementById("addProduct").addEventListener("click", () => {
   const thumbnails = document.getElementById("thumbnails").value;
 
   let status;
-  
+
   if (_status === "on") {
     status = true;
   }
@@ -64,35 +64,31 @@ document.getElementById("addProduct").addEventListener("click", () => {
     thumbnails,
   };
 
-  fetch("/api/products", {
+  const addNewProduct = await fetch("/api/products", {
     method: "POST",
     body: JSON.stringify(newProduct),
     headers: {
       "Content-Type": "application/json",
     },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-      if (data.status === "error") {
-        alert(data.error);
-      }
+  });
 
-      if (data.status === "success") {
-        fetch("/api/users/1/documents", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          enctype: "multipart/form-data",
-          //enviar la imagen form-data en el body como file
-          body: JSON.stringify({ file: newProduct.thumbnails }),
-        });
-        
-        alert(data.success);
-      }
-    })
-    .catch((error) => {
-      console.error("addproduct.js_catch_01", error);
+  const addNewProductData = await addNewProduct.json();
+
+  if (addNewProductData.status === "error") {
+    alert(data.error);
+  }
+
+  if (addNewProductData.status === "success") {
+    fetch("/api/users/1/documents", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      enctype: "multipart/form-data",
+      //enviar la imagen form-data en el body como file
+      body: JSON.stringify({ file: newProduct.thumbnails }),
     });
+
+    alert(data.success);
+  }
 });
