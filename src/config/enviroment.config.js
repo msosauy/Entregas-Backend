@@ -18,4 +18,5 @@ export default {
   cookie_secret: process.env.COOKIE_SECRET,
   persistence: persistenceSelected,
   logger: process.env.LOGGER,
+  upload_files_path: process.env.UPLOAD_FILES_PATH,
 };

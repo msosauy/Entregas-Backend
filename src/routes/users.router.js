@@ -84,27 +84,27 @@ router.get("/:uid", async (req, res) => {
 });
 
 router.post("/:uid/documents", uploader.single("file"), (req, res) => {
-  const uid = req.params.uid;
+  // const uid = req.params.uid;
   const file = req.file;
 
   try {
-    if (!file) {
-      CustomError.createError({
-        statusCode: 400,
-        message: errMessage.FILE_NOT_FOUND,
-        cause: `Debe cargar un archivo`,
-        code: EErrors.INVALID_TYPES_ERROR,
-      });
-    }
+  //   if (!file) {
+  //     CustomError.createError({
+  //       statusCode: 400,
+  //       message: errMessage.FILE_NOT_FOUND,
+  //       cause: `Debe cargar un archivo`,
+  //       code: EErrors.INVALID_TYPES_ERROR,
+  //     });
+  //   } 
 
-    // if (profiles) {
+  //   // if (profiles) {
 
-    // }
-    // if (products) {
+  //   // }
+  //   // if (products) {
       
-    // }
-    // if (documents) {
-    // }
+  //   // }
+  //   // if (documents) {
+  //   // }
 
     res.status(200).send({
       status: "success",

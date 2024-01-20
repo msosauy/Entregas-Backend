@@ -1,4 +1,6 @@
+//LOGIN
 const userLogin = document.getElementById("userLogin");
+
 fetch("/session/profile", {
   method: "GET",
   headers: {
@@ -11,6 +13,7 @@ fetch("/session/profile", {
     userLogin.innerHTML = userInfo;
   });
 
+//LOGOUT
 const logout = document.getElementById("logout");
 
 logout.addEventListener("click", () => {
@@ -23,7 +26,7 @@ logout.addEventListener("click", () => {
   });
 });
 
-//agregar un nuevo producto
+//ADD NEW PRODUCT
 document.getElementById("addProduct").addEventListener("click", async () => {
   const title = document.getElementById("title").value;
   const description = document.getElementById("description").value;
@@ -32,8 +35,8 @@ document.getElementById("addProduct").addEventListener("click", async () => {
   const _status = document.getElementById("status").value;
   const stock = document.getElementById("stock").value;
   const category = document.getElementById("category").value;
-  const thumbnails = document.getElementById("thumbnails").value;
-
+  const file = document.getElementById("thumbnails").files[0];
+  
   let status;
 
   if (_status === "on") {
@@ -47,8 +50,7 @@ document.getElementById("addProduct").addEventListener("click", async () => {
     !price ||
     !status ||
     !stock ||
-    !category ||
-    !thumbnails
+    !category
   ) {
     return alert("Flatan datos requeridos");
   }
@@ -61,7 +63,6 @@ document.getElementById("addProduct").addEventListener("click", async () => {
     status,
     stock: parseInt(stock),
     category,
-    thumbnails,
   };
 
   const addNewProduct = await fetch("/api/products", {
@@ -79,16 +80,18 @@ document.getElementById("addProduct").addEventListener("click", async () => {
   }
 
   if (addNewProductData.status === "success") {
+    const formData = new FormData();
+    formData.append("file", file);
+
     fetch("/api/users/1/documents", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      enctype: "multipart/form-data",
-      //enviar la imagen form-data en el body como file
-      body: JSON.stringify({ file: newProduct.thumbnails }),
-    });
-
-    alert(data.success);
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          alert("Producto agregado  correctamente");
+        }
+      });
   }
 });

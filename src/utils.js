@@ -3,12 +3,13 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import bcrypt from "bcrypt";
 import { fakerES_MX } from "@faker-js/faker";
+import env from "./config/enviroment.config.js";
 
 const faker = fakerES_MX;
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, __dirname + "/public/img/uploads");
+    cb(null, __dirname + env.upload_files_path);
   },
   filename: (req, file, cb) => {
     // const ext = file.originalname.split(".").pop();

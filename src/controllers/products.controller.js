@@ -92,11 +92,9 @@ export const getProductByCode = async (req, res) => {
     return handleError(error, req, res);
   }
 };
-
 // //Agrega un nuevo producto
 export const addProduct = async (req, res) => {
-  let { title, description, code, price, status, stock, category, thumbnails } =
-    req.body;
+  let { title, description, code, price, status, stock, category } = req.body;
 
   status = JSON.parse(status); //convierte a boolean
 
@@ -127,7 +125,6 @@ export const addProduct = async (req, res) => {
             status,
             stock,
             category,
-            thumbnails,
           }),
         });
       }
@@ -155,7 +152,6 @@ export const addProduct = async (req, res) => {
             status,
             stock,
             category,
-            thumbnails,
           }),
         });
       }
@@ -183,7 +179,6 @@ export const addProduct = async (req, res) => {
             status,
             stock,
             category,
-            thumbnails,
           }),
         });
       }
@@ -201,7 +196,6 @@ export const addProduct = async (req, res) => {
             status,
             stock,
             category,
-            thumbnails,
           }),
         });
       }
@@ -224,7 +218,6 @@ export const addProduct = async (req, res) => {
             status,
             stock,
             category,
-            thumbnails,
           }),
         });
       }
@@ -240,7 +233,6 @@ export const addProduct = async (req, res) => {
     title,
     description,
     price,
-    thumbnails,
     stock,
     status,
     category,
@@ -287,7 +279,6 @@ export const updateProduct = async (req, res) => {
     status,
     stock,
     category,
-    thumbnails,
   } = req.body;
 
   try {
@@ -313,7 +304,6 @@ export const updateProduct = async (req, res) => {
       { name: "status", value: status },
       { name: "stock", value: stock },
       { name: "category", value: category },
-      { name: "thumbnails", value: thumbnails },
     ];
 
     for (const el of evaluateRequired) {
@@ -329,7 +319,6 @@ export const updateProduct = async (req, res) => {
             status,
             stock,
             category,
-            thumbnails,
           }),
           code: EErrors.INVALID_TYPES_ERROR,
         });

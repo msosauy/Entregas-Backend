@@ -22,12 +22,11 @@ export const generateAddProductErrorInfo = (product) => {
     *category : debe ser un string, y se recibió [${
       product.category
     } tipo: ${typeof product.category}]
-    *thumbnails : debe ser un string, y se recibió [${
-      product.thumbnails
-    } tipo: ${typeof product.thumbnails}]
     `;
 };
 
 export const valueNotValid = (el, type) => {
-    return `${el.name} debe ser de tipo ${type} y se recibió un ${typeof(el.value)}`
+  return `${
+    el.name
+  } debe ser de tipo ${type} y se recibió un ${typeof el.value}`;
 };
