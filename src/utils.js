@@ -9,7 +9,8 @@ const faker = fakerES_MX;
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    let endPath;
+    console.log(req.body);
+    let endPath = "/products";
     switch (req.body.event) {
       case "profiles":
         endPath = "/profiles";

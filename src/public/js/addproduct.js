@@ -86,6 +86,9 @@ document.getElementById("addProduct").addEventListener("click", async () => {
 
     fetch("/api/users/1/documents", {
       method: "POST",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
       body: formData,
     })
       .then((response) => response.json())
