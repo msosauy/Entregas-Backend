@@ -36,7 +36,7 @@ document.getElementById("addProduct").addEventListener("click", async () => {
   const stock = document.getElementById("stock").value;
   const category = document.getElementById("category").value;
   const file = document.getElementById("thumbnails").files[0];
-  
+
   let status;
 
   if (_status === "on") {
@@ -82,6 +82,7 @@ document.getElementById("addProduct").addEventListener("click", async () => {
   if (addNewProductData.status === "success") {
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("event", "products");
 
     fetch("/api/users/1/documents", {
       method: "POST",

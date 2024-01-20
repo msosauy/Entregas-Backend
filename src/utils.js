@@ -9,7 +9,20 @@ const faker = fakerES_MX;
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, __dirname + env.upload_files_path);
+    let endPath;
+    switch (req.body.event) {
+      case "profiles":
+        endPath = "/profiles";
+        break;
+      case "products":
+        endPath = "/products";
+        break;
+      case "documents":
+        endPath = "/documents";
+        break;
+    }
+    console.log(endPath);
+    cb(null, __dirname + env.upload_files_path + endPath);
   },
   filename: (req, file, cb) => {
     // const ext = file.originalname.split(".").pop();
