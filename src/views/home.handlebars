@@ -8,17 +8,17 @@
     <a href="{{products.nextLink}}">NEXT</a>
 </div>
 <div class="product-list">
-        {{#each products.payload}}
-        <div class="productsCard">
-            <p>{{title}}</p>
-            <p>U$S {{price}}</p>
-            <p>{{description}}</p>
-            <img src="{{thumbnails.[0]}}" alt="{{title}}">
-            <div class="actions">
-                <button id="addToCart-{{@index}}" data-id="{{_id}}">ADD TO CART</button>
-            </div>
+    {{#each products.payload}}
+    <div class="productsCard">
+        <p>{{title}}</p>
+        <p>U$S {{price}}</p>
+        <p>{{description}}</p>
+        <img src="{{thumbnails.[0]}}" alt="{{title}}">
+        <div class="actions">
+            <button id="addToCart-{{@index}}" data-id="{{_id}}">ADD TO CART</button>
         </div>
-        {{/each}}
     </div>
+    {{/each}}
+</div>
 
-    <script src="/js/home.js"></script>
+<script src="/js/home.js"></script>
