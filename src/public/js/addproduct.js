@@ -1,6 +1,6 @@
-const socket = window.io();
-
+//LOGIN
 const userLogin = document.getElementById("userLogin");
+
 fetch("/session/profile", {
   method: "GET",
   headers: {
@@ -13,6 +13,7 @@ fetch("/session/profile", {
     userLogin.innerHTML = userInfo;
   });
 
+//LOGOUT
 const logout = document.getElementById("logout");
 
 logout.addEventListener("click", () => {
@@ -25,38 +26,22 @@ logout.addEventListener("click", () => {
   });
 });
 
-socket.on("error", (errorMessage) => {
-  alert(errorMessage);
-});
-
-socket.on("realTimeProducts", (products) => {
-  let list = document.getElementById("ulProducts");
-
-  while (list.firstChild) {
-    list.removeChild(list.firstChild);
-  }
-  let returnList = "";
-
-  products.payload.forEach((el) => {
-    returnList =
-      returnList +
-      `<li>${el.id} ${el.title} - U$S ${el.price} - ${el.code}</li>`;
-  });
-
-  list.innerHTML = returnList;
-  returnList = "";
-});
-
-//agregar un nuevo producto
-document.getElementById("addProduct").addEventListener("click", () => {
+//ADD NEW PRODUCT
+document.getElementById("addProduct").addEventListener("click", async () => {
   const title = document.getElementById("title").value;
   const description = document.getElementById("description").value;
   const code = document.getElementById("code").value;
   const price = document.getElementById("price").value;
-  const status = document.getElementById("status").value;
+  const _status = document.getElementById("status").value;
   const stock = document.getElementById("stock").value;
   const category = document.getElementById("category").value;
-  const thumbnails = document.getElementById("thumbnails").value;
+  const file = document.getElementById("thumbnails").files[0];
+
+  let status;
+
+  if (_status === "on") {
+    status = true;
+  }
 
   if (
     !title ||
@@ -65,8 +50,7 @@ document.getElementById("addProduct").addEventListener("click", () => {
     !price ||
     !status ||
     !stock ||
-    !category ||
-    !thumbnails
+    !category
   ) {
     return alert("Flatan datos requeridos");
   }
@@ -79,33 +63,39 @@ document.getElementById("addProduct").addEventListener("click", () => {
     status,
     stock: parseInt(stock),
     category,
-    thumbnails,
   };
 
-  fetch("/api/products", {
+  const addNewProduct = await fetch("/api/products", {
     method: "POST",
     body: JSON.stringify(newProduct),
     headers: {
       "Content-Type": "application/json",
     },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.status === "error") {
-          alert(data.error);
-      }
+  });
 
-      if (data.status === "success") {
-        alert(data.success);
-      }
+  const addNewProductData = await addNewProduct.json();
+
+  if (addNewProductData.status === "error") {
+    alert(data.error);
+  }
+
+  if (addNewProductData.status === "success") {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("event", "products");
+
+    fetch("/api/users/1/documents", {
+      method: "POST",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      body: formData,
     })
-    .catch((error) => {
-      console.error("realTimeProducts.js_catch_01", error);
-    });
-});
-
-//eliminar un producto
-document.getElementById("removeProduct").addEventListener("click", () => {
-  const removeId = document.getElementById("removeId").value;
-  socket.emit("removeById", parseInt(removeId));
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "success") {
+          alert("Producto agregado  correctamente");
+        }
+      });
+  }
 });

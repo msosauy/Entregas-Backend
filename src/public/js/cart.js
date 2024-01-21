@@ -7,9 +7,36 @@ const base = `
                 <h3>Productos sin stock disponible</h3>
                 <ul id="ulNoStockProducts"></ul>`;
 
+const baseCart = `
+                <h1>Carrito</h1>
+              <h2>Lista de productos</h2>
+              <ul id="ulProducts"></ul>
+              <p id="totalAmount"></p>
+              <div id="buyButton"></div>
+              <button id="buy">COMPRAR</button>`;
+
 let cart_id;
 const cart = document.getElementById("cart");
 const purchase = document.getElementById("purchase");
+const removeCart = document.getElementById("removeCart");
+
+removeCart.addEventListener("click", async () => {
+  fetch(`/api/carts/${cart_id}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      cart.remove();
+      g = document.createElement('div');
+      g.id = "cart";
+      cart.innerHTML = baseCart;
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+);
 
 document.getElementById("buy").addEventListener("click", async () => {
   cart.remove(); //removemos toda la info del carrito

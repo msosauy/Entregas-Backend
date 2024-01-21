@@ -1,5 +1,12 @@
+let userRole;
+
 const getCartOrCreate = async () => {
   let _cartId;
+
+  if (userRole != "user") {
+    alert("Tu usuario no te permite agregar productos al carrito");
+    return false;
+  }
 
   const getCart = await fetch("/api/carts/getcartfromuser", {
     method: "GET",
@@ -53,25 +60,22 @@ const addProductToCart = async (cartId, productId) => {
 };
 //User info
 const userLogin = document.getElementById("userLogin");
-try {
-  fetch("/session/profile", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      let userInfo = `<h2> Nombre: ${data.user.first_name} - Email: ${
-        data.user.email
-      } - Edad: ${data.user.age} - ROL: ${
-        data.user.admin ? "Administrador" : "Usuario"
+
+fetch("/session/profile", {
+  method: "GET",
+  headers: {
+    "Content-Type": "application/json",
+  },
+})
+  .then((response) => response.json())
+  .then((data) => {
+    userRole = data.user.role;
+
+    let userInfo = `<h2> Nombre: ${data.user.first_name} - Email: ${data.user.email
+      } - Edad: ${data.user.age} - ROL: ${data.user.role
       }</h2>`;
-      userLogin.innerHTML = userInfo;
-    });
-} catch (error) {
-  console.error("home.js", error);
-}
+    userLogin.innerHTML = userInfo;
+  });
 
 //LOGOUT
 const logout = document.getElementById("logout");
@@ -92,7 +96,9 @@ let buttons = document.querySelectorAll('button[id^="addToCart-"]');
 buttons.forEach((button) => {
   button.addEventListener("click", async () => {
     const productId = button.dataset.id;
-      const cartId = await getCartOrCreate();
+    const cartId = await getCartOrCreate();
+    if (cartId != false) {
       await addProductToCart(cartId, productId);
+    }
   });
 });

@@ -1,4 +1,26 @@
-<form action="/api/products" method="POST">
+<div id="userLogin"></div>
+<button id="logout">LOGOUT</button>
+<button><a href="/views/products">PRODUCTOS</a></button>
 
+<div>
+    <h1>Nuevo Producto</h1>
+        <label>Nombre</label>
+        <input value="asd" type="text" id="title">
+        <label>Descripción</label>
+        <input value="asd" type="text" id="description">
+        <label>Precio</label>
+        <input value="123" type="number" id="price">
+        <label>Stock</label>
+        <input value="123" type="number" id="stock">
+        <label>Codigo</label>
+        <input value="asd123" type="text" id="code">
+        <label>Categoría</label>
+        <input value="asd123" type="text" id="category">
+        <label>Imagen</label>
+        <input type="file" id="thumbnails" name="file">
+        <label>Status</label>
+        <input type="checkbox" id="status">
+        <button id="addProduct">Agregar Producto</button>
+</div>
 
-</form>
+<script src="/js/addproduct.js"></script>

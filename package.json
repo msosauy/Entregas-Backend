@@ -1,12 +1,12 @@
 {
-  "name": "04_desafio",
+  "name": "Eccomerce-Manuel_Sosa",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "node ./src/test.js",
+    "test": "mocha ./src/test/superTest.test.js",
     "start": "node ./src/app.js",
-    "dev": "nodemon ./src/app.js"
+    "dev": "nodemon ./src/app.js --dev"
   },
   "keywords": [],
   "author": "",

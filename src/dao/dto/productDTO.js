@@ -1,3 +1,5 @@
+import env from "../../config/enviroment.config.js";
+
 export default class ProductDTO {
     constructor(product) {
       this.title = product.title;
@@ -7,7 +9,7 @@ export default class ProductDTO {
       this.status = product.status;
       this.category = product.category;
       this.code = product.code;
-      this.thumbnails = product.thumbnails;
+      this.thumbnails = `${env.upload_files_path}/products/`;
       this.active = true;
       this.owner = product.owner;    }
   }
